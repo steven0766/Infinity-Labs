@@ -1,0 +1,10 @@
+#ignore everything
+*
+
+#dont ignore
+!*/
+!*.c
+!*.md
+!*.h
+!.myfuncs
+!.gitignore
