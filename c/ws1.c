@@ -31,9 +31,9 @@ static double PowerOfTen(const int n)
     sign = (n < 0) ? -1: 1;
     abs = n * sign;
 
-    for(i = 0; i < abs; i++)
+    for (i = 0; i < abs; i++)
     {
-        result*= 10;
+        result *= 10;
     }
 
     return (sign == -1) ? 1 / result : result;
@@ -42,13 +42,13 @@ static double PowerOfTen(const int n)
 /* flip number (120 will be 21) */
 static int Flip(int n)
 {
-    int fliped, digit, sign;
+    int fliped = 0, digit, sign;
 
     fliped = 0;
     sign = (n < 0) ? -1 : 1;
     n *= sign;
 
-    while(n > 0)
+    while (n > 0)
     {
         digit = n % 10;
         fliped *=10;
@@ -81,10 +81,9 @@ static void TestPrintHelloWorld()
 
 static void TestPowerOfTen()
 {
-    int num = 20;
-    int i;
+    int num = 20, i;
 
-    for (i=-num; i < num; i++)
+    for (i = -num; i < num; i++)
     {
 	if (pow(10,i) != PowerOfTen(i))
 	{
@@ -98,13 +97,9 @@ static void TestPowerOfTen()
 
 static void TestFlip()
 {
-    int num, expected, num2, expected2;
+    int num = 120, expected = 21;
+    int num2 = -340, expected2 = -43;
     
-    num = 120;
-    expected = 21;
-    num2 = -340;
-    expected2 = -43;
-
     if (expected != Flip(num))
     {
 	printf("Test failed on positive number:\n"
@@ -122,22 +117,19 @@ static void TestFlip()
 
 static void TestSwap()
 {
-    int num1, num2, num3, num4;
-    num1 = 12;
-    num2 = 8;
-    num3 = -20;
-    num4 = -55;
+    int num1 = 12, num2 = 8;
+    int num3 = -20, num4 = -55;
 
     Swap(&num1, &num2);
     Swap(&num3, &num4);
 
-    if(num1 != 8 && num2 != 12)
+    if (num1 != 8 && num2 != 12)
     {
 	printf("Test failed on positive numbers:\n"
         "num1 = %d, num2 = %d\n", num1, num2);
 	return;
     }
-    if(num3 != -55 && num4 != -20)
+    if (num3 != -55 && num4 != -20)
     {
 	printf("Test failed on negative numbers:\n"
         "num1 = %d, num2 = %d\n", num1, num2);
