@@ -1,14 +1,15 @@
-/***************************************
-*file name: ws1                        *
-*purpose: implementation of functions: *
-*1. PrintHelloWorld                    *
-*2. PowerOfTen                         *
-*3. FlipNumber                         *
-*4. Swap                               *
-*5. test functions                     *
-****************************************/
-#include <stdio.h>
-#include <math.h>
+/****************************************
+ *file name: ws1                        *
+ *purpose: implementation of functions: *
+ *1. PrintHelloWorld                    *
+ *2. PowerOfTen                         *
+ *3. FlipNumber                         *
+ *4. Swap                               *
+ *5. test functions                     *
+ *   Date: 9/11/2025                    *
+ ****************************************/
+#include <stdio.h>    /* printf function */
+#include <math.h>     /* pow function */ 
 
 /* print "Hello World!" */
 static void PrintHelloWorld()
@@ -45,6 +46,7 @@ static int Flip(int n)
 
     fliped = 0;
     sign = (n < 0) ? -1 : 1;
+    n *= sign;
 
     while(n > 0)
     {
@@ -58,14 +60,14 @@ static int Flip(int n)
 }
 
 /* swap between 2 numbers */
-static void Swap(int *num1, int *num2)
+static void Swap(int *num1_ptr, int *num2_ptr)
 {
-    if (num1 == NULL || num2 == NULL)
+    if (num1_ptr == NULL || num2_ptr == NULL)
 	return;
 
-    *num1 += *num2;
-    *num2 = *num1 - *num2;
-    *num1 -= *num2;
+    *num1_ptr += *num2_ptr;
+    *num2_ptr = *num1_ptr - *num2_ptr;
+    *num1_ptr -= *num2_ptr;
 }
 
 /***************************************
@@ -87,7 +89,7 @@ static void TestPowerOfTen()
 	if (pow(10,i) != PowerOfTen(i))
 	{
 	    printf("test failed for %d\n"
-	    "expected %f, recieved %f\n", i, pow(10,i), PowerOfTen(i));
+	    "expected %f, recieved %f\n", i, pow(10, i), PowerOfTen(i));
 	    break;
 	}
     }
@@ -96,13 +98,23 @@ static void TestPowerOfTen()
 
 static void TestFlip()
 {
-    int num = 120;
-    int expected = 21;
+    int num, expected, num2, expected2;
+    
+    num = 120;
+    expected = 21;
+    num2 = -340;
+    expected2 = -43;
 
     if (expected != Flip(num))
     {
-	printf("Test failed:\n"
+	printf("Test failed on positive number:\n"
 	"expected %d, recieved %d\n", expected, Flip(num));
+	return;
+    }
+    if (expected2 != Flip(num2))
+    {
+	printf("Test failed on negative number:\n"
+	"expected %d, recieved %d\n", expected2, Flip(num2));
 	return;
     }
     printf("Test success!\n");
@@ -110,15 +122,24 @@ static void TestFlip()
 
 static void TestSwap()
 {
-    int num1, num2;
+    int num1, num2, num3, num4;
     num1 = 12;
     num2 = 8;
+    num3 = -20;
+    num4 = -55;
 
     Swap(&num1, &num2);
+    Swap(&num3, &num4);
 
-    if(num1 != 8 || num2 != 12)
+    if(num1 != 8 && num2 != 12)
     {
-	printf("Test Failed:\n"
+	printf("Test failed on positive numbers:\n"
+        "num1 = %d, num2 = %d\n", num1, num2);
+	return;
+    }
+    if(num3 != -55 && num4 != -20)
+    {
+	printf("Test failed on negative numbers:\n"
         "num1 = %d, num2 = %d\n", num1, num2);
 	return;
     }
