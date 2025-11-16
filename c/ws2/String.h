@@ -1,19 +1,57 @@
 /************************************
- * Reviewer: Daria                  *
+ * Reviewer: shalev                  *
  * Date: 11.11.25                   *
  * Version: 1                       *
  ************************************/
 
 #ifndef __STRING_H__
+#define __STRING_H__
+  
+#include <stddef.h>
 
-  #define __STRING_H__
-  #include <stddef.h>
-  #include <stddef.h>
+/* check the length of the string */
+size_t StrLen(const char* s);
 
-  /* check the length of the string */
-  size_t StrLen(const char *s);
-  /* compare 2 strings if they are equal or not */
-  int StrCmp(const char *s1, const char *s2);
+/* compare 2 strings if they are equal or not */
+int StrCmp(const char* s1, const char* s2);
 
-#endif
+/* copy string from src to dst */
+char *StrCpy(char * dst, const char * src);
 
+/* copy first dsize chars from src to dst */
+char* StrNCpy(char* dst, const char* src, size_t dsize);
+
+/* compare 2 strings till n character */
+int StrNCmp(const char* s1, const char* s2, size_t n);
+
+/* compare 2 strings ignoring case sensitivity */
+int StrCaseCmp(const char *s1, const char *s2);
+
+/* find the first letter((char)c) in string(s) */
+char* StrChr(const char *s, int c);
+
+/* duplicate s string to new 1 and return it */
+char* StrDup(const char *s);
+
+/* append src to the end of dst */
+char* StrCat(char* dst, const char* src);
+
+/* append n chars from src to the end of dst */
+char* StrNCat(char* dst, const char* src, size_t n);
+
+
+char* StrStr(const char *haystack, const char *needle);
+
+
+size_t StrSpn(const char *s, const char *accept);
+
+
+char* StrTok(char* str, const char* delim);
+
+
+void SevenBoom(int start, int end);
+
+
+void RemoveSpace(char* str);
+
+#endif /* __STRING_H__ */
