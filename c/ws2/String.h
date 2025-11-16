@@ -39,19 +39,19 @@ char* StrCat(char* dst, const char* src);
 /* append n chars from src to the end of dst */
 char* StrNCat(char* dst, const char* src, size_t n);
 
-/* find needle in haystack */
+/* find needle in s1 */
 char* StrStr(const char *s1, const char *needle);
 
-
+/* counting first letters from accept on s, count them till the first letter that doesn't have in accept */
 size_t StrSpn(const char *s, const char *accept);
 
-
+/* remove delimeters from str */
 char* StrTok(char* str, const char* delim);
 
-
+/* 7 boom game */
 void SevenBoom(int start, int end);
 
-
+/* remove spaces or tabs from beginnind, end and double spaces\ tabs in line */
 void RemoveSpace(char* str);
 
 #endif /* __STRING_H__ */
