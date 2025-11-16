@@ -54,4 +54,5 @@ void SevenBoom(int start, int end);
 /* remove spaces or tabs from beginnind, end and double spaces\ tabs in line */
 void RemoveSpace(char* str);
 
+/* */
 #endif /* __STRING_H__ */
