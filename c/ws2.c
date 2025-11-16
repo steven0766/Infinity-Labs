@@ -23,6 +23,7 @@ int main()
   exe4();
   TestSwapTwoSizeT();
   TestSwapTwoPointers();
+  
   return 0;
 }
 
@@ -31,8 +32,8 @@ void Swap(int* ptr_num1, int* ptr_num2)
 {
   int temp = *ptr_num1;
   
-  assert(NULL != *ptr_num1);
-  assert(NULL != *ptr_num2);
+  assert(NULL != ptr_num1);
+  assert(NULL != ptr_num2);
   
   *ptr_num1 = *ptr_num2;
   *ptr_num2 = temp;
@@ -68,17 +69,17 @@ void CopyArr(int* from_arr, int* to_arr, size_t size)
 {
   size_t i = 0;
   for (i = 0; i < size; i++)
-    from_arr[i] = to_arr[i];
+    to_arr[i] = from_arr[i];
 }
 
 static void TestCopyArr()
 {
-  int copy_from[] = {1, 2, 3, 4, 5}, copy_to[5], i=0;
-  size_t size = 5;
+  int copy_from[] = {1, 2, 3, 4, 5}, copy_to[5];
+  size_t size = 5, i = 0;
   
   CopyArr(copy_from, copy_to, size);
   
-  for (i=0; i < sizeof(copy_from) / sizeof(int); i++)
+  for (i = 0; i < sizeof(copy_from) / sizeof(int); i++)
   {
     if (copy_from[i] != copy_to[i])
     {
@@ -120,7 +121,7 @@ static void TestSwapTwoSizeT()
   
   SwapTwoSizeT(&size1, &size2);
   
-  if (size1 != 800 && size2 != 500)
+  if (800 != size1 || 500 != size2)
   {
     printf("Error:\n"
     "size1 is %lu, size2 is %lu\n", size1, size2);
@@ -146,5 +147,7 @@ static void TestSwapTwoPointers()
     "size31 is %lu, size41 is %lu\n", *size31, *size41);
     return;
   }
-  printf("Test success: TestSwapTwoSizeT\n");
+  printf("Test success: TestSwapTwoPointers\n");
 }
+
+
