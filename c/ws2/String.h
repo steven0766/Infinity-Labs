@@ -39,8 +39,8 @@ char* StrCat(char* dst, const char* src);
 /* append n chars from src to the end of dst */
 char* StrNCat(char* dst, const char* src, size_t n);
 
-
-char* StrStr(const char *haystack, const char *needle);
+/* find needle in haystack */
+char* StrStr(const char *s1, const char *needle);
 
 
 size_t StrSpn(const char *s, const char *accept);

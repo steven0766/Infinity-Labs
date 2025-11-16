@@ -4,11 +4,12 @@
  * Version: 1                       *
  ***********************************/
 
-#include "String.h"
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include "String.h"
 
 size_t StrLen(const char *s)
 {
@@ -16,7 +17,7 @@ size_t StrLen(const char *s)
   
   assert(NULL != s);
   
-  for (cnt = 0; '\0' != *s; cnt++)
+  for (cnt = 0; '\0' != *s; ++cnt)
   {
     ++s;
   }
@@ -28,7 +29,7 @@ int StrCmp(const char *s1, const char *s2)
   assert(NULL != s1);
   assert(NULL != s2);
   
-  while (('\0' != *s1) && ('\0' != *s2) && (*s1 == *s2))
+  while (('\0' != *s1) && (*s1 == *s2))
   {
     ++s1;
     ++s2;
@@ -39,42 +40,42 @@ int StrCmp(const char *s1, const char *s2)
 
 char* StrCpy(char* dst, const char* src)
 {
-  char* p = dst;
+  char* dst_ptr = dst;
   
   assert(NULL != dst);
   assert(NULL != src);
   
   while ('\0' != *src)
   {
-    *p = *src;
-    ++p;
+    *dst_ptr = *src;
+    ++dst_ptr;
     ++src;
   }
-  *p = '\0';
+  *dst_ptr = '\0';
 
   return dst;
 }
 
 char* StrNCpy(char* dst, const char* src, size_t dsize)
 {
-  char* p = dst;
+  char* dst_ptr = dst;
 
   assert(NULL != dst);
   assert(NULL != src);
   
   while (0 != dsize && '\0' != *src)
   {
-    *p = *src;
-    ++p;
+    *dst_ptr = *src;
+    ++dst_ptr;
     ++src;
     --dsize;
   }
   
   while (0 != dsize)
   {
-    *p = '\0';
+    *dst_ptr = '\0';
     --dsize;
-    ++p;
+    ++dst_ptr;
   }
   
   return dst;
@@ -108,25 +109,16 @@ int StrNCmp(const char* s1, const char* s2, size_t n)
 }
 
 int StrCaseCmp(const char *s1, const char *s2)
-{
-  int c1, c2;
-  
+{  
   assert(NULL != s1);
   assert(NULL != s2);
   
-  while (('\0' != *s1) && ('\0' != *s2))
+  while (('\0' != *s1) && (tolower(*s1) == tolower(*s2)))
   {
-    c1 = tolower((unsigned char)*s1);
-    c2 = tolower((unsigned char)*s2);
-    
-    if (c1 != c2)
-    {
-      return c1 - c2;
-    }
     ++s1;
     ++s2;
   }
-  return tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
+  return tolower(*s1) - tolower(*s2);
 }
 
 char* StrChr(const char *s, int c)
@@ -135,14 +127,14 @@ char* StrChr(const char *s, int c)
   
   while ('\0' != *s)
   {
-    if(*s == (char)c)
+    if(*s == c)
     {
       return (char*)s;
     }
     ++s;
   }
   
-  if('\0' == (char)c)
+  if('\0' == c)
   {
     return (char*)s;
   }
@@ -153,12 +145,12 @@ char* StrChr(const char *s, int c)
 char* StrDup(const char *s)
 {
   size_t s_size;
-  char* start_of_s;
+  char* s_ptr;
   char* dup;
   
   assert(NULL != s);
   
-  s_size = strlen(s) + 1;
+  s_size = StrLen(s) + 1;
   dup = (char*)malloc(s_size * sizeof(char));
   
   if (NULL == dup)
@@ -166,23 +158,16 @@ char* StrDup(const char *s)
     return NULL;
   }
   
-  start_of_s = dup;
+  s_ptr = dup;
   
-  while ('\0' != *s)
-  {
-    *dup = *s;
-    ++dup;
-    ++s;
-  }
-  
-  *dup = '\0';
-  /* free dup in ptr I will build in test_func */
-  return start_of_s;
+  StrCpy(s_ptr, s);
+
+  return s_ptr;
 }
 
 char* StrCat(char* dst, const char* src)
 {
-  char* start_of_dst = dst;
+  char* dst_ptr = dst;
 
   assert(NULL != dst);
   assert(NULL != src);
@@ -192,21 +177,14 @@ char* StrCat(char* dst, const char* src)
     ++dst;
   }
   
-  while ('\0' != *src)
-  {
-    *dst = *src;
-    ++src;
-    ++dst;
-  }
+  StrCpy(dst, src);
   
-  *dst = '\0';
-  
-  return start_of_dst; 
+  return dst_ptr; 
 }
 
 char* StrNCat(char* dst, const char* src, size_t n)
 {
-  char* start_of_dst = dst;
+  char* dst_ptr = dst;
 
   assert(NULL != dst);
   assert(NULL != src);
@@ -226,13 +204,13 @@ char* StrNCat(char* dst, const char* src, size_t n)
   
   *dst = '\0';
   
-  return start_of_dst;
+  return dst_ptr;
 }
 
 char* StrStr(const char *s1, const char *needle)
 {
-  const char* needle_sus;
-  const char* check_letters;
+  const char* s1_ptr;
+  const char* needle_ptr;
   
   assert(NULL != s1);
   assert(NULL != needle);
@@ -244,19 +222,19 @@ char* StrStr(const char *s1, const char *needle)
   
   while ('\0' != *s1)
   {
-    check_letters = needle;
+    needle_ptr = needle;
     
-    if (*s1 == *check_letters)
+    if (*s1 == *needle_ptr)
     {
-      needle_sus = s1;
+      s1_ptr = s1;
       
-      while ((*needle_sus == *check_letters) && ('\0' != *check_letters))
+      while ((*s1_ptr == *needle_ptr) && ('\0' != *needle_ptr))
       {
-        ++check_letters;
-        ++needle_sus;
+        ++needle_ptr;
+        ++s1_ptr;
       }
       
-      if ('\0' == *check_letters)
+      if ('\0' == *needle_ptr)
       {
         return (char*)s1;
       }
@@ -271,21 +249,21 @@ char* StrStr(const char *s1, const char *needle)
 size_t StrSpn(const char *s, const char *accept)
 {
   size_t cnt = 0;
-  const char* a;
+  const char* accept_ptr;
   
   assert(NULL != s);
   assert(NULL != accept);
   
   while ('\0' != *s)
   {
-    a = accept;
+    accept_ptr = accept;
     
-    while ('\0' != *a && *a != *s)
+    while ('\0' != *accept_ptr && *accept_ptr != *s)
     {
-      ++a;
+      ++accept_ptr;
     }
     
-    if ('\0' == *a)
+    if ('\0' == *accept_ptr)
     {
       return cnt;
     }
@@ -300,26 +278,26 @@ size_t StrSpn(const char *s, const char *accept)
 char* StrTok(char* str, const char* delim)
 {
     static char* next = NULL;
-    char* start;
+    char* start = NULL;
 
     assert(NULL != delim);
 
-    if (str != NULL)
+    if (NULL != str)
     {
         next = str;
     }
 
-    if (next == NULL)
+    if (NULL == next)
     {
         return NULL;
     }
 
-    while (*next != '\0' && StrChr(delim, *next) != NULL)
+    while ('\0' != *next && NULL != StrChr(delim, *next))
     {
         ++next;
     }
 
-    if (*next == '\0')
+    if ('\0' == *next)
     {
         next = NULL;
         return NULL;
@@ -327,12 +305,12 @@ char* StrTok(char* str, const char* delim)
 
     start = next;
 
-    while (*next != '\0' && StrChr(delim, *next) == NULL)
+    while ('\0' != *next && NULL == StrChr(delim, *next))
     {
         ++next;
     }
 
-    if (*next != '\0')
+    if ('\0' != *next)
     {
         *next = '\0';
         ++next;
