@@ -48,11 +48,4 @@ size_t StrSpn(const char *s, const char *accept);
 /* remove delimeters from str */
 char* StrTok(char* str, const char* delim);
 
-/* 7 boom game */
-void SevenBoom(int start, int end);
-
-/* remove spaces or tabs from beginnind, end and double spaces\ tabs in line */
-void RemoveSpace(char* str);
-
-/* */
 #endif /* __STRING_H__ */

@@ -25,9 +25,7 @@ static void TestStrNCat();
 static void TestStrStr();
 static void TestStrSpn();
 static void TestStrTok();
-static void TestIsPalindrome();
-static void TestSevenBoom();
-static void TestRemoveSpace();
+
 
 int main()
 {
@@ -44,9 +42,6 @@ int main()
   TestStrStr();
   TestStrSpn();
   TestStrTok();
-  TestIsPalindrome();
-  TestSevenBoom();
-  TestRemoveSpace();
   
   return 0;
 }
@@ -364,55 +359,4 @@ static void TestStrTok()
     }
 
     printf("Test Success: strtok\n");
-}
-
-static void TestIsPalindrome()
-{
-    const char* inputs[] = {"", "aa", "ab", "abcba", "12321", "holla", "   ", "\t\t"};
-    int expected[] = {1, 1, 0, 1, 1, 0, 1, 1};
-
-    size_t i = 0;
-
-    for (i = 0; i < (sizeof(inputs) / sizeof(inputs[0])); ++i)
-    {
-        int result = Palindrome(inputs[i]);
-
-        if (result != expected[i])
-        {
-            printf("Error: got %d, expected %d\n", inputs[i], expected[i]);
-            return;
-        }
-    }
-
-    printf("Test Success: Palindrome\n");
-}
-
-static void TestSevenBoom()
-{
-  SevenBoom(5,100);
-}
-
-static void TestRemoveSpace()
-{
-  char* inputs[] = {"    aaa  bbb  ", "asdf", "   dsdd", "sadd   ", "\t  adsw"};
-  char* expected[] = {"aaa bbb", "asdf", "dsdd", "sadd", "adsw"};
-  
-  size_t total_inputs = sizeof(inputs) / sizeof(inputs[0]), i = 0;
-  
-  char buffer[100];
-  
-  for (i = 0; i < total_inputs; ++i)
-  {
-    strcpy(buffer, inputs[i]);
-    
-    RemoveSpace(buffer);
-    
-    if (0 != strcmp(buffer, expected[i]))
-    {
-      printf("Error:\n"
-      "expected: %s, got: %s\n", expected[i], buffer);
-      return;
-    }
-  }
-  printf("Test success: RemoveSpace\n");
 }

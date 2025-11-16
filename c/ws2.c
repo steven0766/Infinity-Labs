@@ -15,7 +15,10 @@ static void TestCopyArr();
 static void exe4();
 static void TestSwapTwoSizeT();
 static void TestSwapTwoPointers();
-  
+static void TestIsPalindrome();
+static void TestSevenBoom();
+static void TestRemoveSpace();
+
 int main()
 {
   TestSwap();
@@ -23,6 +26,9 @@ int main()
   exe4();
   TestSwapTwoSizeT();
   TestSwapTwoPointers();
+  TestIsPalindrome();
+  TestSevenBoom();
+  TestRemoveSpace();
   
   return 0;
 }
@@ -150,4 +156,164 @@ static void TestSwapTwoPointers()
   printf("Test success: TestSwapTwoPointers\n");
 }
 
+int Palindrome(const char* str)
+{
+  const char* left = str;
+  const char* right = str;
+  
+  assert(NULL != str);
+  
+  while ('\0' != *right)
+  {
+    ++right;
+  }
+  
+  --right;
+  
+  while (right > left)
+  {
+    if(*right != *left)
+    {
+      return 0;
+    }
+    
+    --right;
+    ++left;
+  }
+  
+  return 1;
+}
 
+static int ContainSeven(int num)
+{
+  if (num < 0)
+  {
+    num = -num;
+  }
+  
+  while (num > 0)
+  {
+    if (7 == num % 10)
+    {
+      return 1;
+    }
+    
+    num/=10;
+  }
+  
+  return 0;
+}
+
+void SevenBoom(int start, int end)
+{
+  int i = 0;
+  
+  for (i = start; i < end; ++i)
+  {
+    if (0 == i % 7 || ContainSeven(i))
+    {
+      printf("BOOM\n");
+    }
+    else
+    {
+      printf("%d", i);
+    }
+  }
+}
+
+static int IsSpaceOrTab(char c)
+{
+  return (' ' == c || '\t' == c);
+}
+
+void RemoveSpace(char* str)
+{
+  char* read = str;
+  char* corrected_str = str;
+  
+  int space_seq = 0;
+  
+  while  ('\0' != *read && IsSpaceOrTab(*read))
+  {
+    ++read;
+  }
+  
+  while ('\0' != *read)
+  {
+    if (IsSpaceOrTab(*read))
+    {
+      if (0 == space_seq)
+      {
+        space_seq = 1;
+        *corrected_str = *read;
+        ++corrected_str;
+      }
+    }
+    else
+    {
+      *corrected_str = *read;
+      space_seq = 0;
+      ++corrected_str;
+    }
+    
+    ++read;
+  }
+  
+  while (corrected_str > str && IsSpaceOrTab(*(corrected_str - 1)))
+  {
+    --corrected_str;
+  }
+  
+  *corrected_str = '\0';
+}
+
+static void TestIsPalindrome()
+{
+    const char* inputs[] = {"", "aa", "ab", "abcba", "12321", "holla", "   ", "\t\t"};
+    int expected[] = {1, 1, 0, 1, 1, 0, 1, 1};
+
+    size_t i = 0;
+
+    for (i = 0; i < (sizeof(inputs) / sizeof(inputs[0])); ++i)
+    {
+        int result = Palindrome(inputs[i]);
+
+        if (result != expected[i])
+        {
+            printf("Error: got %d, expected %d\n", inputs[i], expected[i]);
+            return;
+        }
+    }
+
+    printf("Test Success: Palindrome\n");
+}
+
+static void TestSevenBoom()
+{
+  SevenBoom(5,100);
+}
+
+static void TestRemoveSpace()
+{
+  char* inputs[] = {"    aaa  bbb  ", "asdf", "   dsdd", "sadd   ", "\t  adsw"};
+  char* expected[] = {"aaa bbb", "asdf", "dsdd", "sadd", "adsw"};
+  
+  size_t total_inputs = sizeof(inputs) / sizeof(inputs[0]), i = 0;
+  
+  char buffer[100];
+  
+  for (i = 0; i < total_inputs; ++i)
+  {
+    strcpy(buffer, inputs[i]);
+    
+    RemoveSpace(buffer);
+    
+    if (0 != strcmp(buffer, expected[i]))
+    {
+      printf("Error:\n"
+      "expected: %s, got: %s\n", expected[i], buffer);
+      return;
+    }
+  }
+  printf("Test success: RemoveSpace\n");
+}
