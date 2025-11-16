@@ -2,7 +2,7 @@
  * Reviewer: shalev                  *
  * Date: 11.11.25                   *
  * Version: 1                       *
- ************************************/
+ ***********************************/
 
 #include "String.h"
 #include <string.h>
