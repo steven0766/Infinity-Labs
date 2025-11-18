@@ -6,3 +6,5 @@ alias gs='git status'
 alias ga='git add .'
 alias gp='git push'
 alias gb='git branch'
+#Valgrind alias
+alias vlg='valgrind --leak-check=yes --track-origins=yes'
