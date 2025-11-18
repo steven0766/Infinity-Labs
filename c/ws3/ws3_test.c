@@ -1,5 +1,13 @@
-#include <stdio.h>
+/************************************
+ * Reviewer: Rozaline Kozly         *
+ * Date: 18.11.25                   *
+ * Version: 2                       *
+ ************************************/
+
+#include <stdio.h> /* printf */
 #include "ws3.h"
+
+#define UNUSED(x) (void)(x)
 
 static void TestSumOfArrayRows();
 static void TestJosephusProblem();
@@ -8,6 +16,9 @@ static void TestPrintEvnp(char** envp);
 
 int main(int argc, char *argv[], char * envp[])
 {
+  UNUSED(argc);
+  UNUSED(argv);
+
   TestSumOfArrayRows();
   TestJosephusProblem();
   TestDataTypes();
@@ -37,7 +48,7 @@ static void TestSumOfArrayRows()
 static void TestJosephusProblem()
 {
   int test_result[5] = {2, 4, 15, 25, 30};
-  int expected[5] = {0, 0, 14, 18, 28};
+  int expected[5] = {1, 1, 15, 19, 29};
   int i = 0;
   
   for (i = 0; i < 5; ++i)
@@ -53,7 +64,6 @@ static void TestJosephusProblem()
 
 static void TestDataTypes()
 {
-  char** buffer;
   DataTypes();
 }
 

@@ -1,8 +1,8 @@
-#include <stddef.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <stddef.h> /* NULL, size_t */
+#include <string.h> /* strlen */
+#include <stdio.h> /* printf */
+#include <stdlib.h> /* malloc, calloc, free */
+#include <ctype.h> /* tolower */
 
 void SumOfArrayRows(int (*matrix)[4], size_t rows, int* dest)
 {
@@ -20,12 +20,17 @@ void SumOfArrayRows(int (*matrix)[4], size_t rows, int* dest)
 
 int JosephusProblem(size_t soldiers_size)
 {
-  int count = soldiers_size;
-  int sword_idx = 0;
+  size_t count = soldiers_size;
+  size_t sword_idx = 0;
   /* 0 find who to kill, 1 find who to give sword to */
   size_t kill_or_sword = 0; 
-  int* soldiers = (int*)calloc(soldiers_size, sizeof(int));
-  int idx = 0;
+  size_t* soldiers = (size_t*)calloc(soldiers_size, sizeof(size_t));
+  size_t idx = 0;
+  
+  if (NULL == soldiers)
+  {
+    return 0;
+  }
   
   while (count > 1)
   {
@@ -73,9 +78,9 @@ void DataTypes()
   printf("long int: %ld\n", sizeof(long int));
 }
 
-int CountEnvp(char** envp)
+size_t CountEnvp(char** envp)
 {
-  int cnt = 0;
+  size_t cnt = 0;
   while (NULL != envp[cnt])
   {
     ++cnt;
@@ -87,14 +92,14 @@ void ToLower(char* envp)
 {
   while ('\0' != *envp)
   {
-    *envp = tolower((unsigned char)*envp);
+    *envp = tolower(*envp);
     ++envp;
   }
 }
 
 char* CopyEnvToStr(char* envp)
 {
-  int cnt = strlen(envp);
+  size_t cnt = strlen(envp);
   char* envp_lower = (char*)malloc((cnt + 1) * sizeof(char));
   if (NULL == envp_lower)
   {
@@ -107,10 +112,10 @@ char* CopyEnvToStr(char* envp)
 
 void PrintEvnp(char** envp)
 {
-  int cnt_envp = CountEnvp(envp);
-  int cur_value = 0;
+  size_t cnt_envp = CountEnvp(envp);
+  size_t cur_value = 0;
   char** lower_case_envp = (char**)malloc(cnt_envp * sizeof(char*));
-  int i = 0;
+  size_t i = 0;
   
   if (NULL == lower_case_envp)
   {

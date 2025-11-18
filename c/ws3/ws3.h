@@ -1,9 +1,3 @@
-/************************************
- * Reviewer:                        *
- * Date:                            *
- * Version:                         *
- ************************************/
- 
 #ifndef __WS_H__
 #define __WS_H__
  
@@ -22,7 +16,7 @@ int JosephusProblem(size_t soldiers_size);
 /* printing all data types and their size */
 void DataTypes();
 
-
+/* print all environment variables in envp in lower case */
 void PrintEvnp(char** envp);
 
 #endif /* __WS_H__ */
