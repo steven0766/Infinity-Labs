@@ -11,6 +11,8 @@ void SumOfArrayRows(int (*matrix)[4], size_t rows, int* dest)
   
   for (i = 0; i < rows; ++i)
   {
+    dest[i] = 0;
+    
     for(j = 0; j < 4; j++)
     {
       dest[i] += matrix[i][j];
@@ -52,6 +54,7 @@ int JosephusProblem(size_t soldiers_size)
   }
   
   free(soldiers);
+  soldiers = NULL;
   return (0 == soldiers_size) ? 0 : (sword_idx + 1);
 }
 
@@ -67,7 +70,7 @@ void DataTypes()
   printf("long double: %ld\n",sizeof(long double));
   printf("char: %ld\n", sizeof(char));
   printf("signed char: %ld\n", sizeof(signed char));
-  printf("unsigned char: %ld\n", sizeof(signed char));
+  printf("unsigned char: %ld\n", sizeof(unsigned char));
   printf("short: %ld\n",sizeof(short));
   printf("short int: %ld\n", sizeof(short int));
   printf("signed short: %ld\n", sizeof(signed short));
@@ -101,10 +104,12 @@ char* CopyEnvToStr(char* envp)
 {
   size_t cnt = strlen(envp);
   char* envp_lower = (char*)malloc((cnt + 1) * sizeof(char));
+  
   if (NULL == envp_lower)
   {
     return NULL;
   }
+  
   strcpy(envp_lower, envp);
   ToLower(envp_lower);
   return envp_lower;
@@ -125,6 +130,12 @@ void PrintEvnp(char** envp)
   while (*(envp + cur_value) != NULL)
   {
     *(lower_case_envp + cur_value) = CopyEnvToStr(*(envp + cur_value));
+    
+    if (NULL == *(lower_case_envp + cur_value))
+    {
+      return;
+    }
+    
     printf("%s\n", lower_case_envp[cur_value]);
     ++cur_value;
   }
@@ -134,6 +145,7 @@ void PrintEvnp(char** envp)
     free(lower_case_envp[i]);
     lower_case_envp[i] = NULL;
   }
+  
   free(lower_case_envp);
   lower_case_envp = NULL;
 } 

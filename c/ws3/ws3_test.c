@@ -31,7 +31,7 @@ static void TestSumOfArrayRows()
 {
   int inputs[3][4] = {{1, 2, 3, 4}, {3, 4, 5, 6}, {5, 6, 7, 8}};
   int expected[3] = {10, 18, 26};
-  int result[3] = {0};
+  int result[3];
   size_t i = 0;
   
   SumOfArrayRows(inputs, 3, result);
