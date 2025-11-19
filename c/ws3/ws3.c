@@ -150,3 +150,4 @@ void PrintEnvp(char** envp)
   free(lower_case_envp);
   lower_case_envp = NULL;
 } 
+
