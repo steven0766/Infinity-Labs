@@ -11,31 +11,36 @@ typedef void (*PtrFunction)(void);
 
 /* printing A-pressed or T-pressed without type print
    using "if else" statement*/
-void IfKeyboardInput();
+void IfKeyboardInputPrint();
 
 /* printing A-pressed or T-pressed without type print
    using "switch" statement*/
-void SwitchKeyboardInput();
+void SwitchKeyboardInputPrint();
 
 /* printing A-pressed or T-pressed without type print
    using look-up-table */
-void LutKeyboardInput();
+void LutKeyboardInputPrint();
+
+/* help functions for LutKeyboardInput */
+void PrintA(void);
+void PrintT(void);
+void Empty(void);
 
 int main()
 {
-  printf("IfKeyboardInput:\n"); 
-  IfKeyboardInput();
+  printf("IfKeyboardInputPrint:\n"); 
+  IfKeyboardInputPrint();
   
-  printf("SwitchKeyboardInput:\n"); 
-  SwitchKeyboardInput();
+  printf("SwitchKeyboardInputPrint:\n"); 
+  SwitchKeyboardInputPrint();
   
-  printf("LutKeyboardInput:\n"); 
-  LutKeyboardInput();
+  printf("LutKeyboardInputPrint:\n"); 
+  LutKeyboardInputPrint();
   
   return 0;
 }
 
-void IfKeyboardInput()
+void IfKeyboardInputPrint(void)
 {
   char letter = '\0';
   
@@ -45,11 +50,11 @@ void IfKeyboardInput()
   {
     letter = getchar();
     
-    if ('a' == letter)
+    if ('A' == letter)
     {
       printf("A pressed\n");
     }
-    else if('t' == letter)
+    else if('T' == letter)
     {
       printf("T pressed\n");
     }
@@ -62,7 +67,7 @@ void IfKeyboardInput()
   system("stty icanon echo");
 }
 
-void SwitchKeyboardInput()
+void SwitchKeyboardInputPrint(void)
 {
   char letter = '\0';
   
@@ -74,15 +79,38 @@ void SwitchKeyboardInput()
     
     switch(letter)
     {
-      case 'a':
+      case 'A':
         printf("A pressed\n");
         break;
-      case 't':
+      case 'T':
         printf("T pressed\n");
         break;
       default:
         break;
     }
+  }
+  system("stty icanon echo");
+}
+
+void LutKeyboardInputPrint(void)
+{
+  PtrFunction lut[256];
+  char letter = '\0';
+  size_t i = 0;
+  
+  for (i = 0; i < 256; ++i)
+  {
+    lut[i] = Empty;
+  }
+  
+  lut['A'] = PrintA;
+  lut['T'] = PrintT;
+  
+  system("stty -icanon -echo");
+  while (27 != letter)
+  {
+    letter = getchar();
+    lut[letter]();
   }
   system("stty icanon echo");
 }
@@ -101,30 +129,3 @@ void Empty(void)
 {
   return;
 }
-
-void LutKeyboardInput()
-{
-  PtrFunction lut[256];
-  char letter = '\0';
-  size_t i = 0;
-  
-  for (i = 0; i < 256; ++i)
-  {
-    lut[i] = Empty;
-  }
-  
-  lut['A'] = PrintA;
-  lut['a'] = PrintA;
-  lut['T'] = PrintT;
-  lut['t'] = PrintT;
-  
-  system("stty -icanon -echo");
-  while (27 != letter)
-  {
-    letter = getchar();
-    lut[letter]();
-  }
-  system("stty icanon echo");
-}
-
-
