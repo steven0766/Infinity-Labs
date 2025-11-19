@@ -17,6 +17,6 @@ int JosephusProblem(size_t soldiers_size);
 void DataTypes();
 
 /* print all environment variables in envp in lower case */
-void PrintEvnp(char** envp);
+void PrintEnvp(char** envp);
 
 #endif /* __WS_H__ */
