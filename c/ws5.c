@@ -109,7 +109,7 @@ op_handler Prepend(const char* input, const char* filename)
 {
   FILE *file_old;
   FILE *file_new;
-  char line[1024];
+  char line[100];
   const char *content;
   
   content = input + 1;
@@ -157,12 +157,30 @@ int ComparePrepend(const char* input, const char* command)
   return input[0] == command[0];
 }
 
+op_handler Append(const char* input, const char* filename)
+{
+  FILE* file_ptr;
+  file_ptr = fopen(filename, "a");
+  if(!file_ptr)
+  {
+    return ERROR;
+  }
+  fputs(input, file_ptr);
+  fputs("\n", file_ptr);
+  fclose(file_ptr);
+  return OK;
+}
+
+int CompareAppend(const char* input, const char* command)
+{
+  return 1;
+}
+
 void Logger(char* file_name)
 {
   FILE* file_ptr;
   char input[100];
   op_handler state = OK;
-  size_t append_flag = 1;
   size_t i = 0;
   
   handler command_lut[] = 
@@ -170,13 +188,13 @@ void Logger(char* file_name)
     {"-remove", CompareCommand, Remove},
     {"-count", CompareCommand, Count},
     {"-exit", CompareCommand, Exit},
-    {"<", ComparePrepend, Prepend}
+    {"<", ComparePrepend, Prepend},
+    {" ", CompareAppend, Append}
   };
   
   while (EXIT != state)
   {
     fgets(input, sizeof(input), stdin);
-    append_flag = 1;
     input[strcspn(input, "\n")] = '\0';
     
     for (i = 0; i < sizeof(command_lut) / sizeof(handler); ++i)
@@ -184,19 +202,7 @@ void Logger(char* file_name)
       if (command_lut[i].compare(input, command_lut[i].cmd_name))
       {
         state = command_lut[i].operation(input, file_name);
-        append_flag = 0;
         break;
-      }
-    }
-    
-    if (1 == append_flag)
-    {
-      file_ptr = fopen(file_name, "a");
-      if(file_ptr)
-      {
-        fputs(input, file_ptr);
-        fputs("\n", file_ptr);
-        fclose(file_ptr);
       }
     }
   }
