@@ -34,9 +34,9 @@ void StructPractice()
   {
     int a;
     PtrFunction ptr;
-  }print_me;
+  }print_me_ty;
 
-  print_me arr[10];
+  print_me_ty arr[10] = {0};
   size_t j = 0;
   
   for(j = 0; j < 10; ++j)
@@ -54,17 +54,17 @@ void Print(int print)
 }
 
   /* exercise 2 */
-typedef enum {OK, ERROR, EXIT} op_handler;
+typedef enum {OK, ERROR, EXIT} op_handler_ty;
 
 typedef struct
 {
   char* cmd_name;
   int (*compare_func_ty)(const char* input, const char* command);
-  op_handler (*operation_func_ty)(const char* input, const char* filename);
-}handler;
+  op_handler_ty (*operation_func_ty)(const char* input, const char* filename);
+}handler_ty;
 
 /* removing file */
-op_handler Remove(const char* input, const char* filename)
+op_handler_ty Remove(const char* input, const char* filename)
 {
   UNUSED(input);
   if (0 == remove(filename))
@@ -79,14 +79,16 @@ op_handler Remove(const char* input, const char* filename)
 }
 
 /* count how much lines on file */
-op_handler Count(const char* input, const char* filename)
+op_handler_ty Count(const char* input, const char* filename)
 {
   int cnt = 0;
   char line[100];
-  FILE* fptr = fopen(filename, "r");
+  FILE* fptr = NULL;
   
   UNUSED(input);
   
+  fptr = fopen(filename, "r");
+
   if (!fptr)
   {
     printf("Count Error: can't open the file\n");
@@ -109,7 +111,7 @@ op_handler Count(const char* input, const char* filename)
 }
 
 /* exit the program */
-op_handler Exit(const char* input, const char* filename)
+op_handler_ty Exit(const char* input, const char* filename)
 {
   UNUSED(input);
   UNUSED(filename);
@@ -123,7 +125,7 @@ int CompareCommand(const char* input, const char* command)
 }
 
 /* append the input to the first life of the file */
-op_handler Prepend(const char* input, const char* filename)
+op_handler_ty Prepend(const char* input, const char* filename)
 {
   FILE *file_old;
   FILE *file_new;
@@ -182,8 +184,16 @@ op_handler Prepend(const char* input, const char* filename)
     printf("Prepend Error: can't close updated new file\n");
     return ERROR;
   }
-  remove(filename);
-  rename("tmp_file.txt", filename);
+  if (!(0 == remove(filename)))
+  {
+    printf("Prepend Error: can't delete old file to switch to new file");
+    return ERROR;
+  }
+  if (!(0 == rename("tmp_file.txt", filename)))
+  {
+    printf("Prepend Error: can't change file name to the old one");
+    return ERROR;
+  }
 
   return OK;
 }
@@ -195,7 +205,7 @@ int ComparePrepend(const char* input, const char* command)
 }
 
 /* append the input to the first line of the line */
-op_handler Append(const char* input, const char* filename)
+op_handler_ty Append(const char* input, const char* filename)
 {
   FILE* file_ptr;
   file_ptr = fopen(filename, "a");
@@ -228,10 +238,10 @@ int CompareAppend(const char* input, const char* command)
 void Logger(char* file_name)
 {
   char input[100];
-  op_handler state = OK;
+  op_handler_ty state = OK;
   size_t i = 0;
   
-  handler command_lut[] = 
+  handler_ty command_lut[] = 
   {
     {"-remove", CompareCommand, Remove},
     {"-count", CompareCommand, Count},
@@ -242,10 +252,14 @@ void Logger(char* file_name)
   
   while (EXIT != state)
   {
-    fgets(input, sizeof(input), stdin);
+    if (NULL == fgets(input, sizeof(input), stdin))
+    {
+      continue;
+    }
+    
     input[strcspn(input, "\n")] = '\0';
     
-    for (i = 0; i < sizeof(command_lut) / sizeof(handler); ++i)
+    for (i = 0; i < sizeof(command_lut) / sizeof(handler_ty); ++i)
     {
       if (command_lut[i].compare_func_ty(input, command_lut[i].cmd_name))
       {
