@@ -5,9 +5,10 @@
 **************************************/
 
 #include <stdio.h>    /* printf */
-#include <string.h>   /*strcmp  */
+#include <string.h>   /*strcmp, strcspn */
 
 typedef void (*PtrFunction)(int);
+#define UNUSED(x) (void)(x);
 void Print(int print);
 void StructPractice();
 void Logger(char* file_name);
@@ -46,6 +47,7 @@ void StructPractice()
   }
 }
 
+/* print number */
 void Print(int print)
 {
   printf("%d\n", print);
@@ -53,34 +55,41 @@ void Print(int print)
 
   /* exercise 2 */
 typedef enum {OK, ERROR, EXIT} op_handler;
-  
+
 typedef struct
 {
   char* cmd_name;
-  int (*compare)(const char* input, const char* command);
-  op_handler (*operation)(const char* input, const char* filename);
+  int (*compare_func_ty)(const char* input, const char* command);
+  op_handler (*operation_func_ty)(const char* input, const char* filename);
 }handler;
 
+/* removing file */
 op_handler Remove(const char* input, const char* filename)
 {
+  UNUSED(input);
   if (0 == remove(filename))
   {
     return EXIT;
   }
   else
   {
+    printf("Exit Error: didn't exit\n");
     return ERROR;
   }
 }
 
+/* count how much lines on file */
 op_handler Count(const char* input, const char* filename)
 {
   int cnt = 0;
   char line[100];
   FILE* fptr = fopen(filename, "r");
   
+  UNUSED(input);
+  
   if (!fptr)
   {
+    printf("Count Error: can't open the file\n");
     return ERROR;
   }
   
@@ -89,22 +98,31 @@ op_handler Count(const char* input, const char* filename)
     ++cnt;
   }
   
-  fclose(fptr);
+  if (!(0 == fclose(fptr)))
+  {
+    printf("Count Error: can't close the file\n");
+    return ERROR;
+  }
   printf("%d\n", cnt);
   
   return OK;
 }
 
+/* exit the program */
 op_handler Exit(const char* input, const char* filename)
 {
+  UNUSED(input);
+  UNUSED(filename);
   return EXIT;
 }
 
+/* check if input is command (count, exit or remove) */
 int CompareCommand(const char* input, const char* command)
 {
   return 0 == strcmp(input, command);
 }
 
+/* append the input to the first life of the file */
 op_handler Prepend(const char* input, const char* filename)
 {
   FILE *file_old;
@@ -120,11 +138,16 @@ op_handler Prepend(const char* input, const char* filename)
     file_new = fopen(filename, "w");
     if (NULL == file_new)
     {    
+      printf("Prepend Error: cant open new or old file\n");
       return ERROR;
     }
     fputs(content, file_new);
     fputc('\n', file_new);
-    fclose(file_new);
+    if (!(0 == fclose(file_new)))
+    {
+      printf("Prepend Error: can't close old file with 1 sentence\n");
+      return ERROR;
+    }
     return OK;
   }
 
@@ -132,7 +155,12 @@ op_handler Prepend(const char* input, const char* filename)
   
   if (NULL == file_new)
   {
-    fclose(file_old);
+    if (!(0 == fclose(file_old)))
+    {
+      printf("Prepend Error: can't close old file\n");
+      return ERROR;
+    }
+    printf("Prepend Error: can't open new empty file\n");
     return ERROR;
   }
 
@@ -144,41 +172,61 @@ op_handler Prepend(const char* input, const char* filename)
     fputs(line, file_new);
   }
 
-  fclose(file_old);
-  fclose(file_new);
+  if (!(0 == fclose(file_old)))
+  {
+    printf("Prepend Error: can't close old empty file\n");
+    return ERROR;
+  }
+  if (!(0 == fclose(file_new)))
+  {
+    printf("Prepend Error: can't close updated new file\n");
+    return ERROR;
+  }
   remove(filename);
   rename("tmp_file.txt", filename);
 
   return OK;
 }
 
+/* check if the input start with "<" */
 int ComparePrepend(const char* input, const char* command)
 {
   return input[0] == command[0];
 }
 
+/* append the input to the first line of the line */
 op_handler Append(const char* input, const char* filename)
 {
   FILE* file_ptr;
   file_ptr = fopen(filename, "a");
   if(!file_ptr)
   {
+    printf("Append Error: can't open file\n");
     return ERROR;
   }
   fputs(input, file_ptr);
   fputs("\n", file_ptr);
-  fclose(file_ptr);
+  if (!(0 == fclose(file_ptr)))
+  {
+    printf("Append Error: can't close file\n");
+    return ERROR;
+  }
   return OK;
 }
-
+/* the last command will always return true to active the function */
 int CompareAppend(const char* input, const char* command)
 {
+  UNUSED(input);
+  UNUSED(command);
   return 1;
 }
 
+/* main logger function.
+   for every input the logger will search through commands
+   to find the right operation. 
+   will exit when the input is "-exit". */ 
 void Logger(char* file_name)
 {
-  FILE* file_ptr;
   char input[100];
   op_handler state = OK;
   size_t i = 0;
@@ -199,9 +247,9 @@ void Logger(char* file_name)
     
     for (i = 0; i < sizeof(command_lut) / sizeof(handler); ++i)
     {
-      if (command_lut[i].compare(input, command_lut[i].cmd_name))
+      if (command_lut[i].compare_func_ty(input, command_lut[i].cmd_name))
       {
-        state = command_lut[i].operation(input, file_name);
+        state = command_lut[i].operation_func_ty(input, file_name);
         break;
       }
     }
