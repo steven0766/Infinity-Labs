@@ -8,7 +8,7 @@
 #include <string.h>   /*strcmp, strcspn */
 
 typedef void (*PtrFunction)(int);
-typedef UNUSED(x) (void)x;
+#define UNUSED(x) (void)(x);
 void Print(int print);
 void StructPractice();
 void Logger(char* file_name);
@@ -66,13 +66,14 @@ typedef struct
 /* removing file */
 op_handler Remove(const char* input, const char* filename)
 {
+  UNUSED(input);
   if (0 == remove(filename))
   {
     return EXIT;
   }
   else
   {
-    printf("Exit Error: didn't exit");
+    printf("Exit Error: didn't exit\n");
     return ERROR;
   }
 }
@@ -84,9 +85,11 @@ op_handler Count(const char* input, const char* filename)
   char line[100];
   FILE* fptr = fopen(filename, "r");
   
+  UNUSED(input);
+  
   if (!fptr)
   {
-    printf("Count Error: can't open the file");
+    printf("Count Error: can't open the file\n");
     return ERROR;
   }
   
@@ -95,10 +98,10 @@ op_handler Count(const char* input, const char* filename)
     ++cnt;
   }
   
-  if (!fclose(fptr))
+  if (!(0 == fclose(fptr)))
   {
-    printf("Count Error: can't close the file");
-    return Error;
+    printf("Count Error: can't close the file\n");
+    return ERROR;
   }
   printf("%d\n", cnt);
   
@@ -108,6 +111,8 @@ op_handler Count(const char* input, const char* filename)
 /* exit the program */
 op_handler Exit(const char* input, const char* filename)
 {
+  UNUSED(input);
+  UNUSED(filename);
   return EXIT;
 }
 
@@ -133,14 +138,14 @@ op_handler Prepend(const char* input, const char* filename)
     file_new = fopen(filename, "w");
     if (NULL == file_new)
     {    
-      printf("Prepend Error: cant open new or old file");
+      printf("Prepend Error: cant open new or old file\n");
       return ERROR;
     }
     fputs(content, file_new);
     fputc('\n', file_new);
-    if (!fclose(file_new))
+    if (!(0 == fclose(file_new)))
     {
-      printf("Prepend Error: can't close old file with 1 sentence");
+      printf("Prepend Error: can't close old file with 1 sentence\n");
       return ERROR;
     }
     return OK;
@@ -150,12 +155,12 @@ op_handler Prepend(const char* input, const char* filename)
   
   if (NULL == file_new)
   {
-    if (!fclose(file_old))
+    if (!(0 == fclose(file_old)))
     {
-      printf("Prepend Error: can't close old file");
+      printf("Prepend Error: can't close old file\n");
       return ERROR;
     }
-    printf("Prepend Error: can't open new empty file");
+    printf("Prepend Error: can't open new empty file\n");
     return ERROR;
   }
 
@@ -167,14 +172,14 @@ op_handler Prepend(const char* input, const char* filename)
     fputs(line, file_new);
   }
 
-  if (!fclose(file_old))
+  if (!(0 == fclose(file_old)))
   {
-    printf("Prepend Error: can't close old empty file");
+    printf("Prepend Error: can't close old empty file\n");
     return ERROR;
   }
-  if (!fclose(file_new))
+  if (!(0 == fclose(file_new)))
   {
-    printf("Prepend Error: can't close updated new file");
+    printf("Prepend Error: can't close updated new file\n");
     return ERROR;
   }
   remove(filename);
@@ -196,14 +201,14 @@ op_handler Append(const char* input, const char* filename)
   file_ptr = fopen(filename, "a");
   if(!file_ptr)
   {
-    printf("Append Error: can't open file");
+    printf("Append Error: can't open file\n");
     return ERROR;
   }
   fputs(input, file_ptr);
   fputs("\n", file_ptr);
-  if (!fclose(file_ptr))
+  if (!(0 == fclose(file_ptr)))
   {
-    printf("Append Error: can't close file");
+    printf("Append Error: can't close file\n");
     return ERROR;
   }
   return OK;
@@ -211,6 +216,8 @@ op_handler Append(const char* input, const char* filename)
 /* the last command will always return true to active the function */
 int CompareAppend(const char* input, const char* command)
 {
+  UNUSED(input);
+  UNUSED(command);
   return 1;
 }
 
@@ -220,7 +227,6 @@ int CompareAppend(const char* input, const char* command)
    will exit when the input is "-exit". */ 
 void Logger(char* file_name)
 {
-  FILE* file_ptr;
   char input[100];
   op_handler state = OK;
   size_t i = 0;
