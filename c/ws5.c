@@ -4,7 +4,7 @@
 * Version: 1                         *
 **************************************/
 
-#include <stdio.h>    /* printf */
+#include <stdio.h>    /* printf, size_t, fopen, fclose, fgets, remove, rename */
 #include <string.h>   /*strcmp, strcspn */
 
 typedef void (*PtrFunction)(int);
@@ -127,12 +127,11 @@ int CompareCommand(const char* input, const char* command)
 /* append the input to the first life of the file */
 op_handler_ty Prepend(const char* input, const char* filename)
 {
-  FILE *file_old;
-  FILE *file_new;
+  FILE* file_old = NULL;
+  FILE* file_new = NULL;
   char line[100];
-  const char *content;
+  const char* content = input + 1;
   
-  content = input + 1;
   file_old = fopen(filename, "r");
   
   if (NULL == file_old)
@@ -207,7 +206,7 @@ int ComparePrepend(const char* input, const char* command)
 /* append the input to the first line of the line */
 op_handler_ty Append(const char* input, const char* filename)
 {
-  FILE* file_ptr;
+  FILE* file_ptr = NULL;
   file_ptr = fopen(filename, "a");
   if(!file_ptr)
   {
