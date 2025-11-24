@@ -12,7 +12,7 @@
 static void TestSumOfArrayRows();
 static void TestJosephusProblem();
 static void TestDataTypes();
-static void TestPrintEvnp(char** envp);
+static void TestPrintEnvp(char** envp);
 
 int main(int argc, char *argv[], char * envp[])
 {
@@ -22,7 +22,7 @@ int main(int argc, char *argv[], char * envp[])
   TestSumOfArrayRows();
   TestJosephusProblem();
   TestDataTypes();
-  TestPrintEvnp(envp);
+  TestPrintEnvp(envp);
   
   return 0;
 }
@@ -67,7 +67,7 @@ static void TestDataTypes()
   DataTypes();
 }
 
-static void TestPrintEvnp(char** envp)
+static void TestPrintEnvp(char** envp)
 {
   PrintEvnp(envp);
 }

@@ -60,25 +60,25 @@ int JosephusProblem(size_t soldiers_size)
 
 void DataTypes()
 {
-  printf("int: %ld\n", sizeof(int));
-  printf("signed: %ld\n",sizeof(signed));
-  printf("signed int: %ld\n",sizeof(signed int));
-  printf("unsigned: %ld\n",sizeof(unsigned));
-  printf("unsigned int: %ld\n",sizeof(unsigned int));
-  printf("float: %ld\n", sizeof(float));
-  printf("double: %ld\n", sizeof(double));
-  printf("long double: %ld\n",sizeof(long double));
-  printf("char: %ld\n", sizeof(char));
-  printf("signed char: %ld\n", sizeof(signed char));
-  printf("unsigned char: %ld\n", sizeof(unsigned char));
-  printf("short: %ld\n",sizeof(short));
-  printf("short int: %ld\n", sizeof(short int));
-  printf("signed short: %ld\n", sizeof(signed short));
-  printf("signed short int: %ld\n", sizeof(signed short int));
-  printf("unsigned short: %ld\n", sizeof(unsigned short));
-  printf("unsigned short int: %ld\n", sizeof(unsigned short int));
-  printf("long: %ld\n", sizeof(long));
-  printf("long int: %ld\n", sizeof(long int));
+  printf("int: %zu\n", sizeof(int));
+  printf("signed: %zu\n",sizeof(signed));
+  printf("signed int: %zu\n",sizeof(signed int));
+  printf("unsigned: %zu\n",sizeof(unsigned));
+  printf("unsigned int: %zu\n",sizeof(unsigned int));
+  printf("float: %zu\n", sizeof(float));
+  printf("double: %zu\n", sizeof(double));
+  printf("long double: %zu\n",sizeof(long double));
+  printf("char: %zu\n", sizeof(char));
+  printf("signed char: %zu\n", sizeof(signed char));
+  printf("unsigned char: %zu\n", sizeof(unsigned char));
+  printf("short: %zu\n",sizeof(short));
+  printf("short int: %zu\n", sizeof(short int));
+  printf("signed short: %zu\n", sizeof(signed short));
+  printf("signed short int: %zu\n", sizeof(signed short int));
+  printf("unsigned short: %zu\n", sizeof(unsigned short));
+  printf("unsigned short int: %zu\n", sizeof(unsigned short int));
+  printf("long: %zu\n", sizeof(long));
+  printf("long int: %zu\n", sizeof(long int));
 }
 
 size_t CountEnvp(char** envp)
@@ -115,7 +115,7 @@ char* CopyEnvToStr(char* envp)
   return envp_lower;
 }
 
-void PrintEvnp(char** envp)
+void PrintEnvp(char** envp)
 {
   size_t cnt_envp = CountEnvp(envp);
   size_t cur_value = 0;
@@ -133,7 +133,8 @@ void PrintEvnp(char** envp)
     
     if (NULL == *(lower_case_envp + cur_value))
     {
-      return;
+      cnt_envp = cur_value + 1;
+      break;
     }
     
     printf("%s\n", lower_case_envp[cur_value]);
@@ -150,4 +151,3 @@ void PrintEvnp(char** envp)
   lower_case_envp = NULL;
 } 
 
-/* temp*/
