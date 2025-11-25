@@ -200,7 +200,7 @@ static void TestCheckThreeBitsOn()
 
     printf("Testing CheckThreeBitsOn:\n");
 
-    printf("Input:    { %u, %u, %u, %u }\n",
+    printf("Input: %u, %u, %u, %u \n",
             tests[0], tests[1], tests[2], tests[3]);
 
     printf("Expected: ");
