@@ -1,3 +1,9 @@
+/*************************************
+* Reviewer: shir                     *
+* Date: 22.11.25                     *
+* Version: 1                         *
+**************************************/
+
 #include <stdio.h>  /* printf, size_t */
 #include <string.h> /* memcpy */
 
