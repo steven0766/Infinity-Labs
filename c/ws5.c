@@ -185,12 +185,12 @@ op_handler_ty Prepend(const char* input, const char* filename)
   }
   if (!(0 == remove(filename)))
   {
-    printf("Prepend Error: can't delete old file to switch to new file");
+    printf("Prepend Error: can't delete old file to switch to new file\n");
     return ERROR;
   }
   if (!(0 == rename("tmp_file.txt", filename)))
   {
-    printf("Prepend Error: can't change file name to the old one");
+    printf("Prepend Error: can't change file name to the old one\n");
     return ERROR;
   }
 
