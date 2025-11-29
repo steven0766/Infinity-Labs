@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <stdio.h>   /* printf, sprintf */
+#include <string.h>  /* strlen, strcpy, strcat, memcpy */
+#include <stdlib.h>  /* malloc, realloc, free, exit */
 
 typedef struct element element_ty;
 typedef void(*add_value_func_ty)(element_ty*, int);
@@ -9,19 +9,19 @@ typedef void(*cleanup_func_ty)(element_ty*);
 
 struct element
 {
-    int     int_val;
-    float   float_val;
-    char*   str_val;
-
+    void* val;
     add_value_func_ty add;
     print_value_func_ty print;
     cleanup_func_ty cleanup;
 };
 
 #define MAX2(a,b) (((a) > (b)) ? (a) : (b))
-#define MAX3(a,b,c) (((a) > (b)) ? (((a) > (c)) ? (a) : (c)) : ((b) > (c)) ? (b) : (c))
+#define MAX3(a,b,c) (MAX2((MAX2((a),(b))),(c)))
 #define SIZEOF_VAR(var) ((char*)(&(var)+1) - (char*)(&(var)))
 #define SIZEOF_TYPE(type) ((size_t)((char*)(((type*)0) + 1) - (char*)((type*)0)))
+
+#define SIZE_OF(elements) sizeof(elements) / sizeof(elements[0])
+#define MAX_INT           11
 
 
 static void TestElements();
@@ -64,7 +64,7 @@ static void TestElements()
     InitInt(&elements[3], 12);
     InitFloat(&elements[4], 56.32);
     
-    for (i = 0; i < sizeof(elements) / sizeof(elements[0]); ++i)
+    for (i = 0; i < SIZE_OF(elements); ++i)
     {
         printf("Element: %ld\n", i);
         elements[i].print(&elements[i]);
@@ -77,7 +77,7 @@ static void TestElements()
 
 void InitInt(element_ty* data, int value)
 {   
-    data->int_val = value;
+    data->val = (void*)(long)value;
     data->add = AddInt;
     data->print = PrintInt; 
     data->cleanup = CleanupInt;
@@ -85,12 +85,14 @@ void InitInt(element_ty* data, int value)
 
 void AddInt(element_ty* data, int value)
 {
-    data->int_val += value;
+    long new_val = (long)data->val;
+    new_val += value;
+    data->val = (void*)new_val;
 }
 
 void PrintInt(element_ty* data)
 {
-    printf("%d\n", data->int_val);
+    printf("%d\n", (int)(long)data->val);
 }
 
 void CleanupInt(element_ty* data)
@@ -101,7 +103,9 @@ void CleanupInt(element_ty* data)
 
 void InitFloat(element_ty* data, float value)
 {
-    data->float_val = value;
+    long bits = 0;
+    memcpy(&bits, &value, sizeof(float));
+    data->val = (void*)bits;
     data->add = AddFloat;
     data->print = PrintFloat;
     data->cleanup = CleanupFloat;
@@ -109,12 +113,22 @@ void InitFloat(element_ty* data, float value)
 
 void AddFloat(element_ty* data, int value)
 {
-    data->float_val += value;
+    long bits = (long)data->val;
+    float f = 0;
+    
+    memcpy(&f, &bits, sizeof(float));
+    f += value;
+    memcpy(&bits, &f, sizeof(float));
+    
+    data->val = (void*)bits;
 }
 
 void PrintFloat(element_ty* data)
 {
-    printf("%f\n", data->float_val);
+    long bits = (long)data->val;
+    float f = 0;
+    memcpy(&f, &bits, sizeof(float));
+    printf("%f\n", f);
 }
 
 void CleanupFloat(element_ty* data)
@@ -125,13 +139,13 @@ void CleanupFloat(element_ty* data)
 
 void InitString(element_ty* data, char* value)
 {
-    data->str_val = (char*)malloc((strlen(value)+1) * sizeof(char));
-    if (NULL == data->str_val)
+    data->val = (char*)malloc((strlen(value)+1) * sizeof(char));
+    if (NULL == data->val)
     {
         printf("string malloc failed\n");
         exit(1);
     }
-    strcpy(data->str_val, value);
+    strcpy(data->val, value);
     
     data->add = AddString;
     data->print = PrintString;
@@ -140,30 +154,30 @@ void InitString(element_ty* data, char* value)
 
 void AddString(element_ty* data, int value)
 {
-    char buffer[32];
+    char buffer[MAX_INT];
     size_t new_size = 0;
     
     sprintf(buffer, "%d", value);
-    new_size = strlen(data->str_val) + strlen(buffer) + 1;
-    data->str_val = (char*)realloc(data->str_val, new_size * sizeof(char));
+    new_size = strlen((char*)data->val) + strlen(buffer) + 1;
     
-    if (NULL == data->str_val)
+    data->val = (char*)realloc(data->val, new_size * sizeof(char));
+    if (NULL == data->val)
     {
         printf("string realloc failed");
         exit(1);
     }
     
-    strcat(data->str_val, buffer);
+    strcat(data->val, (const char*)buffer);
 }
 
 void PrintString(element_ty* data)
 {
-    printf("%s\n", (char*)data->str_val);
+    printf("%s\n", (char*)data->val);
 }
 
 void CleanupString(element_ty* data)
 {
-    free(data->str_val);
+    free(data->val);
 }
 
 
@@ -188,14 +202,15 @@ static void TestSizeofVar()
     char   c = 'A';
     size_t result[3] = {SIZEOF_VAR(a), SIZEOF_VAR(b), SIZEOF_VAR(c)};
     
-    printf("the size of variable a (int) is %lu\n", result[0]);
-    printf("the size of variable b (double) is %lu\n", result[1]);
-    printf("the size of variable c (char) is %lu\n", result[2]);
+    printf("SIZEOF_VAR(a): %lu, sizeof(a): %lu\n", result[0], sizeof(a));
+    printf("SIZEOF_VAR(b): %lu, sizeof(b): %lu\n", result[1], sizeof(b));
+    printf("SIZEOF_VAR(c): %lu, sizeof(c): %lu\n", result[2], sizeof(c));
 }
 
 static void TestSizeofType()
 {
-    printf("the size of int is %lu\n", SIZEOF_TYPE(int));
-    printf("the size of double is %lu\n", SIZEOF_TYPE(double));
-    printf("the size of char is %lu\n", SIZEOF_TYPE(char));
+    printf("SIZEOF_TYPE(int): %lu, sizeof(int): %lu\n", SIZEOF_TYPE(int), sizeof(int));
+    printf("SIZEOF_TYPE(double): %lu, sizeof(double): %lu\n", SIZEOF_TYPE(double), sizeof(double));
+    printf("SIZEOF_TYPE(char): %lu, sizeof(char): %lu\n", SIZEOF_TYPE(char), sizeof(char));
 }
+
