@@ -9,7 +9,10 @@ typedef void(*cleanup_func_ty)(element_ty*);
 
 struct element
 {
-    void* val;
+    int     int_val;
+    float   float_val;
+    char*   str_val;
+
     add_value_func_ty add;
     print_value_func_ty print;
     cleanup_func_ty cleanup;
@@ -72,75 +75,63 @@ static void TestElements()
     }
 }
 
-void InitInt(element_ty* e, int value)
+void InitInt(element_ty* data, int value)
 {   
-    e->val = (int*)malloc(sizeof(int));
-    if(NULL == e->val)
-    {
-        printf("int malloc failed\n");
-        exit(1);
-    }
-    *(int*)e->val = value;
-    e->add = AddInt;
-    e->print = PrintInt; 
-    e->cleanup = CleanupInt;
+    data->int_val = value;
+    data->add = AddInt;
+    data->print = PrintInt; 
+    data->cleanup = CleanupInt;
 }
 
 void AddInt(element_ty* data, int value)
 {
-    *(int*)data->val += value;
+    data->int_val += value;
 }
 
 void PrintInt(element_ty* data)
 {
-    printf("%d\n", *(int*)data->val);
+    printf("%d\n", data->int_val);
 }
 
 void CleanupInt(element_ty* data)
 {
-    free(data->val);
+    (void)data;
 }
 
 
-void InitFloat(element_ty* e, float value)
+void InitFloat(element_ty* data, float value)
 {
-    e->val = (float*)malloc(sizeof(float));
-    if(NULL == e->val)
-    {
-        printf("float malloc failed\n");
-        exit(1);
-    }
-    *(float*)e->val = value;
-    e->add = AddFloat;
-    e->print = PrintFloat;
-    e->cleanup = CleanupFloat;
+    data->float_val = value;
+    data->add = AddFloat;
+    data->print = PrintFloat;
+    data->cleanup = CleanupFloat;
 }
 
 void AddFloat(element_ty* data, int value)
 {
-    *(float*)data->val += value;
+    data->float_val += value;
 }
 
 void PrintFloat(element_ty* data)
 {
-    printf("%f\n", *(float*)data->val);
+    printf("%f\n", data->float_val);
 }
 
 void CleanupFloat(element_ty* data)
 {
-    free(data->val);
+    (void)data;
 }
 
 
 void InitString(element_ty* data, char* value)
 {
-    data->val = (char*)malloc((strlen(value)+1) * sizeof(char));
-    if (NULL == data->val)
+    data->str_val = (char*)malloc((strlen(value)+1) * sizeof(char));
+    if (NULL == data->str_val)
     {
         printf("string malloc failed\n");
         exit(1);
     }
-    strcpy(data->val, value);
+    strcpy(data->str_val, value);
     
     data->add = AddString;
     data->print = PrintString;
@@ -153,26 +144,26 @@ void AddString(element_ty* data, int value)
     size_t new_size = 0;
     
     sprintf(buffer, "%d", value);
-    new_size = strlen((char*)data->val) + strlen(buffer) + 1;
+    new_size = strlen(data->str_val) + strlen(buffer) + 1;
+    data->str_val = (char*)realloc(data->str_val, new_size * sizeof(char));
     
-    data->val = (char*)realloc(data->val, new_size * sizeof(char));
-    if (NULL == data->val)
+    if (NULL == data->str_val)
     {
         printf("string realloc failed");
         exit(1);
     }
     
-    strcat(data->val, (const char*)buffer);
+    strcat(data->str_val, buffer);
 }
 
 void PrintString(element_ty* data)
 {
-    printf("%s\n", (char*)data->val);
+    printf("%s\n", (char*)data->str_val);
 }
 
 void CleanupString(element_ty* data)
 {
-    free(data->val);
+    free(data->str_val);
 }
 
 
