@@ -22,9 +22,9 @@ struct element
 
 #define SIZE_OF(elements) sizeof(elements) / sizeof(elements[0])
 #define MAX_INT           11
+#define UNUSED(x)         (void)(x)
 
 
-static void TestElements();
 void InitInt(element_ty* e, int value);
 void PrintInt(element_ty* data);
 void AddInt(element_ty* data, int value);
@@ -37,6 +37,7 @@ void InitString(element_ty* e, char* value);
 void AddString(element_ty* e, int value);
 void PrintString(element_ty* data);
 void CleanupString(element_ty* data);
+static void TestElements();
 static void TestMax2();
 static void TestMax3();
 static void TestSizeofVar();
@@ -52,28 +53,6 @@ int main()
     return 0;
 }
 
-static void TestElements()
-{
-    size_t i = 0;
-
-    element_ty elements[5];
-
-    InitFloat(&elements[0], 4.2);
-    InitFloat(&elements[1], 6.7);
-    InitString(&elements[2], "chapter");
-    InitInt(&elements[3], 12);
-    InitFloat(&elements[4], 56.32);
-    
-    for (i = 0; i < SIZE_OF(elements); ++i)
-    {
-        printf("Element: %ld\n", i);
-        elements[i].print(&elements[i]);
-        elements[i].add(&elements[i], 10);
-        elements[i].print(&elements[i]);
-        elements[i].cleanup(&elements[i]);
-        printf("\n");
-    }
-}
 
 void InitInt(element_ty* data, int value)
 {   
@@ -97,7 +76,7 @@ void PrintInt(element_ty* data)
 
 void CleanupInt(element_ty* data)
 {
-    (void)data;
+    UNUSED(data);
 }
 
 
@@ -133,7 +112,7 @@ void PrintFloat(element_ty* data)
 
 void CleanupFloat(element_ty* data)
 {
-    (void)data;
+    UNUSED(data);
 }
 
 
@@ -178,8 +157,32 @@ void PrintString(element_ty* data)
 void CleanupString(element_ty* data)
 {
     free(data->val);
+    data->val = NULL;
 }
 
+
+static void TestElements()
+{
+    size_t i = 0;
+
+    element_ty elements[5];
+
+    InitFloat(&elements[0], 4.2);
+    InitFloat(&elements[1], 6.7);
+    InitString(&elements[2], "chapter");
+    InitInt(&elements[3], 12);
+    InitFloat(&elements[4], 56.32);
+    
+    for (i = 0; i < SIZE_OF(elements); ++i)
+    {
+        printf("Element: %ld\n", i);
+        elements[i].print(&elements[i]);
+        elements[i].add(&elements[i], 10);
+        elements[i].print(&elements[i]);
+        elements[i].cleanup(&elements[i]);
+        printf("\n");
+    }
+}
 
 static void TestMax2()
 {
@@ -213,4 +216,3 @@ static void TestSizeofType()
     printf("SIZEOF_TYPE(double): %lu, sizeof(double): %lu\n", SIZEOF_TYPE(double), sizeof(double));
     printf("SIZEOF_TYPE(char): %lu, sizeof(char): %lu\n", SIZEOF_TYPE(char), sizeof(char));
 }
-
