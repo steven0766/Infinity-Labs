@@ -1,5 +1,5 @@
 /*************************************
-* Reviewer:                    *
+* Reviewer: Nimrod                   *
 * Date: 1.12.25                      *
 * Version: 1                         *
 **************************************/
@@ -15,8 +15,8 @@ typedef struct humanistic_grades human_grade_ty;
 typedef struct grade grade_ty;
 typedef struct student student_ty;
 
-#define MAX_NAME    25
-#define EXIT        exit(1)
+#define MAX_NAME_LEN    25
+#define EXIT            exit(1)
 
 struct real_grades
 {
@@ -39,8 +39,8 @@ struct grade
 
 struct student
 {
-    char first_name[MAX_NAME];
-    char last_name[MAX_NAME];
+    char first_name[MAX_NAME_LEN];
+    char last_name[MAX_NAME_LEN];
     grade_ty grades;
 };
 
@@ -79,8 +79,8 @@ static void TestStudent()
                 60.3,    /* physics */
                 88.7,    /* math */
                 87.23);  /* sport */
-    WriteStudent(&s1, "save_student.txt");
-    ReadStudent(&s2, "save_student.txt");
+    WriteStudent(&s1, "save_student.bin");
+    ReadStudent(&s2, "save_student.bin");
     
     PrintStudent(&s1);
     PrintStudent(&s2);
@@ -99,8 +99,8 @@ void InitStudent(student_ty* s, const char* first,const char* last,
                  float sociology, float psychology, float physics,
                  float math, float sport)
 {
-    strncpy(s->first_name, first, MAX_NAME);
-    strncpy(s->last_name, last, MAX_NAME);
+    strncpy(s->first_name, first, MAX_NAME_LEN);
+    strncpy(s->last_name, last, MAX_NAME_LEN);
 
     s->grades.human_grades.sociology = sociology;
     s->grades.human_grades.psychology = psychology;
@@ -120,9 +120,62 @@ void PrintStudent(const student_ty* s)
     printf("Sport: %.2f\n", s->grades.sport);
 }
 
-int StudentCmp(const student_ty* a, const student_ty* b)
+size_t StudentCmp(const student_ty* a, const student_ty* b)
 {
-    return memcmp(a, b, sizeof(*a));
+    if (0 == strcmp(a->first_name, b->first_name)
+    {
+        if (0 == strcmp(a->last_name, b->last_name)
+        {
+            if(GradeCmp(&a->grade, &b->grade)
+            {
+                return 1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+size_t GradeCmp(const grade_ty a, const grade_ty b)
+{
+    if (HumanGradesCmp(&a->human_grades, &b->human_grades)
+    {
+        if (RealGradesCmp(&a->rl_grades, &b->rl_grades)
+        {
+            if (a->sport == b->sport)
+            {
+                return 1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+size_t HumanGradesCmp(const human_grade_ty a, const human_grade_ty b)
+{
+    if (a->sociology == b->sociology)
+    {
+        if (a->psychology == b->psychology)
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+size_t RealGradesCmp(const rl_grade_ty a, const rl_grade_ty b)
+{
+    if (a->phisics == b->phisics)
+    {
+        (a->math == b->math)
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
 }
 
 void WriteStudent(student_ty* student, char* filename)
@@ -131,7 +184,7 @@ void WriteStudent(student_ty* student, char* filename)
     uint8_t name_len = strlen(student->first_name) + 1;
     uint8_t last_name_len = strlen(student->last_name) + 1;
     
-    if (!fwrite(&name_len, sizeof(uint8_t), 1, fptr))
+    if (1 != fwrite(&name_len, sizeof(uint8_t), 1, fptr))
     {
         printf("set first_name size in file failed");
         if (fclose(fptr))
@@ -140,7 +193,7 @@ void WriteStudent(student_ty* student, char* filename)
         }
         EXIT;
     }
-    if (!fwrite(&student->first_name, sizeof(char), name_len, fptr))
+    if (name_len != fwrite(&student->first_name, sizeof(char), name_len, fptr))
     {
         printf("set first_name in file failed");
         if (fclose(fptr))
@@ -149,7 +202,7 @@ void WriteStudent(student_ty* student, char* filename)
         }
         EXIT;
     }
-    if (!fwrite(&last_name_len, sizeof(uint8_t), 1, fptr))
+    if (1 != fwrite(&last_name_len, sizeof(uint8_t), 1, fptr))
     {
         printf("set last_name size in file failed");
         if (fclose(fptr))
@@ -158,7 +211,7 @@ void WriteStudent(student_ty* student, char* filename)
         }
         EXIT;
     }
-    if (!fwrite(&student->last_name, sizeof(char), last_name_len, fptr))
+    if (last_name_len != fwrite(&student->last_name, sizeof(char), last_name_len, fptr))
     {
         printf("set last_name in file failed");
         if (fclose(fptr))
@@ -179,7 +232,7 @@ void WriteGrades(grade_ty* grades, FILE* fptr)
 {
     WriteHumanicGrades(&grades->human_grades, fptr);
     WriteRealGrades(&grades->rl_grades, fptr);
-    if (!fwrite(&grades->sport, sizeof(float), 1, fptr))
+    if (1 != fwrite(&grades->sport, sizeof(float), 1, fptr))
     {
         printf("set sport grade in file failed");
         if (fclose(fptr))
@@ -192,7 +245,7 @@ void WriteGrades(grade_ty* grades, FILE* fptr)
 
 void WriteHumanicGrades(human_grade_ty* grades, FILE* fptr)
 {
-    if (!fwrite(&grades->sociology, sizeof(float), 1, fptr))
+    if (1 != fwrite(&grades->sociology, sizeof(float), 1, fptr))
     {
         printf("set sociology grade in file failed");
         if (fclose(fptr))
@@ -201,7 +254,7 @@ void WriteHumanicGrades(human_grade_ty* grades, FILE* fptr)
         }
         EXIT;
     }
-    if (!fwrite(&grades->psychology, sizeof(float), 1, fptr))
+    if (1 != fwrite(&grades->psychology, sizeof(float), 1, fptr))
     {
         printf("set psychology grade in file failed");
         if (fclose(fptr))
@@ -214,7 +267,7 @@ void WriteHumanicGrades(human_grade_ty* grades, FILE* fptr)
 
 void WriteRealGrades(rl_grade_ty* grades, FILE* fptr)
 {
-    if (!fwrite(&grades->phisics, sizeof(float), 1, fptr))
+    if (1 != fwrite(&grades->phisics, sizeof(float), 1, fptr))
     {
         printf("set phisics grade in file failed");
         if (fclose(fptr))
@@ -223,7 +276,7 @@ void WriteRealGrades(rl_grade_ty* grades, FILE* fptr)
         }
         EXIT;
     }
-    if (!fwrite(&grades->math, sizeof(float), 1, fptr))
+    if (1 != fwrite(&grades->math, sizeof(float), 1, fptr))
     {
         printf("set math grade in file failed");
         if (fclose(fptr))
@@ -245,39 +298,39 @@ void ReadStudent(student_ty* student, char* filename)
         EXIT;
     }
     
-    if (!fread(&name_len, sizeof(uint8_t), 1, fptr))
+    if (1 != fread(&name_len, sizeof(uint8_t), 1, fptr))
     {
-        printf("get first_name size in file failed");
+        printf("get first_name size from file failed");
         if (fclose(fptr))
         {
-            printf("closing file failed after get first_name size in file failed");
+            printf("closing file failed after get first_name size failed");
         }
         EXIT;
     }
-    if (!fread(&student->first_name, sizeof(char), name_len, fptr))
+    if (name_len != fread(&student->first_name, sizeof(char), name_len, fptr))
     {
-        printf("get first_name in file failed");
+        printf("get first_name from file failed");
         if (fclose(fptr))
         {
-            printf("closing file failed after get first_name in file failed");
+            printf("closing file failed after get first_name failed");
         }
         EXIT;
     }
-    if (!fread(&last_name_len, sizeof(uint8_t), 1, fptr))
+    if (1 != fread(&last_name_len, sizeof(uint8_t), 1, fptr))
     {
-        printf("get last_name size in file failed");
+        printf("get last_name size from file failed");
         if (fclose(fptr))
         {
-            printf("closing file failed after get last_name size in file failed");
+            printf("closing file failed after get last_name size failed");
         }
         EXIT;
     }
-    if (!fread(&student->last_name, sizeof(char), last_name_len, fptr))
+    if (last_name_len != fread(&student->last_name, sizeof(char), last_name_len, fptr))
     {
-        printf("get last_name in file failed");
+        printf("get last_name from file failed");
         if (fclose(fptr))
         {
-            printf("closing file failed after get last_name in file failed");
+            printf("closing file failed after get last_name failed");
         }
         EXIT;
     }
@@ -293,7 +346,7 @@ void ReadGrades(grade_ty* grades, FILE* fptr)
 {
     ReadHumanicGrades(&grades->human_grades, fptr);
     ReadRealGrades(&grades->rl_grades, fptr);
-    if (!fread(&grades->sport, sizeof(float), 1, fptr))
+    if (1 != fread(&grades->sport, sizeof(float), 1, fptr))
     {
         printf("get sport grade from file failed");
         if (fclose(fptr))
@@ -306,7 +359,7 @@ void ReadGrades(grade_ty* grades, FILE* fptr)
 
 void ReadHumanicGrades(human_grade_ty* grades, FILE* fptr)
 {
-    if (!fread(&grades->sociology, sizeof(float), 1, fptr))
+    if (1 != fread(&grades->sociology, sizeof(float), 1, fptr))
     {
         printf("get sociology grade from file failed");
         if (fclose(fptr))
@@ -315,7 +368,7 @@ void ReadHumanicGrades(human_grade_ty* grades, FILE* fptr)
         }
         EXIT;
     }
-    if (!fread(&grades->psychology, sizeof(float), 1, fptr))
+    if (1 != fread(&grades->psychology, sizeof(float), 1, fptr))
     {
         printf("get psychology grade from file failed");
         if (fclose(fptr))
@@ -328,7 +381,7 @@ void ReadHumanicGrades(human_grade_ty* grades, FILE* fptr)
 
 void ReadRealGrades(rl_grade_ty* grades, FILE* fptr)
 {
-    if (!fread(&grades->phisics, sizeof(float), 1, fptr))
+    if (1 != fread(&grades->phisics, sizeof(float), 1, fptr))
     {
         printf("get phisics grade from file failed");
         if (fclose(fptr))
@@ -337,7 +390,7 @@ void ReadRealGrades(rl_grade_ty* grades, FILE* fptr)
         }
         EXIT;
     }
-    if (!fread(&grades->math, sizeof(float), 1, fptr))
+    if (1 != fread(&grades->math, sizeof(float), 1, fptr))
     {
         printf("get math grade from file failed");
         if (fclose(fptr))
