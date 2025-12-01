@@ -46,10 +46,11 @@ struct student
 
 
 static void TestStudent();
-void PrintStudent(const student_ty* s);
 void InitStudent(student_ty* s, const char* first,const char* last,
                  float sociology, float psychology, float physics,
                  float math, float sport);
+void PrintStudent(const student_ty* s);
+int StudentCmp(const student_ty* a, const student_ty* b);
 void WriteStudent(student_ty* student, char* filename);
 void WriteGrades(grade_ty* grades, FILE* fptr);
 void WriteHumanicGrades(human_grade_ty* grades, FILE* fptr);
@@ -58,7 +59,6 @@ void ReadStudent(student_ty* student, char* filename);
 void ReadGrades(grade_ty* grades, FILE* fptr);
 void ReadRealGrades(rl_grade_ty* grades, FILE* fptr);
 void ReadHumanicGrades(human_grade_ty* grades, FILE* fptr);
-int StudentCmp(const student_ty* a, const student_ty* b);
                  
 
 int main()
@@ -95,17 +95,6 @@ static void TestStudent()
     }
 }
 
-void PrintStudent(const student_ty* s)
-{
-    printf("First name: %s\n", s->first_name);
-    printf("Last name: %s\n", s->last_name);
-    printf("Sociology: %.2f\n", s->grades.human_grades.sociology);
-    printf("Psychology: %.2f\n", s->grades.human_grades.psychology);
-    printf("Physics: %.2f\n", s->grades.rl_grades.phisics);
-    printf("Math: %.2f\n", s->grades.rl_grades.math);
-    printf("Sport: %.2f\n", s->grades.sport);
-}
-
 void InitStudent(student_ty* s, const char* first,const char* last,
                  float sociology, float psychology, float physics,
                  float math, float sport)
@@ -118,6 +107,22 @@ void InitStudent(student_ty* s, const char* first,const char* last,
     s->grades.rl_grades.phisics = physics;
     s->grades.rl_grades.math = math;
     s->grades.sport = sport;
+}
+
+void PrintStudent(const student_ty* s)
+{
+    printf("First name: %s\n", s->first_name);
+    printf("Last name: %s\n", s->last_name);
+    printf("Sociology: %.2f\n", s->grades.human_grades.sociology);
+    printf("Psychology: %.2f\n", s->grades.human_grades.psychology);
+    printf("Physics: %.2f\n", s->grades.rl_grades.phisics);
+    printf("Math: %.2f\n", s->grades.rl_grades.math);
+    printf("Sport: %.2f\n", s->grades.sport);
+}
+
+int StudentCmp(const student_ty* a, const student_ty* b)
+{
+    return memcmp(a, b, sizeof(*a));
 }
 
 void WriteStudent(student_ty* student, char* filename)
@@ -341,9 +346,4 @@ void ReadRealGrades(rl_grade_ty* grades, FILE* fptr)
         }
         EXIT;
     }
-}
-
-int StudentCmp(const student_ty* a, const student_ty* b)
-{
-    return memcmp(a, b, sizeof(*a));
 }
