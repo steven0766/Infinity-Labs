@@ -1,5 +1,5 @@
 /*************************************
-* Reviewer:                    *
+* Reviewer: Nimrod                   *
 * Date: 1.12.25                      *
 * Version: 1                         *
 **************************************/
@@ -15,8 +15,8 @@ typedef struct humanistic_grades human_grade_ty;
 typedef struct grade grade_ty;
 typedef struct student student_ty;
 
-#define MAX_NAME    25
-#define EXIT        exit(1)
+#define MAX_NAME_LEN    25
+#define EXIT            exit(1)
 
 struct real_grades
 {
@@ -39,8 +39,8 @@ struct grade
 
 struct student
 {
-    char first_name[MAX_NAME];
-    char last_name[MAX_NAME];
+    char first_name[MAX_NAME_LEN];
+    char last_name[MAX_NAME_LEN];
     grade_ty grades;
 };
 
@@ -79,8 +79,8 @@ static void TestStudent()
                 60.3,    /* physics */
                 88.7,    /* math */
                 87.23);  /* sport */
-    WriteStudent(&s1, "save_student.txt");
-    ReadStudent(&s2, "save_student.txt");
+    WriteStudent(&s1, "save_student.bin");
+    ReadStudent(&s2, "save_student.bin");
     
     PrintStudent(&s1);
     PrintStudent(&s2);
@@ -99,8 +99,8 @@ void InitStudent(student_ty* s, const char* first,const char* last,
                  float sociology, float psychology, float physics,
                  float math, float sport)
 {
-    strncpy(s->first_name, first, MAX_NAME);
-    strncpy(s->last_name, last, MAX_NAME);
+    strncpy(s->first_name, first, MAX_NAME_LEN);
+    strncpy(s->last_name, last, MAX_NAME_LEN);
 
     s->grades.human_grades.sociology = sociology;
     s->grades.human_grades.psychology = psychology;
@@ -120,9 +120,62 @@ void PrintStudent(const student_ty* s)
     printf("Sport: %.2f\n", s->grades.sport);
 }
 
-int StudentCmp(const student_ty* a, const student_ty* b)
+size_t StudentCmp(const student_ty* a, const student_ty* b)
 {
-    return memcmp(a, b, sizeof(*a));
+    if (0 == strcmp(a->first_name, b->first_name)
+    {
+        if (0 == strcmp(a->last_name, b->last_name)
+        {
+            if(GradeCmp(&a->grade, &b->grade)
+            {
+                return 1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+size_t GradeCmp(const grade_ty a, const grade_ty b)
+{
+    if (HumanGradesCmp(&a->human_grades, &b->human_grades)
+    {
+        if (RealGradesCmp(&a->rl_grades, &b->rl_grades)
+        {
+            if (a->sport == b->sport)
+            {
+                return 1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+size_t HumanGradesCmp(const human_grade_ty a, const human_grade_ty b)
+{
+    if (a->sociology == b->sociology)
+    {
+        if (a->psychology == b->psychology)
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+size_t RealGradesCmp(const rl_grade_ty a, const rl_grade_ty b)
+{
+    if (a->phisics == b->phisics)
+    {
+        (a->math == b->math)
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
 }
 
 void WriteStudent(student_ty* student, char* filename)
