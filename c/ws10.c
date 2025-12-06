@@ -93,8 +93,11 @@ static int GetCharVal(char c)
 
 static void TestAtoi(void)
 {
-    const char* tests[] ={"0", "   42", "-17", "+19", "    -12   15", 
-                          "999", "1a", "1011", "z"};
+    const char* tests[] =
+    {
+        "0", "   42", "-17", "+19", "    -12   15", 
+        "999", "1a", "1011", "z"
+    };
     size_t count = sizeof(tests) / sizeof(tests[0]);
     size_t i = 0;
     int expected = 0;
