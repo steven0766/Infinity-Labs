@@ -1,4 +1,4 @@
-#include <stdio.h>    /* printf */
+#include <stdio.h>    /* printf, size_t */
 #include <stdlib.h>   /* atoi   */
 #include <string.h>   /* strcmp */
 #include <ctype.h>
