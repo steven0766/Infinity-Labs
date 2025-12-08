@@ -172,8 +172,8 @@ void *Memmove(void* dest, const void* src, size_t num_bytes)
     unsigned char* write_ptr = (unsigned char*)dest + num_bytes;
     unsigned char* read_ptr = (unsigned char*)src + num_bytes;
     
-    int is_overlap = (write_ptr > read_ptr &&
-                      write_ptr < read_ptr + num_bytes);
+    int is_overlap = ((unsigned char*)dest > (unsigned char*)src &&
+                      (unsigned char*)dest < read_ptr);
 
     if (is_overlap)
     {   
