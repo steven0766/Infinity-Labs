@@ -1,19 +1,27 @@
+/*************************************
+* Reviewer: Nimrod                   *
+* Date: 8.12.25                      *
+* Version: 2                         *
+**************************************/
+
 #include <stdio.h>    /* printf, size_t */
-#include <stdlib.h>   /* atoi   */
-#include <string.h>   /* strcmp */
-#include <ctype.h>
+#include <stdlib.h>   /* atoi           */
+#include <ctype.h>    /* tolower        */
+
+
 int Atoi(const char* str, int base);
-static void TestAtoi();
+static void TestAtoi(void);
 char* Itoa(int num, char* buffer, int base);
 static void ReverseString(char* left, char* right);
-static void TestItoa();
+static void TestItoa(void);
 static int GetCharVal(char c);
-void PrintCommon(const char* a1, const char* a2, const char* a3);
-static void TestCommon();
+void PrintInclude1And2Not3(const char* a1, const char* a2, const char* a3);
+static void TestPrintInclude1And2Not3(void);
 int IsLittleEndian(void);
 void TestEndianMacro(void);
 
 
+#define ASCII_SIZE           256
 #define IS_LITTLE_ENDIAN()   ((*(unsigned short*)"\1\2") == 0x0201)
 
 
@@ -21,14 +29,15 @@ int main()
 {
     TestAtoi();
     TestItoa();
-    TestCommon();
+    TestPrintInclude1And2Not3();
     printf("\nFunction endian:\n");
     printf("Is my system using little indian? %s\n"
            , ((IsLittleEndian()) ? "true" : "false"));
-    printf("\nTest Macro:\n");
+    printf("\nTest Marco:\n");
     TestEndianMacro();
     return 0;
 }
+
 
 int Atoi(const char* str , int base)
 {
@@ -225,40 +234,42 @@ static void TestItoa(void)
 
 
 
-#include <stdio.h>
 
-void PrintCommon(const char* a1, const char* a2, const char* a3)
+
+void PrintInclude1And2Not3(const char* arr1,
+                           const char* arr2,
+                           const char* arr3)
 {
-    int map[256] = {0};
+    int map[ASCII_SIZE] = {0};
     int i = 0;
     
-    while (*a1 != '\0')
+    while ('\0' != *arr1)
     {
-        if (map[(unsigned char)*a1] == 0)
+        if (map[(unsigned char)*arr1] == 0)
         {
-            map[(unsigned char)*a1] = 1;
+            map[(unsigned char)*arr1] = 1;
         }
-        ++a1;
+        ++arr1;
     }
 
-    while (*a2 != '\0')
+    while ('\0' != *arr2)
     {
-        if (map[(unsigned char)*a2] == 1)
+        if (map[(unsigned char)*arr2] == 1)
         {
-            map[(unsigned char)*a2] = 2;
+            map[(unsigned char)*arr2] = 2;
         }
-        ++a2;
+        ++arr2;
     }
 
-    while (*a3 != '\0')
+    while ('\0' != *arr3)
     {
-        map[(unsigned char)*a3] = -1;
-        ++a3;
+        map[(unsigned char)*arr3] = -1;
+        ++arr3;
     }
 
-    for (i = 0; i < 256; ++i)
+    for (i = 0; i < ASCII_SIZE; ++i)
     {
-        if (map[i] == 2)
+        if (2 == map[i])
         {
             printf("%c ", i);
         }
@@ -267,7 +278,7 @@ void PrintCommon(const char* a1, const char* a2, const char* a3)
     printf("\n");
 }
 
-static void TestCommon()
+static void TestPrintInclude1And2Not3(void)
 {
     const char* arr1 = "abcdefg";
     const char* arr2 = "bdfxyz";
@@ -276,11 +287,11 @@ static void TestCommon()
     char result[] = "bf";
 
     printf("\nPrintCommon output:\n");
-    PrintCommon(arr1, arr2, arr3);
+    PrintInclude1And2Not3(arr1, arr2, arr3);
 
     printf("expected:\n");
 
-    for (i = 0; result[i] != '\0'; ++i)
+    for (i = 0; '\0' != result[i]; ++i)
     {
         printf("%c ", result[i]);
     }
