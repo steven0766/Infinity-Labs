@@ -1,9 +1,16 @@
-#include "../include/bit_array.h"
+/***********************************************************************
+*File_name: bit_array_test.c
+*Reviewer: Rozalin
+*Version:  2.0
+*Date:	   10.12.25
+************************************************************************/
 
 #include <stdio.h>    /* printf, bit_array_ty */
 #include <math.h>     /* pow                  */
 #include <stdint.h>   /* SIZE_MAX             */
 #include <string.h>   /* strcmp, memset       */
+
+#include "../include/bit_array.h"
 
 
 static void TestBitArraySetAll(void);

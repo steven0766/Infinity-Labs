@@ -1,9 +1,17 @@
+/***********************************************************************
+*File_name: bit_array.c
+*Reviewer: Rozalin
+*Version:  2.0
+*Date:	   10.12.25
+************************************************************************/
+
 #include "../include/bit_array.h"
-#include <assert.h>
+#include <assert.h>   /* assert     */
+#include <limits.h>   /* CHAAR_BITS */
 
 
 #define MASK(idx)                 ((bit_array_ty)1 << (idx))   
-#define BIT_ARR_SIZE                     64
+#define BIT_ARR_SIZE                  (sizeof(bit_array_ty)*CHAR_BIT)
 
 
 bit_array_ty BitArraySetAll(bit_array_ty bit_array)
@@ -22,7 +30,8 @@ bit_array_ty BitArrayResetAll(bit_array_ty bit_array)
 /* Sets a specific bit in "bit_array" to 1 ("on" bit) */
 bit_array_ty BitArraySetOn(bit_array_ty bit_array, unsigned int index)
 {
-    index %= BIT_ARR_SIZE;
+    assert(index < BIT_ARR_SIZE);
+
     return (MASK(index) | bit_array);
     /* declare var one equal 1 */
     
@@ -35,7 +44,8 @@ bit_array_ty BitArraySetOn(bit_array_ty bit_array, unsigned int index)
 /* Sets a specific bit in "bit_array" to 0 ("off" bit) */
 bit_array_ty BitArraySetOff(bit_array_ty bit_array, unsigned int index)
 {
-    index %= BIT_ARR_SIZE;
+    assert(index < BIT_ARR_SIZE);
+
     return (~MASK(index) & bit_array);
     /* var one equal 1 */
     
@@ -51,7 +61,6 @@ bit_array_ty BitArraySetBit(bit_array_ty bit_array,
 {
     assert(index < BIT_ARR_SIZE);
     
-    index %= BIT_ARR_SIZE;
     return (0 != value) ? BitArraySetOn(bit_array, index) :
                           BitArraySetOff(bit_array, index);
     /* if value equal 1 -> use BitArraySetOn function */
@@ -66,7 +75,6 @@ unsigned int BitArrayGetBitVal(bit_array_ty bit_array, unsigned int index)
 {
     assert(index < BIT_ARR_SIZE);
     
-    index %= BIT_ARR_SIZE;
     return ((bit_array >> index) & 1);
     /* return shift bit_array "index" times right & mask 1 */
 }
