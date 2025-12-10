@@ -1,12 +1,12 @@
 /***********************************************************************
-*File_name: stack.c
+*File_name: stack_test.c
 *Reviewer: Nimrod
 *Version:  1.0
 *Date:	   10.12.25
 ************************************************************************/
 
 
-#include <stdio.h>
+#include <stdio.h>    /* printf */
 
 #include "../include/stack.h"
 
