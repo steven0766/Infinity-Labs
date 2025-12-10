@@ -34,7 +34,8 @@ int main()
 
 static void TestStackCreate(void)
 {
-    stack_ty* stk = StackCreate(stack_capacity, ele_size);
+    size_t stack_capacity = 3; 
+    stack_ty* stk = StackCreate(stack_capacity, sizeof(size_t));
     
     if (NULL == stk)
     {
