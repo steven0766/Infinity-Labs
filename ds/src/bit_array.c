@@ -6,12 +6,12 @@
 ************************************************************************/
 
 #include "../include/bit_array.h"
-#include <assert.h>   /* assert     */
-#include <limits.h>   /* CHAAR_BITS */
+#include <assert.h>   /*   assert   */
+#include <limits.h>   /* CHAR_BITS  */
 
 
 #define MASK(idx)                 ((bit_array_ty)1 << (idx))   
-#define BIT_ARR_SIZE                  (sizeof(bit_array_ty)*CHAR_BIT)
+#define BIT_ARR_SIZE              (sizeof(bit_array_ty)*CHAR_BIT)
 
 
 bit_array_ty BitArraySetAll(bit_array_ty bit_array)
@@ -144,6 +144,8 @@ bit_array_ty BitArrayCountOff(bit_array_ty bit_array)
 char* BitArrayToString(bit_array_ty bit_array, char* dest)
 {
     int i = 0;
+    
+    assert(NULL != dest);
 
     for (i = BIT_ARR_SIZE - 1; i >= 0; --i)
     {
