@@ -34,12 +34,12 @@ vector_ty* VectorCreate(size_t capacity, size_t element_size)
     
     if (NULL == vector)
     {
-    return NULL;
+        return NULL;
     }
     
     vector -> start = (char*) malloc(capacity * element_size);
     
-    if (NULL == vector -> start && capacity > 0)
+    if (NULL == vector -> start)
     {
         free(vector);
         return NULL;
@@ -63,7 +63,7 @@ int VectorPushBack(vector_ty* vector, void* data)
 {
     size_t size = 0;
     size_t capacity = 0;
-    char *new_start = NULL;
+    char* new_start = NULL;
     size_t new_capacity = 0;
 
     assert(vector);
