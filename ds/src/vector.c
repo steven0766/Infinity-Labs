@@ -13,7 +13,7 @@
 #include "../include/vector.h"
 
 #define VECTOR_GROWTH         2
-
+  
 
 size_t VectorCapacity(const vector_ty* vec);
 size_t VectorSize(const vector_ty* vec);
@@ -37,7 +37,7 @@ vector_ty* VectorCreate(size_t capacity, size_t element_size)
     return NULL;
     }
     
-    vector->start = (char*)malloc(capacity * element_size);
+    vector -> start = (char*) malloc(capacity * element_size);
     
     if (NULL == vector -> start && capacity > 0)
     {
