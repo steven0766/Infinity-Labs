@@ -7,7 +7,7 @@
 
 
 #include <stdlib.h>   /*   malloc, free  */
-#include <stdio.h>    /*   size_t        */
+#include <stddef.h>   /*   size_t        */
 #include <string.h>   /*   memcpy        */
 #include <assert.h>   /*   assert        */
 
@@ -25,7 +25,7 @@ struct stack_s
 
 stack_ty* StackCreate(size_t capacity, size_t ele_size)
 {
-    stack_ty* stk = malloc(sizeof(stack_ty) + capacity * ele_size - sizeof(char));
+    stack_ty* stk = (stack_ty*)malloc(sizeof(stack_ty) + capacity * ele_size - sizeof(char));
     
     if (NULL == stk)
     {
@@ -48,7 +48,7 @@ void DestroyStack(stack_ty* stack)
 void StackPop(stack_ty* stack)
 {
     assert(stack);
-    assert(stack->head > stack->start);
+    assert(stack -> head > stack -> start);
     
     stack -> head -= stack -> element_size;
 }
@@ -73,6 +73,7 @@ void* StackPeek(stack_ty* stack)
 
 size_t StackSize(stack_ty* stack)
 {
+    assert(stack);
     return ((stack -> head - stack -> start) / stack -> element_size);
 }
 
