@@ -45,7 +45,7 @@ slist_iter_ty SListBeginIter(slist_ty* slist_p)
 slist_iter_ty IterNext(slist_iter_ty iter)
 {
     assert(NULL != iter);
-    assert(NULL != iter -> next);
+    assert(NULL != IterNext(iter));
     
     return iter -> next;
 }
@@ -61,7 +61,7 @@ int IterIsEqual(slist_iter_ty iter1, slist_iter_ty iter2)
 void* IterGetData(slist_iter_ty iter)
 {
     assert(NULL != iter);
-    assert(IterNext(iter) != NULL);
+    assert(NULL != IterNext(iter));
     
     return ITER_TO_NODE(iter) -> data;
 }
@@ -69,7 +69,7 @@ void* IterGetData(slist_iter_ty iter)
 void IterSetData(slist_iter_ty iter, void* data)
 {
     assert(NULL != iter);
-    assert(IterNext(iter) != NULL);
+    assert(NULL != IterNext(iter));
     
     ITER_TO_NODE(iter) -> data = data;
 }
@@ -103,7 +103,7 @@ slist_ty* SListCreate(void)
 void SListDestroy(slist_ty* slist_p)
 {
     slist_iter_ty iter = slist_p -> head;
-    slist_iter_ty iter_save = NULL;
+    slist_iter_ty iter_save = slist_p -> head;
     
     assert(NULL != slist_p);
     
@@ -148,13 +148,13 @@ slist_iter_ty SlistInsertBefore(slist_ty* slist_p,
 {
     slist_node_ty* new_node = (slist_node_ty*)malloc(sizeof(slist_node_ty));
     
-    assert(NULL != slist_p);
-    assert(NULL != IterGetData(where_iter));
-    
     if (NULL == new_node)
     {
         return SListEndIter(slist_p);
     }
+    
+    assert(NULL != slist_p);
+    assert(NULL != where_iter);
     
     new_node -> next = IterNext(where_iter);
     IterSetData(new_node, IterGetData(where_iter));
