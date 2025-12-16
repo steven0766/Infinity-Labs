@@ -8,7 +8,7 @@
 
 #include <stdio.h> /* printf */
 
-#include "linkedlist.h"
+#include "slist.h"
 
 
 static void TestSListEndIter(void);
