@@ -1,3 +1,11 @@
+/***********************************************************************
+*File_name: linkedlist_exe.c
+*Reviewer: rozaline
+*Version:  1.0
+*Date:	   16.12.25
+************************************************************************/
+
+
 #include "../include/linkedlist_exe.h"
 
 #include <stddef.h> /* NULL */
