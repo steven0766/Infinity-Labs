@@ -146,7 +146,7 @@ int VectorShrinkToFit(vector_ty* vector)
     }
     
     vector -> start = new_start;
-        vector -> head  = new_start + (size * vector -> element_size);
+    vector -> head  = new_start + (size * vector -> element_size);
     vector -> end   = new_start + (size * vector -> element_size);
     
     return  0;
