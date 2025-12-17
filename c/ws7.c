@@ -20,7 +20,7 @@ struct element
 #define SIZEOF_VAR(var) ((char*)(&(var)+1) - (char*)(&(var)))
 #define SIZEOF_TYPE(type) ((size_t)((char*)(((type*)0) + 1) - (char*)((type*)0)))
 
-#define SIZE_OF(elements) sizeof(elements) / sizeof(elements[0])
+#define SIZE_OF(elements) (sizeof(elements) / sizeof(elements[0]))
 #define MAX_INT           11
 #define UNUSED(x)         (void)(x)
 
@@ -143,6 +143,7 @@ void AddString(element_ty* data, int value)
     if (NULL == data->val)
     {
         printf("string realloc failed");
+        CleanupString(data);
         exit(1);
     }
     
