@@ -1,11 +1,7 @@
 #include <stdlib.h> /* malloc */
 #include <assert.h> /* assert */
 
-<<<<<<< Updated upstream
 #include "slist.h"
-=======
-#include "../include/linkedlist.h"
->>>>>>> Stashed changes
 
 
 #define SUCCESS     0
@@ -133,6 +129,7 @@ size_t SListCount(const slist_ty* slist_p)
 slist_iter_ty SListRemove( slist_iter_ty iter)
 {
     slist_node_ty* node_to_rm = NULL;
+    slist_ty* list = NULL;
     
     assert(NULL != iter);
     assert(NULL != IterNext(iter));
@@ -141,6 +138,12 @@ slist_iter_ty SListRemove( slist_iter_ty iter)
     IterSetData(iter, IterGetData(node_to_rm));
     IterSetNext(iter, IterNext(NODE_TO_ITER(node_to_rm)));
     free(node_to_rm);
+    
+    if (NULL == iter -> next)
+    {
+        list = iter -> data;
+        list -> tail = iter;
+    }
     
     return iter;
 }
