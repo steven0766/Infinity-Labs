@@ -96,5 +96,11 @@ slist_iter_ty SListFind(slist_iter_ty from, slist_iter_ty to,
 int SListForEach( slist_iter_ty from, slist_iter_ty to, 
 				  action_func_ty action,  void *param);
 
+/******************************************************************************
+* 	Appends "slist1" to "slist2", resulting in an empty "slist2".
+* 	Undefined behaviour if "slist1" or "slist2" are NULL.
+*   O(1)
+******************************************************************************/
+void SListAppend(slist_ty* slist1, slist_ty* slist2);
 
 #endif /* __SLIST_H__ */
