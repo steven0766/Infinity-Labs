@@ -17,10 +17,7 @@
 
 
 static int CountNodes(void* data, void*  cnt);
-<<<<<<< Updated upstream
 static void IterSetNext(slist_iter_ty iter, slist_node_ty* node);
-=======
->>>>>>> Stashed changes
 
 
 struct slist
@@ -53,10 +50,6 @@ slist_iter_ty SListBeginIter(slist_ty* slist_p)
 slist_iter_ty IterNext(slist_iter_ty iter)
 {
     assert(NULL != iter);
-<<<<<<< Updated upstream
-=======
-    assert(NULL != IterNext(iter));
->>>>>>> Stashed changes
     
     return iter -> next;
 }
@@ -72,10 +65,6 @@ int IterIsEqual(slist_iter_ty iter1, slist_iter_ty iter2)
 void* IterGetData(slist_iter_ty iter)
 {
     assert(NULL != iter);
-<<<<<<< Updated upstream
-=======
-    assert(NULL != IterNext(iter));
->>>>>>> Stashed changes
     
     return ITER_TO_NODE(iter) -> data;
 }
@@ -83,10 +72,6 @@ void* IterGetData(slist_iter_ty iter)
 void IterSetData(slist_iter_ty iter, void* data)
 {
     assert(NULL != iter);
-<<<<<<< Updated upstream
-=======
-    assert(NULL != IterNext(iter));
->>>>>>> Stashed changes
     
     ITER_TO_NODE(iter) -> data = data;
 }
@@ -123,22 +108,15 @@ void SListDestroy(slist_ty* slist_p)
     slist_iter_ty iter_save = slist_p -> head;
     
     assert(NULL != slist_p);
-    
-<<<<<<< Updated upstream
+
     while (iter != NODE_TO_ITER(slist_p -> tail))
-=======
-    while (iter)
->>>>>>> Stashed changes
     {
         iter_save = IterNext(iter);
         free(iter);
         iter = iter_save;
     }
-    
-<<<<<<< Updated upstream
+
     free(iter);
-=======
->>>>>>> Stashed changes
     free(slist_p);
 }
 
@@ -147,11 +125,7 @@ size_t SListCount(const slist_ty* slist_p)
     size_t cnt = 0;
     
     assert(NULL != slist_p); 
-<<<<<<< Updated upstream
     SListForEach(NODE_TO_ITER(slist_p -> head), NODE_TO_ITER(slist_p -> tail), CountNodes , &cnt);
-=======
-    SListForEach(slist_p -> head, slist_p -> tail, CountNodes , &cnt);
->>>>>>> Stashed changes
     
     return cnt;
 }
@@ -165,12 +139,7 @@ slist_iter_ty SListRemove( slist_iter_ty iter)
     
     node_to_rm = IterNext(iter);    
     IterSetData(iter, IterGetData(node_to_rm));
-<<<<<<< Updated upstream
     IterSetNext(iter, IterNext(NODE_TO_ITER(node_to_rm)));
-    /*iter -> next = IterNext(node_to_rm);   */ 
-=======
-    iter -> next = IterNext(node_to_rm);    
->>>>>>> Stashed changes
     free(node_to_rm);
     
     return iter;
@@ -191,15 +160,9 @@ slist_iter_ty SlistInsertBefore(slist_ty* slist_p,
     assert(NULL != where_iter);
     
     new_node -> next = IterNext(where_iter);
-<<<<<<< Updated upstream
     IterSetData(NODE_TO_ITER(new_node), IterGetData(where_iter));
     IterSetData(where_iter, new_data);
     IterSetNext(where_iter, new_node);
-=======
-    IterSetData(new_node, IterGetData(where_iter));
-    IterSetData(where_iter, new_data);
-    where_iter -> next = new_node;
->>>>>>> Stashed changes
     
     if (NULL == IterNext(NODE_TO_ITER(new_node)))
     {
@@ -209,15 +172,12 @@ slist_iter_ty SlistInsertBefore(slist_ty* slist_p,
     return where_iter;
 }
 
-<<<<<<< Updated upstream
 static void IterSetNext(slist_iter_ty iter, slist_node_ty* node)
 {
     assert(iter != NULL);
     ITER_TO_NODE(iter) -> next = node;
 }
 
-=======
->>>>>>> Stashed changes
 slist_iter_ty SListFind(slist_iter_ty from, 
                         slist_iter_ty to, 
 			match_func_ty is_match, void *param)

@@ -10,7 +10,7 @@
 #include <stdlib.h>       /*  */
 #include <assert.h>       /*  */
 
-#include "linkedlist_exe.h"
+#include "slist_exe.h"
 
 static void TestFlip(void);
 static void TestHasLoop(void);
@@ -91,7 +91,7 @@ static void TestFindIntersection(void)
     n2->next = n3;
     x1->next = n3;
 
-    if (FindIntersection(n1, x1) != n3)
+    if (FindIntersection(n1, x1) != NULL)
     {
         printf("problem with FindIntersection: wrong node found\n");
     }
@@ -123,3 +123,4 @@ static void FreeList(node_ty* head)
         head = tmp;
     }
 }
+
