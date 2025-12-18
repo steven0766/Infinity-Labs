@@ -1,5 +1,5 @@
 /***********************************************************************
-*File_name: vector_test.c
+*File_name: slist_test.c
 *Reviewer: rozaline
 *Version:  1.0
 *Date:	   12.12.25
