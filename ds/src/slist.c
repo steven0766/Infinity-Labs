@@ -222,6 +222,30 @@ int SListForEach( slist_iter_ty from,
     return SUCCESS;
 }
 
+void SListAppend(slist_ty* slist1, slist_ty* slist2)
+{
+    slist_node_ty* tail1 = slist1->tail;
+    slist_node_ty* head2 = slist2->head;
+
+    assert(NULL != slist1);
+    assert(NULL != slist2);
+
+    if (head2 == slist2->tail)
+    {
+        return;
+    }
+
+    tail1->data = head2->data;
+    tail1->next = head2->next;
+
+    slist1->tail = slist2->tail;
+
+    slist2->head = slist2->tail;
+    slist2->tail->data = slist2;
+    slist2->tail->next = NULL;
+
+}
+
 static int CountNodes(void* data, void*  cnt)
 {
     (void)data;
