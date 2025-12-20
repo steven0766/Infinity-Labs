@@ -240,8 +240,24 @@ static void TestSListAppend(void)
     slist_ty* list2 = SListCreate();
     int a = 1, b = 2, c = 3, d = 4, cnt = 0;
     
+    SListAppend(list1, list2);
+    
+    cnt = SListCount(list1);
+    
+    if (0 != cnt)
+    {
+        printf("2 empty lists somehow appended, %d", cnt);
+    }
+    
     SlistInsertBefore(list1, SListBeginIter(list1), &a);
     SlistInsertBefore(list1, SListBeginIter(list1), &b);
+    
+    cnt = SListCount(list1);
+    
+    if (2 != cnt)
+    {
+        printf("append count isn't right, %d", cnt);
+    }
     
     SlistInsertBefore(list2, SListBeginIter(list2), &c);
     SlistInsertBefore(list2, SListBeginIter(list2), &d);
@@ -261,6 +277,9 @@ static void TestSListAppend(void)
     {
         printf("second list isnt empty, %d", cnt);
     }
+    
+    SListDestroy(list1);
+    SListDestroy(list2);
 }
 
 static int MatchInt(void* data, void* param)

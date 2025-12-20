@@ -1,9 +1,9 @@
 #ifndef __QUEUE_H__
 #define __QUEUE_H__
 
+
 #include <stddef.h>     /* size_t */
 
-#include "slist.h"
 
 typedef struct queue queue_ty;
 
