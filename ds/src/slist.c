@@ -1,3 +1,10 @@
+/***********************************************************************
+*File_name: slist.c
+*Reviewer: rozaline
+*Version:  1.0
+*Date:	   12.12.25
+************************************************************************/
+
 #include <stdlib.h> /* malloc */
 #include <assert.h> /* assert */
 
@@ -220,6 +227,33 @@ int SListForEach( slist_iter_ty from,
     }
     
     return SUCCESS;
+}
+
+void SListAppend(slist_ty* slist1, slist_ty* slist2)
+{
+    slist_node_ty* tail1 = NULL;
+    slist_node_ty* head2 = NULL;
+
+    assert(NULL != slist1);
+    assert(NULL != slist2);
+
+    if (slist1 == slist2 || slist2->head == slist2->tail)
+    {
+        return;
+    }
+    
+    tail1 = slist1->tail;
+    head2 = slist2->head;
+
+    tail1->data = head2->data;
+    tail1->next = head2->next;
+    
+    slist1->tail = slist2->tail;
+    slist1->tail->data = slist1;
+    
+    slist2->tail = slist2->head;
+    slist2->tail->data = slist2;
+    slist2->tail->next = NULL;
 }
 
 static int CountNodes(void* data, void*  cnt)

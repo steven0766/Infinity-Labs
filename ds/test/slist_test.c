@@ -1,5 +1,5 @@
 /***********************************************************************
-*File_name: vector_test.c
+*File_name: slist_test.c
 *Reviewer: rozaline
 *Version:  1.0
 *Date:	   12.12.25
@@ -22,6 +22,7 @@ static void TestSListRemove(void);
 static void TestSlistInsertBefore(void);
 static void TestSListFind(void);
 static void TestSListForEach(void);
+static void TestSListAppend(void);
 
 static int MatchInt(void* data, void* param);
 static int AddToInt(void* data, void* param);
@@ -41,6 +42,7 @@ int main()
     TestSListRemove();
     TestSListFind();
     TestSListForEach();
+    TestSListAppend();
     
     return 0;
 }
@@ -230,6 +232,54 @@ static void TestSListForEach(void)
     }
 
     SListDestroy(list);
+}
+
+static void TestSListAppend(void)
+{
+    slist_ty* list1 = SListCreate();
+    slist_ty* list2 = SListCreate();
+    int a = 1, b = 2, c = 3, d = 4, cnt = 0;
+    
+    SListAppend(list1, list2);
+    
+    cnt = SListCount(list1);
+    
+    if (0 != cnt)
+    {
+        printf("2 empty lists somehow appended, %d", cnt);
+    }
+    
+    SlistInsertBefore(list1, SListBeginIter(list1), &a);
+    SlistInsertBefore(list1, SListBeginIter(list1), &b);
+    
+    cnt = SListCount(list1);
+    
+    if (2 != cnt)
+    {
+        printf("append count isn't right, %d", cnt);
+    }
+    
+    SlistInsertBefore(list2, SListBeginIter(list2), &c);
+    SlistInsertBefore(list2, SListBeginIter(list2), &d);
+    
+    SListAppend(list1, list2);
+    
+    cnt = SListCount(list1);
+    
+    if (4 != cnt)
+    {
+        printf("append count isn't right, %d", cnt);
+    }
+    
+    cnt = SListCount(list2);
+    
+    if (0 != cnt)
+    {
+        printf("second list isnt empty, %d", cnt);
+    }
+    
+    SListDestroy(list1);
+    SListDestroy(list2);
 }
 
 static int MatchInt(void* data, void* param)
