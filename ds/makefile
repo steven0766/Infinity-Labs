@@ -30,3 +30,4 @@ fooer.out: $(objects_release)
 	
 clean:
 	rm -f *.o *.out
+	
