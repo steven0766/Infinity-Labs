@@ -26,7 +26,8 @@ fooer.out: $(objects_release)
 	$(GC) $(objects_release) -o $@
 	
 %.release.o: %.c $(headers)
-	$(GD) -c $< -o $@
+	$(GC) -c $< -o $@
 	
 clean:
 	rm -f *.o *.out
+	
