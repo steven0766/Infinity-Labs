@@ -1,70 +1,70 @@
 /***********************************************************************
-*File_name: queue.c
-*Reviewer: 
+*File_name: buf_test.c
+*Reviewer: Itay
 *Version:  1.0
-*Date:	   12.12.25
+*Date:	   22.12.25
 ************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h> /* printf */
+#include <string.h>/* strncmp, memset */
 
-#include "buffer.h"
+#include "buf.h"
 
 
 #define BUFFERSIZE          10
 
 
-static void TestCircularBufferCreate();
-static void TestCircularBufferWriteAndRead();
+static void TestBufCreate();
+static void TestBufWriteAndRead();
 
 static void PrintError(char* func, char* error);
 
 
 int main()
 {
-    TestCircularBufferCreate();
-    TestCircularBufferWriteAndRead();
+    TestBufCreate();
+    TestBufWriteAndRead();
     
     return 0;
 }
 
-static void TestCircularBufferCreate()
+static void TestBufCreate()
 {
-    buffer_ty* buffer = CircularBufferCreate(BUFFERSIZE);
+    buf_ty* buffer = BufCreate(BUFFERSIZE);
     
     if (NULL == buffer)
     {
-        PrintError("TestCircularBufferCreate", "NULL");
+        PrintError("TestBufCreate", "NULL");
     }
     
-    if (BUFFERSIZE != CircularBufferCapacity(buffer))
+    if (BUFFERSIZE != BufCap(buffer))
     {
-        PrintError("TestCircularBufferCreate", "capacity");
+        PrintError("TestBufCreate", "capacity");
     }
     
-    if (1 != CircularBufferIsEmpty(buffer))
+    if (1 != BufIsEmpty(buffer))
     {
-        PrintError("TestCircularBufferCreate", "isempty");
+        PrintError("TestBufCreate", "isempty");
     }
     
-    CircularBufferDestroy(buffer);
+    BufDestroy(buffer);
 }
 
-static void TestCircularBufferWriteAndRead()
+static void TestBufWriteAndRead()
 {
-    buffer_ty* buffer = CircularBufferCreate(BUFFERSIZE);
+    buf_ty* buffer = BufCreate(BUFFERSIZE);
     char read_buf[BUFFERSIZE + 1] = {0};
     size_t ret = 0;
 
     /* write full buffer */
-    ret = CircularBufferWrite(buffer, 10, "ABCDEFGHIJ");
+    ret = BufWrite(buffer, 10, "ABCDEFGHIJ");
     if (ret != 10)
     {
         PrintError("WriteFull", "expected 10");
     }
 
     /* read part */
-    ret = CircularBufferRead(buffer, 7, read_buf);
+    ret = BufRead(buffer, 7, read_buf);
     if (ret != 7 || strncmp(read_buf, "ABCDEFG", 7) != 0)
     {
         PrintError("ReadPartial", "wrong data");
@@ -72,14 +72,14 @@ static void TestCircularBufferWriteAndRead()
 
     /* write causing wrap-around */
     memset(read_buf, 0, sizeof(read_buf));
-    ret = CircularBufferWrite(buffer, 4, "1234");
+    ret = BufWrite(buffer, 4, "1234");
     if (ret != 4)
     {
         PrintError("WrapWrite1", "expected 4");
     }
 
     /* write more than available space */
-    ret = CircularBufferWrite(buffer, 5, "XXXXX");
+    ret = BufWrite(buffer, 5, "XXXXX");
     if (ret != 3)
     {
         PrintError("WriteOverflow", "expected partial write");
@@ -87,18 +87,18 @@ static void TestCircularBufferWriteAndRead()
 
     /* read everything */
     memset(read_buf, 0, sizeof(read_buf));
-    ret = CircularBufferRead(buffer, BUFFERSIZE, read_buf);
+    ret = BufRead(buffer, BUFFERSIZE, read_buf);
     if (ret != 10 || strncmp(read_buf, "HIJ1234XXX", 10) != 0)
     {
         PrintError("FinalRead", "wrong data after wrap");
     }
 
-    if (!CircularBufferIsEmpty(buffer))
+    if (!BufIsEmpty(buffer))
     {
         PrintError("IsEmpty", "buffer should be empty");
     }
 
-    CircularBufferDestroy(buffer);
+    BufDestroy(buffer);
 }
 
 
