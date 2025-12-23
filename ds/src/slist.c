@@ -1,7 +1,14 @@
+/***********************************************************************
+*File_name: slist.c
+*Reviewer: rozaline
+*Version:  1.0
+*Date:	   12.12.25
+************************************************************************/
+
 #include <stdlib.h> /* malloc */
 #include <assert.h> /* assert */
 
-#include "../include/linkedlist.h"
+#include "slist.h"
 
 
 #define SUCCESS     0
@@ -13,6 +20,7 @@
 
 
 static int CountNodes(void* data, void*  cnt);
+static void IterSetNext(slist_iter_ty iter, slist_node_ty* node);
 
 
 struct slist
@@ -45,7 +53,6 @@ slist_iter_ty SListBeginIter(slist_ty* slist_p)
 slist_iter_ty IterNext(slist_iter_ty iter)
 {
     assert(NULL != iter);
-    assert(NULL != iter -> next);
     
     return iter -> next;
 }
@@ -61,7 +68,6 @@ int IterIsEqual(slist_iter_ty iter1, slist_iter_ty iter2)
 void* IterGetData(slist_iter_ty iter)
 {
     assert(NULL != iter);
-    assert(IterNext(iter) != NULL);
     
     return ITER_TO_NODE(iter) -> data;
 }
@@ -69,7 +75,6 @@ void* IterGetData(slist_iter_ty iter)
 void IterSetData(slist_iter_ty iter, void* data)
 {
     assert(NULL != iter);
-    assert(IterNext(iter) != NULL);
     
     ITER_TO_NODE(iter) -> data = data;
 }
@@ -103,17 +108,18 @@ slist_ty* SListCreate(void)
 void SListDestroy(slist_ty* slist_p)
 {
     slist_iter_ty iter = slist_p -> head;
-    slist_iter_ty iter_save = NULL;
+    slist_iter_ty iter_save = slist_p -> head;
     
     assert(NULL != slist_p);
-    
-    while (iter)
+
+    while (iter != NODE_TO_ITER(slist_p -> tail))
     {
         iter_save = IterNext(iter);
         free(iter);
         iter = iter_save;
     }
-    
+
+    free(iter);
     free(slist_p);
 }
 
@@ -122,7 +128,7 @@ size_t SListCount(const slist_ty* slist_p)
     size_t cnt = 0;
     
     assert(NULL != slist_p); 
-    SListForEach(slist_p -> head, slist_p -> tail, CountNodes , &cnt);
+    SListForEach(NODE_TO_ITER(slist_p -> head), NODE_TO_ITER(slist_p -> tail), CountNodes , &cnt);
     
     return cnt;
 }
@@ -130,14 +136,21 @@ size_t SListCount(const slist_ty* slist_p)
 slist_iter_ty SListRemove( slist_iter_ty iter)
 {
     slist_node_ty* node_to_rm = NULL;
+    slist_ty* list = NULL;
     
     assert(NULL != iter);
     assert(NULL != IterNext(iter));
     
     node_to_rm = IterNext(iter);    
     IterSetData(iter, IterGetData(node_to_rm));
-    iter -> next = IterNext(node_to_rm);    
+    IterSetNext(iter, IterNext(NODE_TO_ITER(node_to_rm)));
     free(node_to_rm);
+    
+    if (NULL == iter -> next)
+    {
+        list = iter -> data;
+        list -> tail = iter;
+    }
     
     return iter;
 }
@@ -148,18 +161,18 @@ slist_iter_ty SlistInsertBefore(slist_ty* slist_p,
 {
     slist_node_ty* new_node = (slist_node_ty*)malloc(sizeof(slist_node_ty));
     
-    assert(NULL != slist_p);
-    assert(NULL != IterGetData(where_iter));
-    
     if (NULL == new_node)
     {
         return SListEndIter(slist_p);
     }
     
+    assert(NULL != slist_p);
+    assert(NULL != where_iter);
+    
     new_node -> next = IterNext(where_iter);
-    IterSetData(new_node, IterGetData(where_iter));
+    IterSetData(NODE_TO_ITER(new_node), IterGetData(where_iter));
     IterSetData(where_iter, new_data);
-    where_iter -> next = new_node;
+    IterSetNext(where_iter, new_node);
     
     if (NULL == IterNext(NODE_TO_ITER(new_node)))
     {
@@ -167,6 +180,12 @@ slist_iter_ty SlistInsertBefore(slist_ty* slist_p,
     }
     
     return where_iter;
+}
+
+static void IterSetNext(slist_iter_ty iter, slist_node_ty* node)
+{
+    assert(iter != NULL);
+    ITER_TO_NODE(iter) -> next = node;
 }
 
 slist_iter_ty SListFind(slist_iter_ty from, 
@@ -208,6 +227,33 @@ int SListForEach( slist_iter_ty from,
     }
     
     return SUCCESS;
+}
+
+void SListAppend(slist_ty* slist1, slist_ty* slist2)
+{
+    slist_node_ty* tail1 = NULL;
+    slist_node_ty* head2 = NULL;
+
+    assert(NULL != slist1);
+    assert(NULL != slist2);
+
+    if (slist1 == slist2 || slist2->head == slist2->tail)
+    {
+        return;
+    }
+    
+    tail1 = slist1->tail;
+    head2 = slist2->head;
+
+    tail1->data = head2->data;
+    tail1->next = head2->next;
+    
+    slist1->tail = slist2->tail;
+    slist1->tail->data = slist1;
+    
+    slist2->tail = slist2->head;
+    slist2->tail->data = slist2;
+    slist2->tail->next = NULL;
 }
 
 static int CountNodes(void* data, void*  cnt)

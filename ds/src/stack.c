@@ -16,21 +16,17 @@
 
 struct stack_s
 {
+    size_t element_size;
     char* end;
     char* head;
-    size_t element_size;
     char start[1];
 };
 
 
 stack_ty* StackCreate(size_t capacity, size_t ele_size)
 {
-    stack_ty* stk = (stack_ty*)malloc(sizeof(stack_ty) + capacity * ele_size - sizeof(char));
-    
-    if (NULL == stk)
-    {
-        return NULL;
-    }
+    stack_ty* stk = (stack_ty*)malloc(sizeof(offsetof(stack_ty, start)) + capacity * ele_size);
+    assert(stk);
     stk -> element_size = ele_size;
     stk -> end = stk -> start + capacity * ele_size;
     stk -> head = stk -> start;

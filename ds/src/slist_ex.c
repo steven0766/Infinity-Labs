@@ -1,4 +1,12 @@
-#include "../include/linkedlist_exe.h"
+/***********************************************************************
+*File_name: linkedlist_exe.c
+*Reviewer: rozaline
+*Version:  1.0
+*Date:	   16.12.25
+************************************************************************/
+
+
+#include "slist_exe.h"
 
 #include <stddef.h> /* NULL */
 #include <assert.h> /* assert */
@@ -58,3 +66,4 @@ node_ty* FindIntersection(node_ty* head_1, node_ty* head_2)
     
     return node_1;
 }
+
