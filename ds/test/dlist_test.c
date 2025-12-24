@@ -179,6 +179,10 @@ static void TestFindAndSlice(void)
     {
         Print("TestDListPushAndPop", "didn't find it");
     }
+    
+    DListDestroy(dlist1);
+    DListDestroy(dlist2);
+    DListDestroy(dlist3);
 }
 
 
