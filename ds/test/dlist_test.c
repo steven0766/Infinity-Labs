@@ -13,7 +13,7 @@
 
 static void TestDListCreateAndDestroy(void);
 static void TestDListPushAndPop(void);
-static void TestFineAndSlice(void);
+static void TestFindAndSlice(void);
 
 static void Print(char* func, char* problem);
 static void PrintList(dlist_ty* list);
@@ -24,7 +24,7 @@ int main()
 {
     TestDListCreateAndDestroy();
     TestDListPushAndPop();
-    TestFineAndSlice();
+    TestFindAndSlice();
     
     return 0;
 }
@@ -119,7 +119,7 @@ static void TestDListPushAndPop(void)
     DListDestroy(dlist);
 }
 
-static void TestFineAndSlice(void)
+static void TestFindAndSlice(void)
 {
     int a = 1, b = 2, c = 3, d = 4, e = 5;
     dlist_iter_ty where = NULL;
@@ -155,7 +155,7 @@ static void TestFineAndSlice(void)
     /* list1 -> H-1-2-1-2-3-4-5-T */
     DListSplice(from, to, where);
     
-    if (8 != DListCount(dlist1))
+    if (7 != DListCount(dlist1))
     {
         Print("TestDListPushAndPop", "wrong count");
         PrintList(dlist1);
