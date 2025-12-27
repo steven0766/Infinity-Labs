@@ -1,8 +1,8 @@
 /***********************************************************************
-*File_name: dlist.c
-*Reviewer: 
+*File_name: sorted_list.c
+*Reviewer: Itay
 *Version:  1.0
-*Date:	   23.12.25
+*Date:	   27.12.25
 ************************************************************************/
 
 #include <stdlib.h>     /* malloc, free */
