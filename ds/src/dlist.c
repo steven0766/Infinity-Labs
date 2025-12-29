@@ -52,7 +52,10 @@ void DListDestroy(dlist_ty* dlist)
     dlist_iter_ty iter1 = NULL;
     dlist_iter_ty iter2 = NULL;
     
-    assert(NULL != dlist);
+    if (NULL == dlist)
+    {
+        return;
+    }
     
     iter1 = DListBeginIter(dlist);
     iter2 = DListEndIter(dlist);
@@ -87,7 +90,6 @@ dlist_iter_ty DListInsertBefore(dlist_ty* dlist,
                                 dlist_iter_ty where, 
     			        void* new_data)
 {
-    dlist_node_ty* prev_node = NULL;
     dlist_node_ty* new_node = NULL;
     dlist_node_ty* where_node = NULL;
     
@@ -101,15 +103,15 @@ dlist_iter_ty DListInsertBefore(dlist_ty* dlist,
         return DListEndIter(dlist);
     }
     
-    prev_node = IterToNode(DListIterPrev(where));
     where_node = IterToNode(where);
-    
-    prev_node->next = new_node;
-    where_node->prev = new_node;
+
     new_node->data = new_data;
+    new_node->prev = where_node->prev;
     new_node->next = where_node;
-    new_node->prev = prev_node;
-    
+
+    where_node->prev->next = new_node;
+    where_node->prev = new_node;
+
     return NodeToIter(new_node);
 }
 
@@ -122,7 +124,7 @@ dlist_iter_ty DListPushFront(dlist_ty* dlist, void* data)
 void DListPopFront(dlist_ty* dlist)
 {
     assert(NULL != dlist);
-    assert(DListIsEmpty(dlist));
+    assert(!DListIsEmpty(dlist));
     DListRemove(DListBeginIter(dlist));
 }
 
@@ -135,27 +137,26 @@ dlist_iter_ty DListPushBack(dlist_ty* dlist, void* data)
 void DListPopBack(dlist_ty* dlist)
 {
     assert(NULL != dlist);
-    assert(DListIsEmpty(dlist));
+    assert(!DListIsEmpty(dlist));
     DListRemove(DListIterPrev(DListEndIter(dlist)));
 }
 
 dlist_iter_ty DListRemove(dlist_iter_ty iter)
 {
-    dlist_iter_ty prev_iter = NULL;
-    dlist_iter_ty next_iter = NULL;
-    
-    assert(iter);
-    
-    prev_iter = DListIterPrev(iter);
-    next_iter = DListIterNext(iter);
-    
-    prev_iter->next = next_iter;
-    next_iter->prev = prev_iter;
-    
-    free(iter);
-    iter = NULL;
-    
-    return next_iter;
+    dlist_node_ty* node = NULL;
+    dlist_node_ty* next = NULL;
+
+    assert(NULL != iter);
+
+    node = IterToNode(iter);
+    next = node->next;
+
+    node->prev->next = next;
+    next->prev = node->prev;
+
+    free(node);
+
+    return NodeToIter(next);
 }
 
 void* DListIterGetData(const dlist_iter_ty iter)
@@ -207,15 +208,18 @@ dlist_iter_ty DListIterPrev(const dlist_iter_ty iter)
 int DListForEach(dlist_iter_ty from, dlist_iter_ty to, 
     				  action_func_ty action,  void *param)
 {
+    int status = 0;
+    
     assert(NULL != from);
     assert(NULL != to);
     assert(NULL != action);
     
     while (from != to)
     {
-        if (0 != action(DListIterGetData(from), param))
+        status = action(DListIterGetData(from), param);
+        if (0 != status)
         {
-            return 1;
+            return status;
         }
         
         from = DListIterNext(from);
@@ -234,63 +238,58 @@ int DListIterIsEqual(const dlist_iter_ty iter1, const dlist_iter_ty iter2)
     
     node1 = IterToNode(iter1);
     node2 = IterToNode(iter2);
-    return (node1 == node2) ? 0 : 1;
+    return (node1 == node2) ? 1 : 0;
 }
 /**********************************************/
 dlist_iter_ty DListFind(const dlist_iter_ty from, const dlist_iter_ty to, 
     			    is_match_func_ty is_match, void *param)
 {
-    dlist_node_ty* node_from = NULL;
-    dlist_node_ty* node_to = NULL;
-    
+    dlist_iter_ty iter = NULL;
+
     assert(NULL != from);
     assert(NULL != to);
     assert(NULL != is_match);
-    
-    node_from = IterToNode(from);
-    node_to = IterToNode(to);
-    
-    while (node_from != node_to)
+
+    iter = from;
+    while (!DListIterIsEqual(iter, to))
     {
-        if (0 == is_match(DListIterGetData(from), param))
+        if (0 == is_match(DListIterGetData(iter), param))
         {
-            break;
+            return iter;
         }
-        
-        node_from = DListIterNext(node_from);
+
+        iter = DListIterNext(iter);
     }
-    
-    return NodeToIter(node_from);
+
+    return to;
 }
 
 int DListMultiFind(const dlist_iter_ty from, const dlist_iter_ty to, 
     					dlist_ty* dest,
     					is_match_func_ty is_match, void* param)
 {
-    dlist_node_ty* node_from = NULL;
-    dlist_node_ty* node_to = NULL;
-    
+    dlist_iter_ty iter = NULL;
+
     assert(NULL != from);
     assert(NULL != to);
     assert(NULL != dest);
     assert(NULL != is_match);
 
-    node_from = IterToNode(from);
-    node_to = IterToNode(to);
-    
-    while (node_from != node_to)
+    iter = from;
+    while (!DListIterIsEqual(iter, to))
     {
-        if (0 == is_match(DListIterGetData(node_from), param))
+        if (0 == is_match(DListIterGetData(iter), param))
         {
-            if (NULL == DListPushBack(dest, DListIterGetData(node_from)))
+            if (DListEndIter(dest) ==
+                DListPushBack(dest, DListIterGetData(iter)))
             {
                 return 1;
             }
         }
-        
-        node_from = DListIterNext(node_from);
+
+        iter = DListIterNext(iter);
     }
-    
+
     return 0;
 }
 
@@ -310,10 +309,12 @@ void DListSplice(dlist_iter_ty from, dlist_iter_ty to, dlist_iter_ty where)
     
     node_from->prev->next = node_to->next;
     node_to->next->prev = node_from->prev;
-    where->prev->next = node_from;
-    from->prev = node_where->prev;
-    node_where->prev = node_to;
+
+    node_from->prev = node_where->prev;
     node_to->next = node_where;
+
+    node_where->prev->next = node_from;
+    node_where->prev = node_to;
 }
 
 
