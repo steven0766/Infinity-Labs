@@ -1,6 +1,6 @@
 /***********************************************************************
 *File_name: sorted_list.c
-*Reviewer: Itay
+*Reviewer: Rozalin
 *Version:  1.0
 *Date:	   27.12.25
 ************************************************************************/
@@ -10,9 +10,14 @@
 
 #include "sorted_list.h"
 
+/* convert sorted_list_iter to double_list_iter */
 static dlist_iter_ty SIterToDIter(sorted_list_iter_ty s_iter);
+/* convert double_list_iter to sorted_list_iter */
 static sorted_list_iter_ty DIterToSIter(dlist_iter_ty iter, const dlist_ty* list);
+/* get double_list from sorted_iter */
 static dlist_ty* SIterToDList(sorted_list_iter_ty s_iter);
+
+#define NULL_ITER                   {0}
 
 struct sorted_list
 {
@@ -60,18 +65,20 @@ void SortedListDestroy(sorted_list_ty* sorted_lst)
 
 size_t SortedListCount(const sorted_list_ty* sorted_lst)
 {
+    assert(NULL != sorted_lst);
     return DListCount(sorted_lst->list);
 }
 
 int SortedListIsEmpty(const sorted_list_ty* sorted_lst)
 {
+    assert(NULL != sorted_lst);
     return DListIsEmpty(sorted_lst->list);
 }
 
 sorted_list_iter_ty SortedListInsert(sorted_list_ty* lst, void* new_data)
 {
-    sorted_list_iter_ty iter = {0};
-    sorted_list_iter_ty tail = {0};
+    sorted_list_iter_ty iter = NULL_ITER;
+    sorted_list_iter_ty tail = NULL_ITER;
     dlist_iter_ty result = NULL;
     
     assert(NULL != lst);
@@ -108,24 +115,54 @@ sorted_list_iter_ty SortedListRemove(sorted_list_iter_ty iter)
 
 void* SortedListIterGetData(sorted_list_iter_ty iter)
 {
-    dlist_iter_ty data = NULL;
+    dlist_iter_ty d_iter = NULL;
     
     assert(NULL != SIterToDIter(iter));
     
-    data = SIterToDIter(iter);
-    return DListIterGetData(data);
+    d_iter = SIterToDIter(iter);
+    return DListIterGetData(d_iter);
 }
 
 void SortedListIterSetData( sorted_list_ty* lst,
                             sorted_list_iter_ty iter,
                             void* new_data              )
 {
+    dlist_iter_ty d_iter = NULL;
+    sorted_list_iter_ty where = NULL_ITER;
+    sorted_list_iter_ty to = NULL_ITER;
     assert(NULL != lst);
     assert(NULL != SIterToDIter(iter));
-
+    
+    d_iter = SIterToDIter(iter);
+    
+    DListIterSetData(d_iter, new_data);
+    
+    where = SortedListBeginIter(lst);
+    to = SortedListEndIter(lst);
+        
+    while (!SortedListIterIsEqual(where, to))
+    {
+        if (0 > lst->cmp(SortedListIterGetData(iter),
+                  SortedListIterGetData(where), 
+                  lst->param))
+        {
+            break;
+        }
+            
+        where = SortedListIterNext(where);
+    }
+    
+    if (!SortedListIterIsEqual(where, iter))
+    {
+       DListSplice(d_iter,
+                   DListIterNext(d_iter),
+                   SIterToDIter(where));
+    }
+    /*
     SortedListRemove(iter);
 
     SortedListInsert(lst, new_data);
+    */
 }
 
 sorted_list_iter_ty SortedListEndIter(const sorted_list_ty* lst)
@@ -209,8 +246,8 @@ int SortedListForEach( sorted_list_iter_ty from, sorted_list_iter_ty to,
 
 sorted_list_iter_ty SortedListFind(sorted_list_ty* lst, void* data)
 {
-    sorted_list_iter_ty iter = {0};
-    sorted_list_iter_ty end_iter = {0};
+    sorted_list_iter_ty iter = NULL_ITER;
+    sorted_list_iter_ty end_iter = NULL_ITER;
     int cmp_result = 0;
     
     assert(NULL != lst);
@@ -328,7 +365,7 @@ static dlist_iter_ty SIterToDIter(sorted_list_iter_ty s_iter)
 static sorted_list_iter_ty DIterToSIter(dlist_iter_ty iter, 
                                         const dlist_ty* list)
 {
-    sorted_list_iter_ty s_iter = {0};
+    sorted_list_iter_ty s_iter = NULL_ITER;
     s_iter.iter = iter;
     s_iter.list = (dlist_ty*)list;
     
