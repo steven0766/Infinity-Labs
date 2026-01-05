@@ -158,11 +158,6 @@ void SortedListIterSetData( sorted_list_ty* lst,
                    DListIterNext(d_iter),
                    SIterToDIter(where));
     }
-    /*
-    SortedListRemove(iter);
-
-    SortedListInsert(lst, new_data);
-    */
 }
 
 sorted_list_iter_ty SortedListEndIter(const sorted_list_ty* lst)
@@ -352,9 +347,6 @@ void SortedListMerge(sorted_list_ty* dest, sorted_list_ty* src)
         }
     }
 }
-
-
-
 
 #ifndef NDEBUG
 static dlist_iter_ty SIterToDIter(sorted_list_iter_ty s_iter)
