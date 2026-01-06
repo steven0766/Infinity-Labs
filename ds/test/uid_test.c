@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h>     /* printf */
 
 #include "uid.h"
 
@@ -12,7 +12,7 @@ int main()
     printf("counter: %ld\n", id1.counter);
     printf("pid: %d\n", id1.pid);
     printf("ip: %s\n", id1.ip);
-    printf("_________________\n");
+    printf("____________________\n");
     printf("id2:\n");
     printf("time: %ld\n", id2.time);
     printf("counter: %ld\n", id2.counter);
