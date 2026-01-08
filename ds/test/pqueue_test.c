@@ -7,7 +7,7 @@
 
 #include <stdio.h> /* printf */
 
-#include "priority_queue.h"
+#include "pqueue.h"
 
 static void PQCreateTest(void);
 static void PQEnqueueAndDequeue(void);

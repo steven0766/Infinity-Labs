@@ -9,11 +9,11 @@ typedef enum status
     FAIL = 1
 } status_ty;
 
-typedef enum bool
+typedef enum pq_bool
 {
-    FALSE = 0,
-    TRUE = 1
-} bool_ty;
+    PQ_FALSE = 0,
+    PQ_TRUE = 1
+} pq_bool_ty;
 
 /****************************************************************************** 
 *   Function compares "data1" and "data2", any other parameter may be
@@ -74,7 +74,7 @@ size_t PQCount(const pq_ty* q);
 * 		"q" is NULL
 * 	O(1)
 ******************************************************************************/
-bool_ty PQIsEmpty(const pq_ty* q);
+pq_bool_ty PQIsEmpty(const pq_ty* q);
 
 /****************************************************************************** 
 * 	Description:
