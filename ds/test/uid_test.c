@@ -26,5 +26,11 @@ int main()
     printf("pid: %d\n", id2.pid);
     printf("ip: %s\n", id2.ip);
     
+    printf("IsMatchId(id1, id1) = %d, expected 1\n",
+            IsMatchId(id1, id1));
+
+    printf("IsMatchId(id1, id2) = %d, expected 0\n",
+            IsMatchId(id1, id2));
+    
     return 0;
 }

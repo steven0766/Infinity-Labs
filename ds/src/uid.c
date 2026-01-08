@@ -15,11 +15,9 @@
 
 #include "uid.h"
 
-int gethostname(char* name, size_t len);
-
 static void SetIP(char* ip_buffer);
 
-const uid_ty g_invalid_uid = {0};
+const uid_ty invalid_uid_g = {0};
 
 uid_ty UidCreate(void)
 {
@@ -29,9 +27,9 @@ uid_ty UidCreate(void)
 
 	uid.time = time(NULL);
 	
-	if (-1 == uid.time)
+	if ((time_t)-1 == uid.time)
 	{
-	    return g_invalid_uid;
+	    return invalid_uid_g;
 	}
 
 	++counter;
@@ -42,7 +40,7 @@ uid_ty UidCreate(void)
 	
 	if (0 == strcmp(uid.ip, ""))
 	{
-	    return g_invalid_uid;
+	    return invalid_uid_g;
 	}
 
 	return uid;
@@ -50,18 +48,18 @@ uid_ty UidCreate(void)
 
 int IsMatchId(uid_ty id_1, uid_ty id_2)
 {
-    return id_1.time == id_2.time &&
+    return (difftime(id_1.time, id_2.time) == 0 &&
 	   id_1.counter == id_2.counter &&
-	   id_1.pid == id_2.pid;
+	   id_1.pid == id_2.pid &&
+           strcmp(id_1.ip, id_2.ip) == 0);
 }
 
 static void SetIP(char* ip_buffer)
 {
     struct ifaddrs *ifap, *ifa;
     struct sockaddr_in *sa;
-    char *addr;
-    int status_getadd = 0;
-    status_getadd = getifaddrs(&ifap);
+    char *addr = NULL;
+    int status_getadd = getifaddrs(&ifap);
     
     if (status_getadd)
     {
@@ -84,4 +82,5 @@ static void SetIP(char* ip_buffer)
     }
     
     freeifaddrs(ifap);
+    ifap = NULL;
 }

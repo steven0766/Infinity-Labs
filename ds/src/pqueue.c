@@ -1,8 +1,15 @@
-#include <stdlib.h>
-#include <assert.h>
+/***********************************************************************
+*File_name: uid.c
+*Reviewer: itay
+*Version:  1.0
+*Date:	   6.1.26
+************************************************************************/
+
+#include <stdlib.h>   /* malloc, free */
+#include <assert.h>   /* assert       */
 
 #include "sorted_list.h"
-#include "priority_queue.h"
+#include "pqueue.h"
 
 struct pq
 {
@@ -15,7 +22,7 @@ pq_ty* PQCreate(pq_cmp_ty cmp, void* param)
     
     assert(NULL != cmp);
     
-    p_q = (pq_ty*)malloc(sizeof(pq_ty));
+    p_q = (pq_ty*)malloc(sizeof(pq_ty) * sizeof(char));
     
     if (NULL == p_q)
     {
@@ -24,9 +31,10 @@ pq_ty* PQCreate(pq_cmp_ty cmp, void* param)
     
     p_q->lst = SortedListCreate(cmp, param);
     
-    if (NULL == p_q)
+    if (NULL == p_q->lst)
     {
         free(p_q);
+        p_q = NULL;
         return NULL;
     }
     
@@ -52,7 +60,7 @@ size_t PQCount(const pq_ty* q)
     return SortedListCount(q->lst);
 }
 
-bool_ty PQIsEmpty(const pq_ty* q)
+pq_bool_ty PQIsEmpty(const pq_ty* q)
 {
     assert(NULL != q);
     
@@ -61,10 +69,12 @@ bool_ty PQIsEmpty(const pq_ty* q)
 
 status_ty PQEnqueue(pq_ty* q, void* data)
 {
+    sorted_list_iter_ty result = {0};
+    
     assert(NULL != q);
     
-    sorted_list_iter_ty result = SortedListInsert(q->lst, data);
-    return (SortedListIterIsEqual(SortedListEndIter(q->lst), result)) ? SUCCESS : FAIL;
+    result = SortedListInsert(q->lst, data);
+    return (!SortedListIterIsEqual(SortedListEndIter(q->lst), result)) ? SUCCESS : FAIL;
 }
 
 void* PQDequeue(pq_ty* q)
@@ -89,17 +99,28 @@ void* PQRemove(pq_ty* q, pq_is_match_ty is_match, void* param)
     assert(!PQIsEmpty(q));
     assert(NULL != is_match);
     
-    SortedListRemove(iter);
-    
     iter = SortedListFindIf(SortedListBeginIter(q->lst),
                                                 SortedListEndIter(q->lst), 
 					        is_match, param            );
+    if (SortedListIterIsEqual(iter, SortedListEndIter(q->lst)))
+    {
+        return NULL;
+    }
+    
     data = SortedListIterGetData(iter);
+    SortedListRemove(iter);
     
     return data;
 }
 
 void* PQPeek(const pq_ty* q)
 {
+    assert(NULL != q);
+    
+    if (PQIsEmpty(q))
+    {
+        return NULL;
+    }
+    
     return SortedListIterGetData(SortedListBeginIter(q->lst));
 }
