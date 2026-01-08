@@ -1,10 +1,17 @@
-#include <time.h> /* time, difftime, time_t */
-#include <unistd.h> /* getpid */
-#include <arpa/inet.h> /* inet_ntoa */
-#include <ifaddrs.h> /* struct ifaddrs, getifaddrs, freeifaddrs */
-#include <string.h> /* strcpy, strcmp */
-#include <linux/if.h> /* IFF_LOOPBACK */
-#include <sys/types.h> /* size_t, pid_t */
+/***********************************************************************
+*File_name: uid.c
+*Reviewer: itay
+*Version:  1.0
+*Date:	   6.1.26
+************************************************************************/
+
+#include <time.h>       /* time, difftime, time_t */
+#include <unistd.h>     /* getpid */
+#include <arpa/inet.h>  /* inet_ntoa */
+#include <ifaddrs.h>    /* struct ifaddrs, getifaddrs, freeifaddrs */
+#include <string.h>     /* strcpy, strcmp */
+#include <linux/if.h>   /* IFF_LOOPBACK */
+#include <sys/types.h>  /* size_t, pid_t */
 
 #include "uid.h"
 
@@ -28,9 +35,7 @@ uid_ty UidCreate(void)
 	}
 
 	++counter;
-	/*uid_ty.counter = counter*/
 	uid.counter = counter;
-	/*uid_ty.pid = current_pid*/
 	uid.pid = getpid();
 
 	SetIP(uid.ip);
