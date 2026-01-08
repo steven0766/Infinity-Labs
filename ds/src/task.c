@@ -34,14 +34,11 @@ task_ty* TaskCreate( task_op_ty op, void* op_param,
     assert(NULL != cl);
     
     task = (task_ty*)malloc(sizeof(task_ty) * sizeof(char));
-    
     if (NULL == task)
     {
         return NULL;
     }
-    
     cur_time = time(NULL);
-    
     if ((time_t)(-1) == cur_time)
     {
         free(task);
@@ -49,9 +46,7 @@ task_ty* TaskCreate( task_op_ty op, void* op_param,
         
         return NULL;
     }
-
     task->uid = UidCreate();
-    
     if (IsMatchId(task->uid, invalid_uid_g))
     {
         free(task);
@@ -59,7 +54,6 @@ task_ty* TaskCreate( task_op_ty op, void* op_param,
         
         return NULL;
     }
-    
     task->op = op;
     task->op_param = op_param;
     task->cl = cl;
@@ -84,21 +78,19 @@ void TaskDestroy(task_ty* tsk)
 uid_ty TaskGetUID(const task_ty* tsk)
 {
     assert(NULL != tsk);
-    return tsk->uid;
+    return (tsk->uid);
 }
-
 
 op_status_ty TaskExecute(task_ty* tsk)
 {
     assert(NULL != tsk);
-    return tsk->op(tsk->op_param);
+    return (tsk->op(tsk->op_param));
 }
-
 
 time_t TaskGetTimeToRun(const task_ty* tsk)
 {
     assert(NULL != tsk);
-    return tsk->time_to_run;
+    return (tsk->time_to_run);
 }
 
 void TaskUpdateTimeToRun(task_ty* tsk)
@@ -111,5 +103,5 @@ bool_ty TaskIsMatch(const task_ty* tsk1, const task_ty* tsk2)
 {
     assert(NULL != tsk1);
     assert(NULL != tsk2);
-    return IsMatchId(tsk1->uid, tsk2->uid);
+    return (IsMatchId(tsk1->uid, tsk2->uid));
 }
