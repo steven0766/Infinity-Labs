@@ -2,8 +2,8 @@
 #define __UID_H_
 
 #include <arpa/inet.h> /* INET_ADDRSTRLEN */
-#include <time.h>
-#include <sys/types.h>
+#include <time.h>      /*      time_t     */
+#include <sys/types.h> /*      pid_t      */
 
 typedef struct uid
 {

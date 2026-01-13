@@ -1,4 +1,11 @@
-#include <stdio.h>
+/***********************************************************************
+*File_name: uid.c
+*Reviewer: itay
+*Version:  1.0
+*Date:	   6.1.26
+************************************************************************/
+
+#include <stdio.h>     /* printf */
 
 #include "uid.h"
 
@@ -12,12 +19,18 @@ int main()
     printf("counter: %ld\n", id1.counter);
     printf("pid: %d\n", id1.pid);
     printf("ip: %s\n", id1.ip);
-    printf("_________________\n");
+    printf("____________________\n");
     printf("id2:\n");
     printf("time: %ld\n", id2.time);
     printf("counter: %ld\n", id2.counter);
     printf("pid: %d\n", id2.pid);
     printf("ip: %s\n", id2.ip);
+    
+    printf("IsMatchId(id1, id1) = %d, expected 1\n",
+            IsMatchId(id1, id1));
+
+    printf("IsMatchId(id1, id2) = %d, expected 0\n",
+            IsMatchId(id1, id2));
     
     return 0;
 }
