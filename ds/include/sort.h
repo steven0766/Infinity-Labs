@@ -5,10 +5,10 @@
 
 typedef int (*cmp_func_ty)(const void* a, const void* b);
 
-void BubbleSort(int* arr, size_t size, cmp_func_ty func);
+void BubbleSort(int* arr, size_t size, cmp_func_ty comp_func);
 
-void SelectionSort(int* arr, size_t size, cmp_func_ty func);
+void SelectionSort(int* arr, size_t size, cmp_func_ty comp_func);
 
-void InsertionSort(int* arr, size_t size, cmp_func_ty func);
+void InsertionSort(int* arr, size_t size, cmp_func_ty comp_func);
 
 #endif  /* __SORT_H__ */

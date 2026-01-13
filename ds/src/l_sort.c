@@ -5,7 +5,7 @@
 
 static int* CountNumbers(int* arr, size_t size);
 static void PrefixSum(int* count_arr, size_t size);
-static void RadixCount(int arr[], int n, int exp);
+static void RadixCountByDigit(int arr[], int n, int exp);
 static int RadixGetMax(int arr[], int n);
 
 void CountSort(int* arr, size_t size, func_cmp_ty func)
@@ -16,6 +16,11 @@ void CountSort(int* arr, size_t size, func_cmp_ty func)
 	int i = 0;
 	
 	(void)func;
+	
+	if (size < 2)
+	{
+	    return;
+	}
 	
 	if (NULL == count_arr)
 	{
@@ -45,7 +50,7 @@ void CountSort(int* arr, size_t size, func_cmp_ty func)
 static int* CountNumbers(int* arr, size_t size)
 {
 	size_t max_num = 101;
-	int i = 0;
+	size_t i = 0;
 	int* count_arr = (int*)calloc(max_num, sizeof(int));
 	if (NULL == count_arr)
 	{
@@ -77,13 +82,18 @@ void RadixSort(int* arr, size_t size, func_cmp_ty func)
 	
 	(void)func;
 	
+	if (size < 2)
+	{
+	    return;
+	}
+	
 	for (exp = 1; max / exp > 0; exp *= 10)
 	{
-		RadixCount(arr, size, exp);
+		RadixCountByDigit(arr, size, exp);
 	}
 }
 
-static void RadixCount(int arr[], int n, int exp)
+static void RadixCountByDigit(int arr[], int n, int exp)
 {
 	int* count = NULL;
 	int* ans = NULL;
@@ -128,7 +138,7 @@ static void RadixCount(int arr[], int n, int exp)
 
 static int RadixGetMax(int arr[], int n)
 {
-	int i = 0;
+	size_t i = 0;
 	int max = arr[0];
 	
 	for (i = 1; i < n; ++i)
