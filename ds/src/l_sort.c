@@ -121,6 +121,9 @@ static void RadixCount(int arr[], int n, int exp)
 	{
 		arr[i] = ans[i];
 	}
+	
+	free(count);
+	free(ans);
 }
 
 static int RadixGetMax(int arr[], int n)
