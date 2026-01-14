@@ -1,6 +1,6 @@
 #include "sort.h"
 
-#include <stdio.h>
+#include <stdio.h> /* size_t */
 
 static void Swap(int* a, int* b);
 
