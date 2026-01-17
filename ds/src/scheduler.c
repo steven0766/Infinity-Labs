@@ -1,3 +1,10 @@
+/***********************************************************************
+*File_name: scheduler.c
+*Reviewer: rozaline
+*Version:  1.0
+*Date:	   14.01.26
+************************************************************************/
+
 #include <unistd.h> /* sleep */
 #include <assert.h>	/* assert */
 #include <stdlib.h> /* malloc, free */
