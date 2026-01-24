@@ -87,7 +87,7 @@ sorted_list_iter_ty SortedListInsert(sorted_list_ty* lst, void* new_data)
     tail = SortedListEndIter(lst);
     
     while (!SortedListIterIsEqual(iter, tail) &&
-           (lst->cmp(SortedListIterGetData(iter), new_data, lst->param) < 0))
+           (lst->cmp(SortedListIterGetData(iter), new_data, lst->param) <= 0))
     {
         iter = SortedListIterNext(iter);
     }
