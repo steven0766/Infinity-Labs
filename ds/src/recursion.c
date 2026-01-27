@@ -40,7 +40,6 @@ int FibonacciIter(int element_index)
 	
 	for (i = 0; i < element_index; ++i)
 	{
-		printf("FibonacciIter i = %d\n", i + 1);
 		prev2 = prev1; 
 		prev1 = curr;
 		curr = prev1 + prev2;
