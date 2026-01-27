@@ -2,7 +2,7 @@
 #include <stdlib.h>		/* malloc, free */
 #include "recursion.h"
 #include "test_utils.h"
-#include "stack.h"
+#include "stack.h"		/* StackCreate, StackPush, StackPop */
 
 #define ARRAY_LEN(arr)		(sizeof((arr)) / sizeof((arr[0])))
 
