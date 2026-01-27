@@ -1,16 +1,8 @@
-#include <stdlib.h>
-#include <assert.h>
-#include <stdio.h>
+#include <stdlib.h> /* malloc, free */
+#include <assert.h> /* assert */
+#include <stdio.h> /* size_t */
 
 #include "bst.h"
-
-static bst_iter_ty GetIter(const bst_node_ty* node);
-static bst_node_ty* GetNode(bst_iter_ty iter);
-static int IsLeaf(bst_node_ty* node);
-static int IsSingleChild(bst_node_ty* node);
-static bst_node_ty* GetLeftMost(bst_node_ty* node);
-static bst_node_ty* GetRightMost(bst_node_ty* node);
-static int IsFromSmallerThenTo(bst_iter_ty from, bst_iter_ty to);
 
 struct bst_node
 {
@@ -27,6 +19,14 @@ struct bst
 	void* cmp_param;
 };
 
+static bst_iter_ty GetIter(const bst_node_ty* node);
+static bst_node_ty* GetNode(bst_iter_ty iter);
+static int IsLeaf(bst_node_ty* node);
+static int IsSingleChild(bst_node_ty* node);
+static bst_node_ty* GetLeftMost(bst_node_ty* node);
+static bst_node_ty* GetRightMost(bst_node_ty* node);
+static int IsFromSmallerThenTo(bst_iter_ty from, bst_iter_ty to);
+
 bst_ty* BstCreate(bst_cmp_ty cmp_func, void* cmp_param)
 {
 	bst_ty* bst = NULL;
@@ -34,7 +34,7 @@ bst_ty* BstCreate(bst_cmp_ty cmp_func, void* cmp_param)
 	
 	assert(NULL != cmp_func);
 	
-	bst = (bst_ty*)malloc(sizeof(*bst));
+	bst = (bst_ty*)malloc(sizeof(*bst) * sizeof(char));
 	if (NULL == bst)
 	{
 		return NULL;
@@ -135,9 +135,10 @@ bst_iter_ty BstInsert(bst_ty* bst, void* data)
 bst_iter_ty BstFind(const bst_ty* bst, void* data)
 {
 	bst_iter_ty curr = NULL;
+	
 	assert(NULL != bst);
 	
-	curr = bst->dummy.left;
+	curr = GetIter(bst->dummy.left);
 	while (curr)
 	{
 		if (0 == bst->cmp_func(curr->data, data, bst->cmp_param))
@@ -163,6 +164,8 @@ bst_iter_ty BstRemove(bst_iter_ty iter)
 	bst_node_ty* to_remove = NULL, *parent = NULL, *tmp = NULL;
 	void* tmp_data = NULL;
 	bst_iter_ty next = {0};
+	
+	assert(NULL != GetNode(iter)->parent);
 
 	to_remove = GetNode(iter);
 	next = BstItNext(iter);
@@ -182,7 +185,7 @@ bst_iter_ty BstRemove(bst_iter_ty iter)
 		}
 
 		free(to_remove);
-
+		to_remove = NULL;
 	}
 	else if(IsSingleChild(to_remove))
 	{
@@ -199,14 +202,15 @@ bst_iter_ty BstRemove(bst_iter_ty iter)
 		tmp->parent = parent;
 
 		free(to_remove);
+		to_remove = NULL;
 	}
 	else
 	{
 		tmp_data = to_remove->data;
-		to_remove->data = next->data;
-		next->data = tmp_data;
+		to_remove->data = GetNode(next)->data;
+		GetNode(next)->data = tmp_data;
 
-		BstRemove(GetIter(next));
+		BstRemove(next);
 		
 		return GetIter(to_remove);
 	}
@@ -237,7 +241,7 @@ int BstForEach(bst_iter_ty from,
                void* param)
 {
 	bst_node_ty* runner = NULL, *end = NULL;
-	size_t cnt = 0;
+	int result = 0;
 	
 	assert(NULL != from);
 	assert(NULL != to);
@@ -248,12 +252,12 @@ int BstForEach(bst_iter_ty from,
 	end = to;
 	while (!BstItEqual(runner, end))
 	{
-		if (action(BstGetData(runner), param))
+		result = action(BstGetData(runner), param);
+		if (result)
 		{
-			return 1;
+			return result;
 		}
-		
-		++cnt;
+
 		runner = BstItNext(runner);
 	}
 	
@@ -266,21 +270,23 @@ bst_iter_ty BstItBegin(const bst_ty* bst)
 	
 	assert(NULL != bst);
 	
+	
 	node = bst->dummy.left;
-	return GetIter(GetLeftMost(node));
+	return node? GetIter(GetLeftMost(node)) : &bst->dummy;
 }
 
 bst_iter_ty BstItNext(bst_iter_ty iter)
 {
 	bst_node_ty* node = NULL, *parent = NULL;
 	
-	assert(NULL != iter);
+	assert(NULL != GetNode(iter));
+	assert(NULL != GetNode(iter)->parent);
 	
 	node = GetNode(iter);
 	
 	if (node->right)
 	{
-		return GetLeftMost(node->right);
+		return GetIter(GetLeftMost(node->right));
 	}
 	
 	parent = node->parent;
