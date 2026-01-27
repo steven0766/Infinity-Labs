@@ -270,9 +270,12 @@ bst_iter_ty BstItBegin(const bst_ty* bst)
 	
 	assert(NULL != bst);
 	
-	
+	if (NULL == bst->dummy.left)
+	{
+		return GetIter(&bst->dummy);
+	}
 	node = bst->dummy.left;
-	return node? GetIter(GetLeftMost(node)) : &bst->dummy;
+	return GetIter(GetLeftMost(node));
 }
 
 bst_iter_ty BstItNext(bst_iter_ty iter)
