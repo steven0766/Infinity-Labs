@@ -8,7 +8,7 @@ typedef struct fsa fsa_ty;
 
 
 /******************************************************************************
-*	Description: 
+*	Description:  
 *       Calculates the pool size required to initialize a fsa_ty.*
 * 
 *   Return value: Suggested pool size to be used in the FsaInit.
