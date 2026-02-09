@@ -20,6 +20,9 @@ int TestSuiteEnd(void);
 #define ASSERT_INT(expected, actual) \
     AssertInt((expected), (actual), __FILE__, __LINE__)
 
+#define ASSERT_DOUBLE(expected, actual) \
+    AssertDouble((expected), (actual), __FILE__, __LINE__)
+    
 #define ASSERT_SIZE(expected, actual) \
     AssertSize((expected), (actual), __FILE__, __LINE__)
 
@@ -55,6 +58,7 @@ int TestSuiteEnd(void);
  *===========================================================================*/
 
 int AssertInt(int expected, int actual, const char* file, int line);
+int AssertDouble(double expected, double actual, const char* file, int line);
 int AssertSize(size_t expected, size_t actual, const char* file, int line);
 int AssertPtr(const void* expected, const void* actual, const char* file, int line);
 int AssertTrue(int condition, const char* condition_str, const char* file, int line);
@@ -83,5 +87,8 @@ void TestUtilsSetColorOutput(int enable);
 
 /* Print a section header */
 void TestPrintSection(const char* section_name);
+/* Print a section sub-header */
+void TestPrintSubSection(const char* subsection_name);
 
 #endif /* __ILRD_TEST_UTILS_H__ */
+
