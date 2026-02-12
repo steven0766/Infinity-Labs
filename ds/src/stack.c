@@ -25,8 +25,11 @@ struct stack_s
 
 stack_ty* StackCreate(size_t capacity, size_t ele_size)
 {
-    stack_ty* stk = (stack_ty*)malloc(sizeof(offsetof(stack_ty, start)) + capacity * ele_size);
-    assert(stk);
+    stack_ty* stk = (stack_ty*)malloc((offsetof(stack_ty, start)) + capacity * ele_size);
+    if (NULL == stk)
+    {
+    	return NULL;
+    }
     stk -> element_size = ele_size;
     stk -> end = stk -> start + capacity * ele_size;
     stk -> head = stk -> start;
@@ -34,7 +37,7 @@ stack_ty* StackCreate(size_t capacity, size_t ele_size)
     return stk;
 }
 
-void DestroyStack(stack_ty* stack)
+void StackDestroy(stack_ty* stack)
 {
     free(stack);
     
