@@ -158,6 +158,33 @@ int AssertInt(int expected, int actual, const char* file, int line)
     return 0;
 }
 
+int AssertDouble(double expected, double actual, const char* file, int line)
+{
+    char message[256];
+    double eps = 0.0000001;
+    double diff = 0;
+    
+    g_tests_total++;
+    
+    diff = expected - actual;
+    if (diff < 0)
+    {
+    	diff *= -1;
+    }
+    
+    if (diff <= eps)
+    {
+        g_tests_passed++;
+        PrintPass(file, line);
+        return 1;
+    }
+    
+    sprintf(message, "expected %f, got %f", expected, actual);
+    PrintFail(file, line, message);
+    return 0;
+}
+
+
 int AssertSize(size_t expected, size_t actual, const char* file, int line)
 {
     char message[256];
@@ -417,3 +444,11 @@ void TestPrintSection(const char* section_name)
     printf("--- %s ---\n", section_name);
     printf("\n");
 }
+
+void TestPrintSubSection(const char* subsection_name)
+{
+	printf("\n");
+	printf("* %s *\n", subsection_name);
+	printf("\n");
+}
+
