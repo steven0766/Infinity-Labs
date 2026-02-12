@@ -47,7 +47,7 @@ static void TestStackCreate(void)
         PrintError("StackCreate, StackIsEmpty");
     }
     
-    DestroyStack(stk);
+    StackDestroy(stk);
 }
 
 static void TestStackPop(void)
@@ -70,7 +70,7 @@ static void TestStackPop(void)
         PrintError("TestStackPop");
     }
     
-    DestroyStack(stk);
+    StackDestroy(stk);
 }
 
 static void TestStackPushAndPeek(void)
@@ -97,7 +97,7 @@ static void TestStackPushAndPeek(void)
         PrintError("StackPeek");
     } 
     
-    DestroyStack(stk);
+    StackDestroy(stk);
 }
 
 static void TestStackSize()
@@ -118,7 +118,7 @@ static void TestStackSize()
         PrintError("StackSize");
     }
     
-    DestroyStack(stk);
+    StackDestroy(stk);
 }
 
 static void TestStackCapacity(void)
@@ -136,7 +136,7 @@ static void TestStackCapacity(void)
         PrintError("StackCapacity");
     }
     
-    DestroyStack(stk);
+    StackDestroy(stk);
 }
 
 static void PrintError(char* msg)

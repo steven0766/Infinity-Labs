@@ -11,7 +11,7 @@ typedef struct stack_s stack_ty;
 stack_ty* StackCreate(size_t capacity, size_t ele_size);
 
 /* destroy the stack. */
-void DestroyStack(stack_ty* stack);
+void StackDestroy(stack_ty* stack);
 
 /* take element from stack */
 void StackPop(stack_ty* stack);

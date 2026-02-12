@@ -4,7 +4,7 @@
 * Date: 09.2.26
 * Version: 1
 ****************************************/
-#include <stdlib.h>			/* free */
+#include <stdlib.h>			/* strtod */
 #include <string.h>			/* strlen */
 #include <ctype.h>			/* isspace */
 #include <assert.h>			/* assert */
@@ -27,10 +27,9 @@ typedef enum input
 	OPT = 1,
 	OPEN_PAR = 2,
 	CLOSE_PAR = 3,
-	SPACE = 4,
-	INVALID = 5,
-	END = 6,
-	INPUT_SIZE = 7
+	INVALID = 4,
+	END = 5,
+	INPUT_SIZE = 6
 }input_type_ty;
 
 typedef struct token
@@ -141,7 +140,7 @@ calc_status_ty Calculator(const char* s, double* res)
 		state = transition.next_state;
 
 		s += token.len;
-	} while (token.type != END && status == SUCCESS);
+	} while (END != token.type&& SUCCESS == status);
 	
 	if (StackIsEmpty(opd_stk))
 	{
@@ -269,6 +268,7 @@ static calc_status_ty HandleClosePar(token_ty* token,
 
 	}
 	
+	/* in case we didn't stop at open par */
 	if (StackIsEmpty(opt_stk))
 	{
 		return SYNTAX_ERROR;
@@ -397,7 +397,6 @@ static token_ty GetNextToken(const char* s)
 		token.type = END;
 		token.len = s - start;
 	}
-	
 	else if (IsDigit(*s))
 	{
 		token.type = OPD;
@@ -405,19 +404,16 @@ static token_ty GetNextToken(const char* s)
 		sign = 1;
 		token.len = end - start; 
 	}
-	
 	else if (IsOpt(*s))
 	{
 		token.type = OPT;
 		token.value.operator = *s;
 	}
-	
 	else if (IsOpenPar(*s))
 	{
 		token.type = OPEN_PAR;
 		token.value.operator = *s;
 	}
-
 	else if (IsClosePar(*s))
 	{
 		token.type = CLOSE_PAR;
@@ -464,27 +460,27 @@ static calc_status_ty EvaluateTopOperator(stack_ty* opd_stk, stack_ty* opt_stk)
 	return status;
 }
 
-static int IsUnaryOpt(const char s)
+static int IsUnaryOpt(const char c)
 {
-	return s == '+' || s == '-';
+	return ('+' == c || '-' == c);
 }
 static int IsDigit(const char c)
 {
-	return '0' <= c && '9' >= c;
+	return ('0' <= c && '9' >= c);
 }
 
 static int IsOpt(const char c)
 {
-	return (c == '+' || c == '-' || c == '*' || c == '/');
+	return ('+' == c || '-' == c || '*' == c || '/' == c);
 }
 
 static int IsOpenPar(const char c)
 {
-	return c == '(';
+	return ('(' == c);
 }
 
 static int IsClosePar(const char c)
 {
-	return c == ')';
+	return (')' == c);
 }
 
