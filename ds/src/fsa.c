@@ -9,132 +9,117 @@
 
 #include "fsa.h"
 
+#define WORD_SIZE					sizeof(void*)
+
+static size_t Align(size_t size);
+
 struct fsa
 {
-	void* free_space;
+	size_t next_free;
 };
 
 size_t FsaSuggestedSize(size_t n_blocks, size_t block_size)
 {
-    size_t eff_size;
-    size_t size;
-    size_t rem;
-
-    if (block_size < sizeof(void*))
-    {
-        eff_size = sizeof(void*);
-    }
-    else
-    {
-        eff_size = block_size;
-    }
-
-    size = sizeof(fsa_ty) + n_blocks * eff_size;
-
-    rem = size % sizeof(void*);
-    if (0 != rem)
-    {
-        size += sizeof(void*) - rem;
-    }
-
-    return size;
+	assert(block_size);
+	
+	return (Align(block_size) * n_blocks) +
+						 Align(sizeof(fsa_ty));
 }
+
 
 fsa_ty* FsaInit(void* pool_p, size_t pool_size, size_t block_size)
 {
-    fsa_ty* fsa;
-    size_t eff_size;
-    char* runner;
-    char* end;
-    void* next;
+	size_t blocks_count = 0;
+	size_t header_size = 0;
+	size_t current_offset = 0;
+	char* block_runner = NULL;
+	fsa_ty* fsa = NULL;
 
-    assert(NULL != pool_p);
-    assert(0 != block_size);
+	assert(NULL != pool_p);
+	assert(0 != block_size);
 
-    if (block_size < sizeof(void*))
-    {
-        eff_size = sizeof(void*);
-    }
-    else
-    {
-        eff_size = block_size;
-    }
+	block_size = Align(block_size);
+	header_size = Align(sizeof(fsa_ty));
 
-    fsa = (fsa_ty*)pool_p;
+	blocks_count = (pool_size - header_size) / block_size;
 
-    runner = (char*)pool_p + sizeof(fsa_ty);
-    end = (char*)pool_p + pool_size;
+	fsa = (fsa_ty*)pool_p;
+	fsa->next_free = header_size;
 
-    fsa->free_space = runner;
+	block_runner = (char*)pool_p + header_size;
+	current_offset = header_size;
 
-    while (runner + eff_size <= end)
-    {
-        next = runner + eff_size;
+	while (1 < blocks_count)
+	{
+		*(size_t*)block_runner = current_offset + block_size;
 
-        if ((char*)next + eff_size <= end)
-        {
-            *(size_t*)runner = (size_t)((char*)next - (char*)fsa);
-        }
-        else
-        {
-            *(void**)runner = NULL;
-        }
+		block_runner += block_size;
+		current_offset += block_size;
+		--blocks_count;
+	}
 
-        runner = (char*)next;
-    }
+	*(size_t*)block_runner = 0;
 
-    return fsa;
+	return fsa;
 }
 
 void* FsaAlloc(fsa_ty* fsa)
 {
-    void* block;
+    void* block = NULL;
     size_t offset = 0;
 
     assert(NULL != fsa);
 
-    if (NULL == fsa->free_space)
+    if (0 == fsa->next_free)
     {
         return NULL;
     }
 
-    block = fsa->free_space;
+    block = (char*)fsa + fsa->next_free;
     offset = *(size_t*)block;
-	fsa->free_space = offset ? (char*)fsa + offset : NULL;
+    fsa->next_free = offset;
 
-
-    return (char*)block;
+    return block;
 }
 
 void FsaFree(fsa_ty* fsa, void* p)
 {
-	size_t offset = 0;	
+	size_t prev_free = 0;
 	
-    assert(NULL != fsa);
-    assert(NULL != p);
-
-    offset = (size_t)((char*)fsa->free_space - (char*)fsa);
-	*(size_t*)p = offset;
-	fsa->free_space = p;
-
+	assert(NULL != fsa);
+	
+	if (NULL == p)
+	{
+		return;
+	}
+	
+	prev_free = fsa->next_free;
+	fsa->next_free = (size_t)((char*)p - (char*)fsa);
+	*(size_t*)p = prev_free;
 }
 
-size_t FsaAvailableBlocks(fsa_ty *fsa)
+size_t FsaAvailableBlocks(fsa_ty* fsa)
 {
     size_t count = 0;
-    void* runner;
+    void* runner = NULL;
     size_t offset = 0;
 
     assert(NULL != fsa);
 
-    runner = fsa->free_space;
-    while (NULL != runner)
-    {
-        offset = *(size_t*)runner;
-		runner = offset ? (char*)fsa + offset : NULL;
+    offset = fsa->next_free;
 
+    while (0 != offset)
+    {
+        runner = (char*)fsa + offset;
+        offset = *(size_t*)runner;
         ++count;
     }
 
     return count;
 }
+
+static size_t Align(size_t size)
+{
+    return (size + WORD_SIZE - 1) & ~(WORD_SIZE - 1);
+}
+
