@@ -264,11 +264,9 @@ static void QuickSortHelper(void* arr, ssize_t left, ssize_t right, size_t el_si
 
 static size_t Partition(void* arr, ssize_t left, ssize_t right, size_t el_size, cmp_func_ty cmp)
 {
-	/* i = the last element smaller then the pivot */
 	ssize_t pivot = 0;
 	ssize_t i = left - 1;
 	
-	/* select pivot */
 	pivot = right;
 	
 	for (; left < pivot; ++left)
@@ -280,7 +278,6 @@ static size_t Partition(void* arr, ssize_t left, ssize_t right, size_t el_size, 
 		}	
 	}
 	
-	/* place pivot in sorted position */
 	++i;
 	SwapByByte((char*)arr + (el_size * i), (char*)arr + (el_size * pivot), el_size);
 		
