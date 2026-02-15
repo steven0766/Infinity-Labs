@@ -94,7 +94,7 @@ void* PQPeek(const pq_ty* q_)
 
 static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 {
-	/* get element in vector in idx_ */
+	/* assert */
 	
 	/* while not top and curr < parent  */
 	
@@ -102,3 +102,21 @@ static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 		
 		/* curr = parent */
 }
+
+static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
+{
+	/* assert */
+	
+	/* while not leaf and child < curr  */
+	
+		/* swap between MIN(child left, child right) and curr data */
+		
+		/* curr = child */
+}
+
+
+
+
+
+
+
