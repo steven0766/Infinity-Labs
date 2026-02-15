@@ -114,20 +114,26 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 		/* curr = child */
 }
 
-static void* StartIMP(pq_ty* pq)
+static void* StartIMP(pq_ty* pq_)
 {
 	/* assert */
 	
 	/* return vector address - 1 */
 }
 
-static void* ParentIMP(pq_ty* pq, size_t idx)
+static void* ParentIMP(pq_ty* pq_, size_t idx_)
 {
 	/* assert */
 	
 	/* return VectorGetAccessToElement in idx / 2 */
 }
 
+static void LChildIMP(pq_ty* pq_, size_t idx_)
+{
+	/* assert */
+	
+	/* return VectorGetAccessToElement in idx * 2 */
+}
 
 
 
