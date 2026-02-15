@@ -37,4 +37,19 @@ status_ty PQEnqueue(pq_ty* q, void* data)
 	/* return status */
 }
 
-
+void* PQDequeue(pq_ty* q)
+{
+	/* assert */
+	
+	/* return NULL if pq is empty */
+	
+	/* save root data */
+	
+	/* swap between first and last element */
+	
+	/* remove the last element */
+	
+	/* heapify down the root */
+	
+	/* return saved data */
+}
