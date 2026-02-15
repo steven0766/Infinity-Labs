@@ -15,7 +15,7 @@ pq_ty* PQCreate(pq_cmp_ty cmp, void* param)
 	/* return pq */
 }
 
-void PQDestroy(pq_ty* q)
+void PQDestroy(pq_ty* q_)
 {
 	/* assert */
 	
@@ -24,7 +24,14 @@ void PQDestroy(pq_ty* q)
 	/* free pq */
 }
 
-status_ty PQEnqueue(pq_ty* q, void* data)
+size_t PQCount(const pq_ty* q_)
+{
+	/* assert */
+
+	/* return VectorSize */
+}
+
+status_ty PQEnqueue(pq_ty* q_, void* data)
 {
 	/* assert */
 	
@@ -37,7 +44,7 @@ status_ty PQEnqueue(pq_ty* q, void* data)
 	/* return status */
 }
 
-void* PQDequeue(pq_ty* q)
+void* PQDequeue(pq_ty* q_)
 {
 	/* assert */
 	
