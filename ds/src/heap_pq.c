@@ -135,6 +135,12 @@ static void LChildIMP(pq_ty* pq_, size_t idx_)
 	/* return VectorGetAccessToElement in idx * 2 */
 }
 
+static void RChildIMP(pq_ty* pq_, size_t idx_)
+{
+	/* assert */
+	
+	/* return VectorGetAccessToElement in idx * 2 + 1 */
+}
 
 
 
