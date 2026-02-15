@@ -88,7 +88,7 @@ static void PQRemoveTest(void)
     
     if (NULL == p_q)
     {
-        Print("PQRemove", "PQcreate");
+        Print("PQRemoveTest", "PQcreate");
     }
     
     PQEnqueue(p_q, &c);
@@ -99,7 +99,7 @@ static void PQRemoveTest(void)
     
     if (3 != *(int*)PQRemove(p_q, IsMatch, &is_match_param))
     {
-        Print("PQCreateTest", "PQRemove");
+        Print("PQRemoveTest", "PQRemove");
     }
     
     PQDestroy(p_q);
