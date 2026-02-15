@@ -72,7 +72,7 @@ pq_bool_ty PQIsEmpty(const pq_ty* pq_)
 	assert(pq_);
 	
 	/* return if VectorSize == 0 */
-	return (0 == VectorSize(pq_->data));
+	return (0 == VectorSize(pq_->data)) ? PQ_TRUE : PQ_FALSE;
 }
 
 status_ty PQEnqueue(pq_ty* pq_, void* data_)
@@ -156,7 +156,7 @@ static void** StartIMP(pq_ty* pq_)
 	assert(pq_);
 	
 	/* return vector address - 1 */
-	start = (void**)VectorGetAccessToElement(pq_->data, 0);
+	start = (void**)VectorGetAccessToElement(pq_->data, 0) - 1;
 	
 	return start;
 }
@@ -164,19 +164,19 @@ static void** StartIMP(pq_ty* pq_)
 static size_t ParentIMP(size_t idx_)
 {
 	/* return idx / 2 */
-	return idx/2;
+	return idx_ / 2;
 }
 
 static size_t LChildIMP(size_t idx_)
 {
 	/* return idx * 2 */
-	return idx * 2;
+	return idx_ * 2;
 }
 
 static size_t RChildIMP(size_t idx_)
 {
 	/* return idx * 2 + 1 */
-	return idx * 2 + 1;
+	return idx_ * 2 + 1;
 }
 
 
