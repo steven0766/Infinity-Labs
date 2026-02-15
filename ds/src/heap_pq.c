@@ -68,6 +68,23 @@ void* PQDequeue(pq_ty* q_)
 	/* return saved data */
 }
 
+void* PQRemove(pq_ty* q_, pq_is_match_ty is_match_, void* param_)
+{
+	/* assert */
+	
+	/* find element in vector */
+	
+	/* return NULL if not found */
+	
+	/* save data of element */
+	
+	/* swap between element and last element in vector */
+	
+	/* heapify up or down if needed */
+	
+	/* return saved data */
+}
+
 void* PQPeek(const pq_ty* q_)
 {
 	/* assert */
