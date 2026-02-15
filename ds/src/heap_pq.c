@@ -45,10 +45,16 @@ pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 void PQDestroy(pq_ty* pq_)
 {
 	/* handle q_ is NULL */
+	if (NULL == pq_)
+	{
+		return;
+	}
 	
 	/* destroy vector */
+	VectorDestroy(pq_->data);
 	
 	/* free pq */
+	free(pq_);
 }
 
 size_t PQCount(const pq_ty* pq_)
