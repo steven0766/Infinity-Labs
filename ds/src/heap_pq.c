@@ -3,11 +3,9 @@ pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 	/* assert */
 	
 	/* allocate pq struct */
-	
 	/* validate pq allocation */
 	
 	/* create vector with cap 1 */
-	
 	/* validate vector allocation */
 	
 	/* add vector and cmp to pq */
@@ -17,7 +15,7 @@ pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 
 void PQDestroy(pq_ty* q_)
 {
-	/* assert */
+	/* handle q_ is NULL */
 	
 	/* destroy vector */
 	
@@ -43,8 +41,7 @@ status_ty PQEnqueue(pq_ty* q_, void* data_)
 	/* assert */
 	
 	/* add data to the end of vector */
-	
-	/* handle data didn't add to vector */
+	/* handle failure */
 	
 	/* heapify up */
 	
@@ -59,7 +56,7 @@ void* PQDequeue(pq_ty* q_)
 	
 	/* save root data */
 	
-	/* swap between first and last element */
+	/* copy last element to root */
 	
 	/* remove the last element */
 	
@@ -73,12 +70,13 @@ void* PQRemove(pq_ty* q_, pq_is_match_ty is_match_, void* param_)
 	/* assert */
 	
 	/* find element in vector */
-	
 	/* return NULL if not found */
 	
 	/* save data of element */
 	
-	/* swap between element and last element in vector */
+	/* copy the last element to the element we found */
+	
+	/* remove last element */
 	
 	/* heapify up or down if needed */
 	
@@ -109,7 +107,7 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 	
 	/* while not leaf and child < curr  */
 	
-		/* swap between MIN(child left, child right) and curr data */
+		/* swap between MIN(child left, child right) that less than curr and curr data */
 		
 		/* curr = child */
 }
