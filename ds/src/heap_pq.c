@@ -151,9 +151,14 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 
 static void** StartIMP(pq_ty* pq_)
 {
+	void** start = NULL;
 	/* assert */
+	assert(pq_);
 	
 	/* return vector address - 1 */
+	start = (void**)VectorGetAccessToElement(pq_->data, 0);
+	
+	return start;
 }
 
 static size_t ParentIMP(size_t idx_)
