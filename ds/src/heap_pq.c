@@ -114,6 +114,33 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 		/* curr = child */
 }
 
+static void* StartIMP(pq_ty* pq)
+{
+	/* assert */
+	
+	/* return vector address - 1 */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
