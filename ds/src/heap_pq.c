@@ -24,4 +24,17 @@ void PQDestroy(pq_ty* q)
 	/* free pq */
 }
 
+status_ty PQEnqueue(pq_ty* q, void* data)
+{
+	/* assert */
+	
+	/* add data to the end of vector */
+	
+	/* handle data didn't add to vector */
+	
+	/* heapify up */
+	
+	/* return status */
+}
+
 
