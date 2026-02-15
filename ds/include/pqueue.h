@@ -92,7 +92,6 @@ status_ty PQEnqueue(pq_ty* q, void* data);
 * 		Remove "q" head
 * 	Return value: 
 *		pointer to removed element
-*       NULL if "q" is empty
 * 	Undefined behavior: 
 * 		"q" is NULL
 *               "q" is empty
