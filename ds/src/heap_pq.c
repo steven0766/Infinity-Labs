@@ -1,59 +1,96 @@
+#include <assert.h> /* assert */
+#include <stdlib.h> /* malloc, free */
+
+#include "vector.h" /* vector api */
+#include "pqueue.h" /* api */
+
+struct pq
+{
+	pq_cmp_ty cmp_func;
+	void* param;
+	vector_ty* data;
+};
+
 pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 {
-	/* assert */
+	pq_ty* pq= NULL;
 	
+	/* assert */
+	assert(cmp_);
 	/* allocate pq struct */
 	/* validate pq allocation */
-	
+	pq = (pq_ty*)malloc(sizeof(*pq));
+	if (NULL == pq)
+	{
+		return NULL;
+	}
 	/* create vector with cap 1 */
 	/* validate vector allocation */
+	pq->data = VectorCreate(1, sizeof(void*));
+	if (NULL == pq->data)
+	{
+		free(pq);
+		pq = NULL;
+		return NULL;
+	}
 	
-	/* add vector and cmp to pq */
+	/* init vector and cmp to pq */
+	pq->cmp_func = cmp_;
+	pq->param = param_;
 	
 	/* return pq */
+	return pq;
 }
 
-void PQDestroy(pq_ty* q_)
+void PQDestroy(pq_ty* pq_)
 {
 	/* handle q_ is NULL */
+	if (NULL == pq_)
+	{
+		return;
+	}
 	
 	/* destroy vector */
+	VectorDestroy(pq_->data);
 	
 	/* free pq */
+	free(pq_);
 }
 
-size_t PQCount(const pq_ty* q_)
+size_t PQCount(const pq_ty* pq_)
 {
 	/* assert */
+	assert(pq_);
 
 	/* return VectorSize */
+	return VectorSize(pq_->data);
 }
 
-pq_bool_ty PQIsEmpty(const pq_ty* q_)
+pq_bool_ty PQIsEmpty(const pq_ty* pq_)
 {
 	/* assert */
+	assert(pq_);
 	
 	/* return if VectorSize == 0 */
+	return (0 == VectorSize(pq_->data));
 }
 
-status_ty PQEnqueue(pq_ty* q_, void* data_)
+status_ty PQEnqueue(pq_ty* pq_, void* data_)
 {
 	/* assert */
 	
 	/* add data to the end of vector */
 	/* handle failure */
 	
-	/* heapify up */
+	/* heapify up on new data */
 	
 	/* return status */
 }
 
-void* PQDequeue(pq_ty* q_)
+void* PQDequeue(pq_ty* pq_)
 {
 	/* assert */
-	
-	/* return NULL if pq is empty */
-	
+
 	/* save root data */
 	
 	/* copy last element to root */
@@ -83,11 +120,11 @@ void* PQRemove(pq_ty* q_, pq_is_match_ty is_match_, void* param_)
 	/* return saved data */
 }
 
-void* PQPeek(const pq_ty* q_)
+void* PQPeek(const pq_ty* pq_)
 {
 	/* assert */
 	
-	/* return VectorGetAccessToElement at idx 0 */
+	/* return first element in vector */
 }
 
 static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
