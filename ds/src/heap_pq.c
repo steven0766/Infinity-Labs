@@ -1,4 +1,4 @@
-pq_ty* PQCreate(pq_cmp_ty cmp, void* param)
+pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 {
 	/* assert */
 	
@@ -31,14 +31,14 @@ size_t PQCount(const pq_ty* q_)
 	/* return VectorSize */
 }
 
-pq_bool_ty PQIsEmpty(const pq_ty* q)
+pq_bool_ty PQIsEmpty(const pq_ty* q_)
 {
 	/* assert */
 	
 	/* return if VectorSize == 0 */
 }
 
-status_ty PQEnqueue(pq_ty* q_, void* data)
+status_ty PQEnqueue(pq_ty* q_, void* data_)
 {
 	/* assert */
 	
@@ -66,4 +66,11 @@ void* PQDequeue(pq_ty* q_)
 	/* heapify down the root */
 	
 	/* return saved data */
+}
+
+void* PQPeek(const pq_ty* q_)
+{
+	/* assert */
+	
+	/* return VectorGetAccessToElement at idx 0 */
 }
