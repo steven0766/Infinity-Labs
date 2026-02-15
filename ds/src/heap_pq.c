@@ -1,5 +1,3 @@
-#include "pqueue.h"
-
 pq_ty* PQCreate(pq_cmp_ty cmp, void* param)
 {
 	/* assert */
@@ -16,3 +14,14 @@ pq_ty* PQCreate(pq_cmp_ty cmp, void* param)
 	
 	/* return pq */
 }
+
+void PQDestroy(pq_ty* q)
+{
+	/* assert */
+	
+	/* destroy vector */
+	
+	/* free pq */
+}
+
+
