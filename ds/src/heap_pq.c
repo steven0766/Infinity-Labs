@@ -91,3 +91,14 @@ void* PQPeek(const pq_ty* q_)
 	
 	/* return VectorGetAccessToElement at idx 0 */
 }
+
+static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
+{
+	/* get element in vector in idx_ */
+	
+	/* while not top and curr < parent  */
+	
+		/* swap between parent and curr data */
+		
+		/* curr = parent */
+}
