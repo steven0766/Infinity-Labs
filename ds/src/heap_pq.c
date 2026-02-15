@@ -63,8 +63,10 @@ size_t PQCount(const pq_ty* pq_)
 pq_bool_ty PQIsEmpty(const pq_ty* pq_)
 {
 	/* assert */
+	assert(pq_);
 	
 	/* return if VectorSize == 0 */
+	return (0 == VectorSize(pq_->data));
 }
 
 status_ty PQEnqueue(pq_ty* pq_, void* data_)
