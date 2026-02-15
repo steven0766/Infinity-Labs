@@ -164,8 +164,10 @@ static void** StartIMP(pq_ty* pq_)
 static size_t ParentIMP(size_t idx_)
 {
 	/* assert */
+	assert(pq_);
 	
 	/* return idx / 2 */
+	return idx/2;
 }
 
 static size_t LChildIMP(size_t idx_)
