@@ -121,6 +121,12 @@ static void* StartIMP(pq_ty* pq)
 	/* return vector address - 1 */
 }
 
+static void* ParentIMP(pq_ty* pq, size_t idx)
+{
+	/* assert */
+	
+	/* return VectorGetAccessToElement in idx / 2 */
+}
 
 
 
