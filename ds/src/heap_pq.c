@@ -61,9 +61,11 @@ void PQDestroy(pq_ty* pq_)
 	
 	/* destroy vector */
 	VectorDestroy(pq_->data);
+	DEBUG_ONLY(pq_->data = BAD_MEM(vector_ty*););
 	
 	/* free pq */
 	free(pq_);
+	DEBUG_ONLY(pq_ = BAD_MEM(pq_ty*););
 }
 
 size_t PQCount(const pq_ty* pq_)
