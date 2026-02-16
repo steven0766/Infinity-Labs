@@ -21,33 +21,34 @@ static void SwapIMP(void** data1, void** data2);
 
 pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 {
-	pq_ty* pq= NULL;
+	/* allocate pq struct */
+	pq_ty* ret= (pq_ty*)malloc(sizeof(*ret));
 	
 	/* assert */
 	assert(cmp_);
-	/* allocate pq struct */
+	
 	/* validate pq allocation */
-	pq = (pq_ty*)malloc(sizeof(*pq));
-	if (NULL == pq)
+	if (NULL == ret)
 	{
 		return NULL;
 	}
 	/* create vector with cap 1 */
 	/* validate vector allocation */
-	pq->data = VectorCreate(1, sizeof(void*));
-	if (NULL == pq->data)
+	ret->data = VectorCreate(1, sizeof(void*));
+	if (NULL == ret->data)
 	{
-		free(pq);
-		pq = NULL;
+		free(ret);
+		/* TODO: DEBOUG_ONLY (BAD_MEM) instead of ret = NULL */
+		ret = NULL;
 		return NULL;
 	}
 	
 	/* init vector and cmp to pq */
-	pq->cmp_func = cmp_;
-	pq->param = param_;
+	ret->cmp_func = cmp_;
+	ret->param = param_;
 	
 	/* return pq */
-	return pq;
+	return ret;
 }
 
 void PQDestroy(pq_ty* pq_)
@@ -128,22 +129,46 @@ void* PQDequeue(pq_ty* pq_)
 	return data;
 }
 
-void* PQRemove(pq_ty* q_, pq_is_match_ty is_match_, void* param_)
+void* PQRemove(pq_ty* pq_, pq_is_match_ty is_match_, void* param_)
 {
+	void** heap = NULL;
+	size_t i = 1;
+	void* save_data = NULL;
 	/* assert */
+	assert(pq_);
+	assert(is_match_);
+	
+	heap = StartIMP(pq_);
 	
 	/* find element in vector */
 	/* return NULL if not found */
+	while (i <= VectorSize(pq_->data) && !is_match_(heap[i], param_))
+	{
+		++i;
+	}
+	if (i > VectorSize(pq_->data))
+	{
+		return NULL;
+	}
 	
 	/* save data of element */
+	save_data = heap[i];
 	
 	/* copy the last element to the element we found */
+	heap[i] = heap[VectorSize(pq_->data)];
 	
 	/* remove last element */
+	VectorPopBack(pq_->data);
 	
 	/* heapify up or down if needed */
 	
+	/* if heapify up needed */
+	HeapifyUpIMP(pq_, VectorSize(pq_->data));
+	/* if heapify down needed */
+	HeapifyDownIMP(pq_, 1);
+	
 	/* return saved data */
+	return save_data;
 }
 
 void* PQPeek(const pq_ty* pq_)
