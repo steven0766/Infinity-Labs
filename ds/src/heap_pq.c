@@ -13,7 +13,7 @@ struct pq
 
 static void HeapifyUpIMP(pq_ty* pq_, size_t idx_);
 static void HeapifyDownIMP(pq_ty* pq_, size_t idx_);
-static void** StartIMP(pq_ty* pq_);
+static void** StartIMP(const pq_ty* pq_);
 static size_t ParentIMP(size_t idx_);
 static size_t LChildIMP(size_t idx_);
 static size_t RChildIMP(size_t idx_);
@@ -85,14 +85,24 @@ pq_bool_ty PQIsEmpty(const pq_ty* pq_)
 
 status_ty PQEnqueue(pq_ty* pq_, void* data_)
 {
+	status_ty status = SUCCESS;
+	
 	/* assert */
+	assert(pq_);
 	
 	/* add data to the end of vector */
+	status = VectorPushBack(pq_->data, &data_);
 	/* handle failure */
+	if (FAIL == status)
+	{
+		return status;
+	}
 	
 	/* heapify up on new data */
+	HeapifyUpIMP(pq_, VectorSize(pq_->data));
 	
 	/* return status */
+	return status;
 }
 
 void* PQDequeue(pq_ty* pq_)
@@ -130,9 +140,14 @@ void* PQRemove(pq_ty* q_, pq_is_match_ty is_match_, void* param_)
 
 void* PQPeek(const pq_ty* pq_)
 {
+	void** start = NULL;
 	/* assert */
+	assert(pq_);
+	assert(0 != VectorSize(pq_->data));
 	
+	start = StartIMP(pq_) + 1;
 	/* return first element in vector */
+	return *start;
 }
 
 static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
@@ -144,7 +159,7 @@ static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 	start = StartIMP(pq_);
 	
 	/* while not top and curr < parent  */
-	while (1 != idx_ && pq_->cmp_func(*(start + idx_), *(start + ParentIMP(idx_)), pq_->param) < 0)
+	while (1 < idx_ && pq_->cmp_func(*(start + idx_), *(start + ParentIMP(idx_)), pq_->param) < 0)
 	{
 		/* swap between parent and curr data */
 		Swap(start + idx_, start + ParentIMP(idx_));
@@ -155,16 +170,21 @@ static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 
 static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 {
+	void** start = NULL;
 	/* assert */
+	assert(pq_);
+	
+	start = StartIMP(pq_);
 	
 	/* while not leaf and child < curr  */
+
 	
 		/* swap between MIN(child left, child right) that less than curr and curr data */
 		
 		/* curr = child */
 }
 
-static void** StartIMP(pq_ty* pq_)
+static void** StartIMP(const pq_ty* pq_)
 {
 	void** start = NULL;
 	/* assert */
