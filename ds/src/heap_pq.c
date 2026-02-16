@@ -11,6 +11,14 @@ struct pq
 	vector_ty* data;
 };
 
+static void HeapifyUpIMP(pq_ty* pq_, size_t idx_);
+static void HeapifyDownIMP(pq_ty* pq_, size_t idx_);
+static void** StartIMP(pq_ty* pq_);
+static size_t ParentIMP(size_t idx_);
+static size_t LChildIMP(size_t idx_);
+static size_t RChildIMP(size_t idx_);
+static void Swap(void** data1, void** data2);
+
 pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 {
 	pq_ty* pq= NULL;
@@ -129,13 +137,20 @@ void* PQPeek(const pq_ty* pq_)
 
 static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 {
+	void** start = NULL;
 	/* assert */
+	assert(pq_);
+	
+	start = StartIMP(pq_);
 	
 	/* while not top and curr < parent  */
-	
+	while (1 != idx_ && pq_->cmp_func(*(start + idx_), *(start + ParentIMP(idx_)), pq_->param) < 0)
+	{
 		/* swap between parent and curr data */
-		
+		Swap(start + idx_, start + ParentIMP(idx_));
 		/* curr = parent */
+		idx_ = ParentIMP(idx_);
+	}
 }
 
 static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
@@ -156,7 +171,7 @@ static void** StartIMP(pq_ty* pq_)
 	assert(pq_);
 	
 	/* return vector address - 1 */
-	start = (void**)VectorGetAccessToElement(pq_->data, 0) - 1;
+	start = ((void**)VectorGetAccessToElement(pq_->data, 0)) - 1;
 	
 	return start;
 }
@@ -179,7 +194,12 @@ static size_t RChildIMP(size_t idx_)
 	return idx_ * 2 + 1;
 }
 
-
+static void Swap(void** data1, void** data2)
+{
+	void* tmp = *data1;
+	*data1 = *data2;
+	*data2 = tmp;
+}
 
 
 
