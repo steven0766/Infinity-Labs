@@ -17,7 +17,8 @@ static void** StartIMP(const pq_ty* pq_);
 static size_t ParentIMP(size_t idx_);
 static size_t LChildIMP(size_t idx_);
 static size_t RChildIMP(size_t idx_);
-static void Swap(void** data1, void** data2);
+static void SwapIMP(void** data1, void** data2);
+static void CopyIMP(void** data1, void** data2);
 
 pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 {
@@ -107,17 +108,25 @@ status_ty PQEnqueue(pq_ty* pq_, void* data_)
 
 void* PQDequeue(pq_ty* pq_)
 {
+	void** start = NULL;
+	void* data = NULL;
 	/* assert */
+	assert(pq_);
 
 	/* save root data */
+	data = *(start + 1);
 	
 	/* copy last element to root */
+	CopyIMP(*(start + 1), (start + VectorSize(pq_->data)));
 	
 	/* remove the last element */
+	VectorPopBack(pq_->data);
 	
 	/* heapify down the root */
+	HeapifyDownIMP(pq_, VectorSize(pq_->data))
 	
 	/* return saved data */
+	return data;
 }
 
 void* PQRemove(pq_ty* q_, pq_is_match_ty is_match_, void* param_)
@@ -162,7 +171,7 @@ static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 	while (1 < idx_ && pq_->cmp_func(*(start + idx_), *(start + ParentIMP(idx_)), pq_->param) < 0)
 	{
 		/* swap between parent and curr data */
-		Swap(start + idx_, start + ParentIMP(idx_));
+		SwapIMP(start + idx_, start + ParentIMP(idx_));
 		/* curr = parent */
 		idx_ = ParentIMP(idx_);
 	}
@@ -214,14 +223,17 @@ static size_t RChildIMP(size_t idx_)
 	return idx_ * 2 + 1;
 }
 
-static void Swap(void** data1, void** data2)
+static void SwapIMP(void** data1, void** data2)
 {
 	void* tmp = *data1;
 	*data1 = *data2;
 	*data2 = tmp;
 }
 
-
+static void CopyIMP(void** data1, void** data2)
+{
+	*data1 = *data2;
+}
 
 
 
