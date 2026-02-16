@@ -1,6 +1,5 @@
 #include <assert.h> /* assert */
 #include <stdlib.h> /* malloc, free */
-#include <string.h> /* memcpy */
 
 #include "vector.h" /* vector api */
 #include "pqueue.h" /* api */
@@ -94,13 +93,12 @@ status_ty PQEnqueue(pq_ty* pq_, void* data_)
 	/* add data to the end of vector */
 	status = VectorPushBack(pq_->data, &data_);
 	/* handle failure */
-	if (FAIL == status)
-	{
-		return status;
-	}
 	
 	/* heapify up on new data */
-	HeapifyUpIMP(pq_, VectorSize(pq_->data));
+	if (SUCCESS == status)
+	{
+		HeapifyUpIMP(pq_, VectorSize(pq_->data));
+	}
 	
 	/* return status */
 	return status;
@@ -118,7 +116,7 @@ void* PQDequeue(pq_ty* pq_)
 	data = *(start + 1);
 	
 	/* copy last element to root */
-	memcpy(start + 1, start + VectorSize(pq_->data), sizeof(void*));
+	start[1] = *(start + VectorSize(pq_->data));
 	
 	/* remove the last element */
 	VectorPopBack(pq_->data);
@@ -169,7 +167,8 @@ static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 	start = StartIMP(pq_);
 	
 	/* while not top and curr < parent  */
-	while (1 < idx_ && pq_->cmp_func(*(start + idx_), *(start + ParentIMP(idx_)), pq_->param) < 0)
+	while (1 < idx_ && pq_->cmp_func(*(start + idx_),
+			 *(start + ParentIMP(idx_)), pq_->param) < 0)
 	{
 		/* swap between parent and curr data */
 		SwapIMP(start + idx_, start + ParentIMP(idx_));
@@ -193,10 +192,12 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 	while (l_child_ <= VectorSize(pq_->data))
 	{
 		idx_ret_ = l_child_;
-		/* swap between MIN(child left, child right) that less than curr and curr data */
+		/* swap between MIN(child left, child right) and curr data */
 		if (r_child_ <= VectorSize(pq_->data))
 		{
-			idx_ret_ = (pq_->cmp_func(*(start + l_child_), *(start + r_child_), pq_->param) < 0) ? l_child_ : r_child_;
+			idx_ret_ = (pq_->cmp_func(*(start + l_child_),
+						 *(start + r_child_), pq_->param) < 0)
+						 				 ? l_child_ : r_child_;
 		}
 		
 		if (pq_->cmp_func(*(start + idx_ret_), *(start + idx_), pq_->param) > 0)
