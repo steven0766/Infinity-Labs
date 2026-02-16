@@ -124,7 +124,7 @@ void* PQDequeue(pq_ty* pq_)
 	VectorPopBack(pq_->data);
 	
 	/* heapify down the root */
-	HeapifyDownIMP(pq_, VectorSize(pq_->data));
+	HeapifyDownIMP(pq_, 1);
 	
 	/* return saved data */
 	return data;
@@ -192,6 +192,7 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 	/* while not leaf and child < curr  */
 	while (l_child_ <= VectorSize(pq_->data))
 	{
+		idx_ret_ = l_child_;
 		/* swap between MIN(child left, child right) that less than curr and curr data */
 		if (r_child_ <= VectorSize(pq_->data))
 		{
@@ -206,6 +207,8 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 		SwapIMP(start + idx_ret_, start + idx_);
 		/* curr = child */
 		idx_ = idx_ret_;
+		l_child_ = LChildIMP(idx_);
+		r_child_ = RChildIMP(idx_);
 	}
 }
 
