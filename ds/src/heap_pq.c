@@ -1,5 +1,6 @@
 #include <assert.h> /* assert */
 #include <stdlib.h> /* malloc, free */
+#include <string.h> /* memcpy */
 
 #include "vector.h" /* vector api */
 #include "pqueue.h" /* api */
@@ -18,7 +19,6 @@ static size_t ParentIMP(size_t idx_);
 static size_t LChildIMP(size_t idx_);
 static size_t RChildIMP(size_t idx_);
 static void SwapIMP(void** data1, void** data2);
-static void CopyIMP(void** data1, void** data2);
 
 pq_ty* PQCreate(pq_cmp_ty cmp_, void* param_)
 {
@@ -113,17 +113,18 @@ void* PQDequeue(pq_ty* pq_)
 	/* assert */
 	assert(pq_);
 
+	start = StartIMP(pq_);
 	/* save root data */
 	data = *(start + 1);
 	
 	/* copy last element to root */
-	CopyIMP(*(start + 1), (start + VectorSize(pq_->data)));
+	memcpy(start + 1, start + VectorSize(pq_->data), sizeof(void*));
 	
 	/* remove the last element */
 	VectorPopBack(pq_->data);
 	
 	/* heapify down the root */
-	HeapifyDownIMP(pq_, VectorSize(pq_->data))
+	HeapifyDownIMP(pq_, VectorSize(pq_->data));
 	
 	/* return saved data */
 	return data;
@@ -180,17 +181,32 @@ static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
 static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 {
 	void** start = NULL;
+	size_t l_child_ = LChildIMP(idx_);
+	size_t r_child_ = RChildIMP(idx_);
+	size_t idx_ret_ = l_child_;
 	/* assert */
 	assert(pq_);
 	
 	start = StartIMP(pq_);
 	
 	/* while not leaf and child < curr  */
-
-	
+	while (l_child_ <= VectorSize(pq_->data))
+	{
 		/* swap between MIN(child left, child right) that less than curr and curr data */
+		if (r_child_ <= VectorSize(pq_->data))
+		{
+			idx_ret_ = (pq_->cmp_func(*(start + l_child_), *(start + r_child_), pq_->param) < 0) ? l_child_ : r_child_;
+		}
 		
+		if (pq_->cmp_func(*(start + idx_ret_), *(start + idx_), pq_->param) > 0)
+		{
+			break;
+		}
+		
+		SwapIMP(start + idx_ret_, start + idx_);
 		/* curr = child */
+		idx_ = idx_ret_;
+	}
 }
 
 static void** StartIMP(const pq_ty* pq_)
@@ -229,13 +245,6 @@ static void SwapIMP(void** data1, void** data2)
 	*data1 = *data2;
 	*data2 = tmp;
 }
-
-static void CopyIMP(void** data1, void** data2)
-{
-	*data1 = *data2;
-}
-
-
 
 
 
