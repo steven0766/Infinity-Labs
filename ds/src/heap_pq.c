@@ -90,7 +90,11 @@ pq_bool_ty PQIsEmpty(const pq_ty* pq_)
 	assert(pq_);
 	
 	/* return if VectorSize == 0 */
-	return (0 == VectorSize(pq_->data)) ? PQ_TRUE : PQ_FALSE;
+	if (0 == VectorSize(pq_->data))
+	{
+		return PQ_TRUE;
+	}
+	return PQ_FALSE;
 }
 
 status_ty PQEnqueue(pq_ty* pq_, void* data_)
@@ -120,6 +124,7 @@ void* PQDequeue(pq_ty* pq_)
 	void* ret = NULL;
 	/* assert */
 	assert(pq_);
+	assert(!PQIsEmpty(pq_));
 
 	start = StartIMP(pq_);
 	/* save root data */
@@ -172,9 +177,9 @@ void* PQRemove(pq_ty* pq_, pq_is_match_ty is_match_, void* param_)
 	/* heapify up or down if needed */
 	
 	/* if heapify up needed */
-	HeapifyUpIMP(pq_, VectorSize(pq_->data));
+	HeapifyUpIMP(pq_, i);
 	/* if heapify down needed */
-	HeapifyDownIMP(pq_, 1);
+	HeapifyDownIMP(pq_, i);
 	
 	/* return saved data */
 	return ret;
@@ -182,14 +187,12 @@ void* PQRemove(pq_ty* pq_, pq_is_match_ty is_match_, void* param_)
 
 void* PQPeek(const pq_ty* pq_)
 {
-	void** ret = NULL;
 	/* assert */
 	assert(pq_);
 	assert(0 != VectorSize(pq_->data));
 	
-	ret = StartIMP(pq_) + 1;
 	/* return first element in vector */
-	return *ret;
+	return StartIMP(pq_)[1];
 }
 
 static void HeapifyUpIMP(pq_ty* pq_, size_t idx_)
@@ -229,9 +232,11 @@ static void HeapifyDownIMP(pq_ty* pq_, size_t idx_)
 		/* swap between MIN(child left, child right) and curr data */
 		if (r_child_ <= VectorSize(pq_->data))
 		{
-			idx_ret_ = (pq_->cmp_func(heap[l_child_],
-						 heap[r_child_], pq_->param) < 0)
-						 				 ? l_child_ : r_child_;
+			if (pq_->cmp_func(heap[l_child_],
+						 heap[r_child_], pq_->param) > 0)
+			{
+				idx_ret_ = r_child_;
+			}
 		}
 		
 		if (pq_->cmp_func(heap[idx_ret_], heap[idx_], pq_->param) > 0)
