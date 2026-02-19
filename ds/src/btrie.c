@@ -12,6 +12,7 @@ struct node
 static node_ty* CreateNode(void);
 static void Destroynodes(void);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
+static size_t CountOccupied(node_ty* node, int height, int total_height);
 
 btrie_ty* BTrieCreate(size_t num_bits_)
 {
@@ -45,15 +46,17 @@ void BTrieDestroy(btrie_ty* trie_)
 {
 	/* handle trie is NULL */
 	
-	/* call DestroyNodes */
+	/* root = get root */
+	/* call DestroyNodes(root) */
 	
+	/*trie->root = bad mem*/
 	/* free trie */
 	/* set trie to bad mem */
 }
 
 static void Destroynodes(node_ty* node)
 {
-	/* handle node is NULL */
+	/* return if node is NULL */
 	
 	/* call DestroyNodes(left node) */
 	/* call DestroyNodes(right node) */
@@ -65,25 +68,31 @@ void BTrieRelease(btrie_ty* trie_, num_ty addr_)
 {
 	/* assert */
 	
-	/* ret = addr_ */
+	/* num = addr_ */
 	
 	/* get root */
 	
-	/* if ReleaseIMP(root, num of bits, ret) */
+	/* ReleaseIMP(root, num of bits, num) */
 }
 
 static int ReleaseIMP(node_ty* node, size_t idx, num_ty addr_)
 {
-	/* if *node is NULL */
+	/* if node is NULL */
 		/* return fail */
+	/* if idx is 0 */
+		/* free node */
+		/* set node to bad mem */
+		/* return success */
 	
 	/* dir = GetDir(addr_, idx - 1) */	
-	/* ret = ReleaseIMP(node[dir], idx - 1, addr_) */
+	/* status = ReleaseIMP(node[dir], idx - 1, addr_) */
 	
-	/* if ret is success */
+	/* if status is success */
+		
 		/* if other child is NULL */
 			/* free node */
-			/* return ret */
+			/* set node to bad mem */
+			/* return success */
 	
 	/* return fail */
 }
@@ -124,13 +133,29 @@ static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 		/* else */
 			/* set cur bit to 0 and right bits to 1 */
 		
-		/* dir = GetDir(num, idx - 1) */
-		/* ret = GetIMP(node[dir], idx - 1, num) */
+		/* ret = GetIMP(node[!dir], idx - 1, num) */
 		/* ret is fail */
 			/* return ret */
 			
 	/* if both bits occupied */
-		/* sry is ocuupied true */
+		/* set node is ocuupied true */
 		
 	/* return ret */
+}
+
+
+size_t BTrieCountAvailable(const btrie_ty* trie_)
+{
+
+	/* return CountOccupied(root, 0) */
+}
+
+static size_t CountOccupied(node_ty* node, int height, int total_height)
+{
+	/* if node is null return 0  */
+	
+	/* if is occupied  */
+		/* return 2^(total_height - height) */
+	
+	/* return CountOccupied(left node, height + 1, total_height) +  CountOccupied(right node, height + 1, total_height)*/
 }
