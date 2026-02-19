@@ -1,65 +1,43 @@
-#ifndef __BIT_ARR__
-#define __BIT_ARR__
+#ifndef __BTRIE_H__
+#define __BTRIE_H__
 
-#include <stddef.h>
+#include <stddef.h>     /* size_t */
 
 typedef struct btrie btrie_ty;
 typedef size_t addr_ty;
+ 
+/*
+* On failure returns NULL
+* O(1)
+*/
+btrie_ty* BTrieCreate(size_t num_bits_);
 
-/****************************************************************************** 
-* 	Description:
-* 		Creates an empty "btrie"
-* 	Return value:
-* 		On success, a pointer to the created trie
-* 		On failure, NULL
-*   Undefined behavior:
-* 		num_bits == 0
-* 	O(1)
-******************************************************************************/
-btrie_ty* BTrieCreate(size_t num_bits);
+/*
+*   NULL is allowed
+*   
+*/
+void BTrieDestroy(btrie_ty* trie_);
 
-/****************************************************************************** 
-* 	Description:
-* 		Destroys the "trie"
-* 		No operations performed if "trie" is NULL
-* 	Return value:
-* 		None
-*   O(n)
-******************************************************************************/
-void BTrieDestroy(btrie_ty* trie);
-
-/****************************************************************************** 
-* 	Description:
-* 		Frees "addr" from "trie"
-* 	Return value:	
-* 		None
-* 	Undefined behaviour:
-* 		None
+/*
+*   Frees "addr" from "trie"
 *   O(1)
-******************************************************************************/
-void BTrieFree(btrie_ty* trie, addr_ty* addr);
+*/
+void BTrieRelease(btrie_ty* trie_, addr_ty addr_);
 
-/****************************************************************************** 
-* 	Description:
-* 		Allocates a new available address.
+/*
 * 	Return value:	
 * 		On success, returns the nearest address available to "addr_"
 *       On fail, returns address with 0 value.
 * 	Undefined behaviour:
-        "trie_" is NULL.
+*        "trie_" is NULL
 *   O(1)
-******************************************************************************/
-addr_ty* BTrieGet(btrie_ty* trie, addr_ty* addr);
+*/
+addr_ty BTrieGet(btrie_ty* trie_, addr_ty addr_);
+    
+/*
+* 	Undefined behaviour:
+*        "trie_" is NULL
+*/
+size_t BTrieCountAvailable(const btrie_ty* trie_);
 
-/****************************************************************************** 
-* 	Description:
-*       Count all available addresses in trie.
-* 	Return value:
-*       Number of available addresses in trie.
-*   Undefined behaviour:
-*       "trie_" is NULL
-*   O(n)
-******************************************************************************/
-size_t BTrieAvailable(btrie_ty* trie);
-
-#endif /* __BIT_ARR__ */
+#endif /* __BTRIE_H__ */
