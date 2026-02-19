@@ -6,6 +6,7 @@ struct trie
 struct node
 {
 	struct node* nodes[2];
+	unsigned int num_bits;
 };
 
 static node_ty* CreateNode(void);
@@ -47,6 +48,7 @@ void BTrieDestroy(btrie_ty* trie_)
 	/* call DestroyNodes */
 	
 	/* free trie */
+	/* set trie to bad mem */
 }
 
 static void Destroynodes(node_ty* node)
@@ -56,9 +58,10 @@ static void Destroynodes(node_ty* node)
 	/* call DestroyNodes(left node) */
 	/* call DestroyNodes(right node) */
 	/* free node */
+	/* set node to bad mem */
 }
 
-num_ty BTrieGet(btrie_ty* trie_, addr_ty addr_)
+void BTrieRelease(btrie_ty* trie_, num_ty addr_)
 {
 	/* assert */
 	
@@ -66,7 +69,34 @@ num_ty BTrieGet(btrie_ty* trie_, addr_ty addr_)
 	
 	/* get root */
 	
-	/* if GetIMP(toor, num of bits, &ret) is false */
+	/* if ReleaseIMP(root, num of bits, ret) */
+}
+
+static int ReleaseIMP(node_ty* node, size_t idx, num_ty addr_)
+{
+	/* if *node is NULL */
+		/* return fail */
+	
+	/* dir = GetDir(addr_, idx - 1) */	
+	/* ret = ReleaseIMP(node[dir], idx - 1, addr_) */
+	
+	/* if ret is success */
+		/* if other child is NULL */
+			/* free node */
+			/* return ret */
+	
+	/* return fail */
+}
+
+num_ty BTrieGet(btrie_ty* trie_, num_ty addr_)
+{
+	/* assert */
+	
+	/* ret = addr_ */
+	
+	/* get root */
+	
+	/* if GetIMP(root, num of bits, &ret) is false */
 		/* return 0 */
 	
 	/* return ret */
