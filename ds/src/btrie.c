@@ -1,45 +1,89 @@
-struct trie
-{
-	node_ty* root;
-};
+#include <stdlib.h> /* malloc, free */
+#include <stddef.h> /* size_t */
 
-struct node
+#include "btrie.h"  /* api */
+#include "utils.h"  /* DEBUG, bad mem */
+
+typedef struct node
 {
 	struct node* nodes[2];
+	int is_occupied;
+}node_ty;
+
+struct btrie
+{
+	node_ty* root;
 	unsigned int num_bits;
 };
 
 static node_ty* CreateNode(void);
-static void Destroynodes(void);
+static void Destroynodes(node_ty* node);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
 static size_t CountOccupied(node_ty* node, int height, int total_height);
 
 btrie_ty* BTrieCreate(size_t num_bits_)
 {
+	size_t i = 0;
+	node_ty* curr = NULL;
 	/* allocate btrie (ret) */
 	/* handle fail */
+	btrie_ty* ret = (btrie_ty*)malloc(sizeof(btrie_ty));
+	if(!ret)
+	{
+		return NULL;
+	}
 	
 	/* allocate ret->root */
 	/* handle fail */
-	
 	/* curr = root[0] */
+	ret->root = CreateNode();
+	if (!ret->root)
+	{
+		free(ret);
+		DEBUG_ONLY(ret = BAD_MEM(trie_ty*););
+		return NULL;
+	}
+	ret->num_bits = num_bits_;
 	
 	/* loop from 0 to idx */
 		/* curr[0] = createnode */
 		/* handle fail */
 		/* curr = curr[0] */
-		
+	curr = ret->root;
+	for (i = 0; i < num_bits_; ++i)
+	{
+		curr->nodes[0] = CreateNode();
+		if (!curr->nodes[0])
+		{
+			Destroynodes(ret->root);
+			free(ret);
+			DEBUG_ONLY(ret = BAD_MEM(btrie_ty*););
+			return NULL;
+		}
+		curr = curr->nodes[0];
+	}
+	
 	/* set curr's is ocuppied to true */
+	curr->is_occupied = 1;
 	
 	/* return ret*/
+	return ret;
 }
 
 static node_ty* CreateNode(void)
 {
 	/* allocate ret */
 	/* handle fail */
+	node_ty* ret = (node_ty*)malloc(sizeof(node_ty));
+	if (!ret)
+	{
+		return NULL;
+	}
+	/* init is_occupied to 0 */
+	ret->is_occupied = 0;
 	
 	/* return ret */
+	return ret;
 }
 
 void BTrieDestroy(btrie_ty* trie_)
@@ -146,16 +190,26 @@ static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 
 size_t BTrieCountAvailable(const btrie_ty* trie_)
 {
-
 	/* return CountOccupied(root, 0) */
+	return CountOccupied(trie_->root, 0, trie_->num_bits);
 }
 
 static size_t CountOccupied(node_ty* node, int height, int total_height)
 {
 	/* if node is null return 0  */
+	if (!node)
+	{
+		return 0;
+	}
 	
 	/* if is occupied  */
 		/* return 2^(total_height - height) */
+	if (1 == node->is_occupied)
+	{
+		return pow(2, total_height - height);
+	}
 	
 	/* return CountOccupied(left node, height + 1, total_height) +  CountOccupied(right node, height + 1, total_height)*/
+	return CountOccupied(node->nodes[0], height + 1, total_height) + 
+		   CountOccupied(node->nodes[1], height + 1, total_height);
 }
