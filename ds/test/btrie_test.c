@@ -22,4 +22,6 @@ static void TestBTrieCreate(void)
 	
 	ASSERT_NOT_NULL(btrie);
 	ASSERT_INT(1, BTrieCountAvailable(btrie));
+	
+	BTrieDestroy(btrie);
 }
