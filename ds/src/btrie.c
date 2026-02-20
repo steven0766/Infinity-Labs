@@ -209,7 +209,7 @@ static size_t CountOccupied(node_ty* node, int height, int total_height)
 		return pow(2, total_height - height);
 	}
 	
-	/* return CountOccupied(left node, height + 1, total_height) +  CountOccupied(right node, height + 1, total_height)*/
+	/* return left nodes occupied + right nodes occupied*/
 	return CountOccupied(node->nodes[0], height + 1, total_height) + 
 		   CountOccupied(node->nodes[1], height + 1, total_height);
 }
