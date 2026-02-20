@@ -1,5 +1,6 @@
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
+#include <math.h>   /* pow */
 
 #include "btrie.h"  /* api */
 #include "utils.h"  /* DEBUG, bad mem */
@@ -17,7 +18,7 @@ struct btrie
 };
 
 static node_ty* CreateNode(void);
-static void Destroynodes(node_ty* node);
+static void DestroyNodes(node_ty* node);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
 static size_t CountOccupied(node_ty* node, int height, int total_height);
 
@@ -40,7 +41,7 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 	if (!ret->root)
 	{
 		free(ret);
-		DEBUG_ONLY(ret = BAD_MEM(trie_ty*););
+		DEBUG_ONLY(ret = BAD_MEM(btrie_ty*););
 		return NULL;
 	}
 	ret->num_bits = num_bits_;
@@ -55,7 +56,7 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 		curr->nodes[0] = CreateNode();
 		if (!curr->nodes[0])
 		{
-			Destroynodes(ret->root);
+			DestroyNodes(ret->root);
 			free(ret);
 			DEBUG_ONLY(ret = BAD_MEM(btrie_ty*););
 			return NULL;
@@ -81,6 +82,8 @@ static node_ty* CreateNode(void)
 	}
 	/* init is_occupied to 0 */
 	ret->is_occupied = 0;
+	ret->nodes[0] = NULL;
+	ret->nodes[1] = NULL;
 	
 	/* return ret */
 	return ret;
@@ -88,24 +91,42 @@ static node_ty* CreateNode(void)
 
 void BTrieDestroy(btrie_ty* trie_)
 {
+	node_ty* node = NULL;
 	/* handle trie is NULL */
+	if (!trie_)
+	{
+		return;
+	}
 	
 	/* root = get root */
+	node = trie_->root;
 	/* call DestroyNodes(root) */
+	DestroyNodes(node);
 	
 	/*trie->root = bad mem*/
+	DEBUG_ONLY(trie_->root = BAD_MEM(node_ty*););
 	/* free trie */
+	free(trie_);
 	/* set trie to bad mem */
+	DEBUG_ONLY(trie_ = BAD_MEM(btrie_ty*););
 }
 
-static void Destroynodes(node_ty* node)
+static void DestroyNodes(node_ty* node)
 {
 	/* return if node is NULL */
+	if (!node)
+	{
+		return;
+	}
 	
 	/* call DestroyNodes(left node) */
+	DestroyNodes(node->nodes[0]);
 	/* call DestroyNodes(right node) */
+	DestroyNodes(node->nodes[1]);
 	/* free node */
+	free(node);
 	/* set node to bad mem */
+	DEBUG_ONLY(node = BAD_MEM(node_ty*););
 }
 
 void BTrieRelease(btrie_ty* trie_, num_ty addr_)
@@ -139,6 +160,7 @@ static int ReleaseIMP(node_ty* node, size_t idx, num_ty addr_)
 			/* return success */
 	
 	/* return fail */
+	return 0;
 }
 
 num_ty BTrieGet(btrie_ty* trie_, num_ty addr_)
