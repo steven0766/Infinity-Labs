@@ -1,10 +1,12 @@
-#include <stdio.h>
+#include <stdio.h>  /* printf */
+#include <math.h>   /* pow */
 
 #include "test_utils.h"
 #include "btrie.h"
 
 static void TestBTrieCreate(void);
 static void TestBTrieGet(void);
+static void TestBTrieGetFull(void);
 static void TestBTrieRelease(void);
 
 #define ARR_SIZE(arr)					sizeof((arr)) / sizeof((arr)[0])
@@ -17,7 +19,11 @@ int main()
 	TestBTrieCreate();
 	
 	TestPrintSection("btrie get");
+	TestPrintSubSection("simple add address");
 	TestBTrieGet();
+	
+	TestPrintSubSection("add address on limit");
+	TestBTrieGetFull();
 	
 	TestPrintSection("btrie release");
 	TestBTrieRelease();
@@ -31,7 +37,7 @@ static void TestBTrieCreate(void)
 	btrie_ty* btrie = BTrieCreate(size);
 	
 	ASSERT_NOT_NULL(btrie);
-	ASSERT_INT(1, BTrieCountAvailable(btrie));
+	ASSERT_INT((1 << size) - 1, BTrieCountAvailable(btrie));
 	
 	BTrieDestroy(btrie);
 }
@@ -55,9 +61,32 @@ static void TestBTrieGet(void)
 		ASSERT_INT(expected[i], actual);
 	}
 	
-	ASSERT_INT(ARR_SIZE(arr) + 1, BTrieCountAvailable(btrie));
+	ASSERT_INT((1 << size) - ARR_SIZE(arr) - 1, BTrieCountAvailable(btrie));
 	
 	BTrieDestroy(btrie);
+}
+
+static void TestBTrieGetFull(void)
+{
+	size_t size = 8;
+	btrie_ty* btrie = BTrieCreate(size);
+	size_t i = 0;
+	size_t max_cap = pow(2, size);
+	num_ty stress_arr[5] = {1, 57, 150, 230, 255};
+	int result = 0;
+	
+	ASSERT_NOT_NULL(btrie);
+	
+	for (i = 0; i < max_cap; ++i)
+	{
+		BTrieGet(btrie, i);
+	}
+	
+	for (i = 0; i < ARR_SIZE(stress_arr); ++i)
+	{
+		result = BTrieGet(btrie, stress_arr[i]);
+		ASSERT_INT(0, result);
+	}
 }
 
 static void TestBTrieRelease(void)
@@ -81,8 +110,7 @@ static void TestBTrieRelease(void)
 		BTrieRelease(btrie, release[i]);
 	}
 	
-	ASSERT_INT(ARR_SIZE(arr) - ARR_SIZE(release) + 1,
-						    BTrieCountAvailable(btrie));
+	ASSERT_INT((1 << size) - ARR_SIZE(release) - 1, BTrieCountAvailable(btrie));
 						    
 	BTrieDestroy(btrie);
 }
