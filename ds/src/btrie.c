@@ -20,6 +20,7 @@ struct btrie
 
 static node_ty* CreateNode(void);
 static void DestroyNodes(node_ty* node);
+static int ReleaseIMP(node_ty* node, size_t idx, num_ty addr_);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
 static int GetDirIMP(const num_ty* num, size_t idx);
 static void SwitchBitIMP(num_ty* num, size_t idx);
@@ -136,33 +137,56 @@ static void DestroyNodes(node_ty* node)
 void BTrieRelease(btrie_ty* trie_, num_ty addr_)
 {
 	/* assert */
+	assert(trie_);
 	
 	/* num = addr_ */
 	
 	/* get root */
 	
 	/* ReleaseIMP(root, num of bits, num) */
+	ReleaseIMP(trie_->root, trie_->num_bits, addr_);
 }
 
 static int ReleaseIMP(node_ty* node, size_t idx, num_ty addr_)
 {
+	int dir = 0;
+	int status = 0;
 	/* if node is NULL */
 		/* return fail */
+	if (!node)
+	{
+		return 0;
+	}
 	/* if idx is 0 */
 		/* free node */
 		/* set node to bad mem */
 		/* return success */
+	if (0 == idx)
+	{
+		free(node);
+		DEBUG_ONLY(node = BAD_MEM(node*););
+		return 1;
+	}
 	
 	/* dir = GetDir(addr_, idx - 1) */	
+	dir = GetDirIMP(&addr_, idx - 1);
 	/* status = ReleaseIMP(node[dir], idx - 1, addr_) */
+	status = ReleaseIMP(node->nodes[dir], idx - 1, addr_);
 	
 	/* if status is success */
-		
+	if (1 == status)
+	{
 		/* if other child is NULL */
+		if (!node->nodes[!dir])
+		{
 			/* free node */
 			/* set node to bad mem */
 			/* return success */
-	
+			free(node);
+			DEBUG_ONLY(node = BADMEM(node*););
+			return 1;
+		}
+	}
 	/* return fail */
 	return 0;
 }
