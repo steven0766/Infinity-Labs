@@ -315,8 +315,11 @@ static void SetBitIMP(num_ty* num, size_t idx, int bit)
 
 size_t BTrieCountAvailable(const btrie_ty* trie_)
 {
-	/* return CountOccupied(root, 0) */
-	return CountOccupied(trie_->root, 0, trie_->num_bits);
+	size_t cnt = 0;
+	assert(trie_);
+	/* count = CountOccupied(root, 0) */
+	cnt = CountOccupied(trie_->root, 0, trie_->num_bits);
+	return (1 << trie_->num_bits) - cnt;
 }
 
 static size_t CountOccupied(node_ty* node, int height, int total_height)
@@ -331,7 +334,7 @@ static size_t CountOccupied(node_ty* node, int height, int total_height)
 		/* return 2^(total_height - height) */
 	if (1 == node->is_occupied)
 	{
-		return pow(2, total_height - height);
+		return (1 << (total_height - height));
 	}
 	
 	/* return left nodes occupied + right nodes occupied*/
