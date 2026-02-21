@@ -1,6 +1,7 @@
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 #include <math.h>   /* pow */
+#include <assert.h> /* assert */
 
 #include "btrie.h"  /* api */
 #include "utils.h"  /* DEBUG, bad mem */
@@ -20,6 +21,9 @@ struct btrie
 static node_ty* CreateNode(void);
 static void DestroyNodes(node_ty* node);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
+static int GetDirIMP(const num_ty* num, size_t idx);
+static void SwitchBitIMP(num_ty* num, size_t idx);
+static void SetBitIMP(num_ty* num, size_t idx, int bit);
 static size_t CountOccupied(node_ty* node, int height, int total_height);
 
 btrie_ty* BTrieCreate(size_t num_bits_)
@@ -165,50 +169,127 @@ static int ReleaseIMP(node_ty* node, size_t idx, num_ty addr_)
 
 num_ty BTrieGet(btrie_ty* trie_, num_ty addr_)
 {
+	num_ty ret = 0;
+	node_ty* node = NULL;
 	/* assert */
+	assert(trie_);
 	
 	/* ret = addr_ */
-	
-	/* get root */
+	ret = addr_;
 	
 	/* if GetIMP(root, num of bits, &ret) is false */
 		/* return 0 */
+	if (0 == GetIMP(&trie_->root, trie_->num_bits, &ret))
+	{
+		return 0;
+	}
 	
 	/* return ret */
+	return ret;
 }
 
 static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 {
+	size_t dir = 0;
+	int left_occupied = 0;
+	int right_occupied = 0;
+	int is_created = 0;
+	int ret = 0;
 	/* if *node is NULL */
 		/* create node */
 		/* handle failure */
+	if (NULL == *node)
+	{
+		*node = CreateNode();
+		if (NULL == *node)
+		{
+			return 0;
+		}
+		is_created = 1;
+	}
 		
 	/* if node is occupied */
 		/* return fail */
+	if (1 == (*node)->is_occupied)
+	{
+		return 0;
+	}
 		
 	/* if last bit */
 		/* set occupied true */
 		/* return success */
+	if (0 == idx)
+	{
+		(*node)->is_occupied = 1;
+		return 1;
+	}
 	
 	/* dir = GetDir(num, idx - 1) */
+	dir = GetDirIMP(num, idx - 1);
 	/* ret = GetIMP(node[dir], idx - 1, num) */
+	ret = GetIMP((&(*node)->nodes[dir]), idx - 1, num);
 	
 	/* if ret is fail */
+	if (0 == ret)
+	{
 		/* if curr bit is 0 */
 			/* set cur bit to 1 and right bits to 0 */
 		/* else */
 			/* set cur bit to 0 and right bits to 1 */
-		
+		SwitchBitIMP(num, idx - 1);
+		if (2 <= idx)
+		{
+			SetBitIMP(num, idx - 2, dir);
+		}
 		/* ret = GetIMP(node[!dir], idx - 1, num) */
 		/* ret is fail */
 			/* return ret */
-			
+		ret = GetIMP((&(*node)->nodes[!dir]), idx - 1, num);
+		if (0 == ret)
+		{
+			if (1 == is_created)
+			{
+				free(*node);
+				*node = NULL;
+			}
+			return ret;
+		}	
+	}
 	/* if both bits occupied */
 		/* set node is ocuupied true */
+	left_occupied = ((*node)->nodes[0] != NULL) && ((*node)->nodes[0]->is_occupied);
+	right_occupied = ((*node)->nodes[1] != NULL) && ((*node)->nodes[1]->is_occupied);
+	(*node)->is_occupied = left_occupied && right_occupied;
 		
 	/* return ret */
+	return ret;
 }
 
+static int GetDirIMP(const num_ty* num, size_t idx)
+{
+	return ((*num >> idx) & 1);
+}
+
+static void SwitchBitIMP(num_ty* num, size_t idx)
+{
+	*num ^= ((size_t)1 << idx);
+}
+
+static void SetBitIMP(num_ty* num, size_t idx, int bit)
+{
+	size_t i = 0;
+	for (i = 0; i <= idx; ++i)
+	{
+		if (bit)
+		{
+			*num |= ((size_t)1 << i);
+		}
+		else
+		{
+			*num &= ~((size_t)1 << i);
+		}
+	}
+}
 
 size_t BTrieCountAvailable(const btrie_ty* trie_)
 {
