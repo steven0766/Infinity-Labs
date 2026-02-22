@@ -152,13 +152,9 @@ static int ReleaseIMP(node_ty** node, size_t idx, num_ty num_)
 
 num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
 {
-	num_ty ret = 0;
-	node_ty* node = NULL;
+	num_ty ret = num_;
 	/* assert */
 	assert(trie_);
-	
-	/* ret = addr_ */
-	ret = num_;
 	
 	/* if GetIMP(root, num of bits, &ret) is false */
 	if (FAIL == GetIMP(&trie_->root, trie_->num_bits, &ret))
