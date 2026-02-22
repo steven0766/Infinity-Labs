@@ -1,5 +1,9 @@
+#include <stdlib.h>		/* malloc, free, size_t */
+#include <assert.h>		/* assert */
+
 #include "dhcp.h"
-#include "utils.h"
+#include "btrie.h"		/* BTrieCreate, BTrieDestroy */
+#include "utils.h"		/* BAD_MEM, DEBUG_ONLY */
 
 struct dhcp
 {
@@ -10,26 +14,48 @@ struct dhcp
 
 dhcp_ty* DhcpCreate(addr_ty subnet_id_, unsigned int host_numb_)
 {
-	/* assert host_numb_ max */
-	
 	/* allocate dhcp */
-	/* handle failure */
+	dhcp_ty* ret = (dhcp_ty*)malloc(sizeof(dhcp_ty));
+	/* assert host_numb_ max */
+	assert(64 >= host_numb_);
 	
-	/* allocate trie */
-	/* handle failue */
+	/* handle failure */
+	if (NULL == ret)
+	{
+		return NULL;
+	}
 	
 	/* init subnet_id and subnet_mask */
+	ret->subnet_id = subnet_id_;
+	ret->subnet_mask = (~(size_t)0 << host_numb_);
 	
-	/* BTrieGet 0 */
-	/* handle failure */
+	/* allocate trie */
+	ret->trie = BTrieCreate(host_numb_);
+	/* handle failue */
+	if (NULL == ret->trie)
+	{
+		free(ret);
+		return NULL;
+	}
 	
 	/* BTrieGet max (broadcast address */
-	/* handle failure */
+	if (0 == BTrieGet(ret->trie, (~(size_t)0)))
+	{
+		/* handle failure */
+		BTrieDestroy(ret->trie);
+		return NULL;
+	}
 	
 	/* BTrieGet max - 1 (server address) */
-	/* handle failure */
+	if (0 == BTrieGet(ret->trie, (~(size_t)0 << 1)))
+	{
+		/* handle failure */
+		BTrieDestroy(ret->trie);
+		return NULL;
+	}
 	
 	/* return dhcp */
+	return ret;
 }
 
 void DhcpDestroy(dhcp_ty* dhcp_)
@@ -60,7 +86,10 @@ addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
 
 void DhcpFreeIp(dhcp_ty* dhcp_, addr_ty addr_)
 {
-
+	/* assert addr_ prefix */
+	/* assert dhcp */
+	
+	/* BTrieRelease addr_ */
 }
 
 size_t DhcpCountFree(const dhcp_ty* dhcp_)
