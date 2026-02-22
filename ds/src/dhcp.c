@@ -34,7 +34,12 @@ dhcp_ty* DhcpCreate(addr_ty subnet_id_, unsigned int host_numb_)
 
 void DhcpDestroy(dhcp_ty* dhcp_)
 {
+	/* return if dhcp is NULL */
 	
+	/* BTrieDestroy */
+	/* bad mem on btrie */
+	
+	/* free dhcp */
 }
 
 addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
