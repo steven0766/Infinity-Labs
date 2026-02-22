@@ -9,4 +9,9 @@
 
 #define BAD_MEM(type) ((type)NULL)
 
+#define SUCCESS		0
+#define FAIL		1
+#define TRUE		1
+#define FALSE		0
+
 #endif /*__UTILS_H__*/
