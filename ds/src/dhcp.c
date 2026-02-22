@@ -77,24 +77,39 @@ void DhcpDestroy(dhcp_ty* dhcp_)
 
 addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
 {
-	/* assert addr_ prefix */
-	/* assert dhcp */
-	
 	/* init ret as addr */
+	addr_ty ret = addr_;
+	
+	/* assert dhcp */
+	assert(dhcp_);
+	/* assert addr_ prefix */
+	assert(dhcp_->subnet_id == subnet_mask & addr_);
 	
 	/* add ret to trie */
+	ret = BTrieGet(dhcp_->trie, ret);
 	
 	/* if ret is 0 */
+	if (0 == ret)
+	{
 		/* add 0 to trie */
+		ret = BTrieGet(dhcp_->trie, ret);
+		/* if ret still 0 */
+		if (0 == ret)
+		{
 			/* return 0 */
+			return 0;
+		{
+	}
 			
 	/* return ret with subnet_id */
+	return ret | subnet_id;
 }
 
 void DhcpFreeIp(dhcp_ty* dhcp_, addr_ty addr_)
 {
-	/* assert addr_ prefix */
 	/* assert dhcp */
+	
+	/* assert addr_ prefix */
 	
 	/* BTrieRelease addr_ */
 }
