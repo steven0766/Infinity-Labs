@@ -279,8 +279,10 @@ static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 	}
 	/* if both bits occupied */
 		/* set node is ocuupied true */
-	left_occupied = ((*node)->nodes[0] != NULL) && ((*node)->nodes[0]->is_occupied);
-	right_occupied = ((*node)->nodes[1] != NULL) && ((*node)->nodes[1]->is_occupied);
+	left_occupied = ((*node)->nodes[0] != NULL) &&
+					 ((*node)->nodes[0]->is_occupied);
+	right_occupied = ((*node)->nodes[1] != NULL) && 
+					 ((*node)->nodes[1]->is_occupied);
 	(*node)->is_occupied = left_occupied && right_occupied;
 		
 	/* return ret */
