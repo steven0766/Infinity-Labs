@@ -31,8 +31,8 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 	num_ty num = 0;
 	node_ty* curr = NULL;
 	/* allocate btrie (ret) */
-	/* handle fail */
 	btrie_ty* ret = (btrie_ty*)malloc(sizeof(btrie_ty));
+	/* handle fail */
 	if(!ret)
 	{
 		return NULL;
@@ -47,8 +47,9 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 		DEBUG_ONLY(ret = BAD_MEM(btrie_ty*););
 		return NULL;
 	}
+	/* init num_bits */
 	ret->num_bits = num_bits_;
-
+	/* allocate num 0 and handle fail */
 	if (FAIL == GetIMP(&ret->root, num_bits_, &num))
 	{
 		BTrieDestroy(ret);
@@ -62,8 +63,8 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 static node_ty* CreateNode(void)
 {
 	/* allocate ret */
-	/* handle fail */
 	node_ty* ret = (node_ty*)calloc(1, sizeof(node_ty));
+	/* handle fail */
 	if (!ret)
 	{
 		return NULL;
@@ -104,6 +105,7 @@ static void DestroyNodes(node_ty* node)
 	DestroyNodes(node->nodes[0]);
 	/* call DestroyNodes(right node) */
 	DestroyNodes(node->nodes[1]);
+	/* bad mem on left and right node */
 	DEBUG_ONLY(node->nodes[0] = BAD_MEM(node_ty*););
 	DEBUG_ONLY(node->nodes[1] = BAD_MEM(node_ty*););
 	/* free node */
@@ -176,9 +178,9 @@ num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
 	ret = num_;
 	
 	/* if GetIMP(root, num of bits, &ret) is false */
-		/* return 0 */
 	if (FAIL == GetIMP(&trie_->root, trie_->num_bits, &ret))
 	{
+		/* return 0 */
 		return 0;
 	}
 	
@@ -276,9 +278,11 @@ static void SwitchBitsIMP(num_ty* num, size_t idx)
 size_t BTrieCountAvailable(const btrie_ty* trie_)
 {
 	size_t cnt = 0;
+	/* assert */
 	assert(trie_);
 	/* count = CountOccupied(root, 0) */
 	cnt = CountOccupied(trie_->root, 0, trie_->num_bits);
+	/* return max_numbers - cnt */
 	return (1 << trie_->num_bits) - cnt;
 }
 
@@ -291,9 +295,9 @@ static size_t CountOccupied(node_ty* node, int height, int total_height)
 	}
 	
 	/* if is occupied  */
-		/* return 2^(total_height - height) */
 	if (1 == node->is_occupied)
 	{
+		/* return 2^(total_height - height) */
 		return (1 << (total_height - height));
 	}
 	
