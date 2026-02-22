@@ -23,7 +23,7 @@ static void DestroyNodes(node_ty* node);
 static int ReleaseIMP(node_ty** node, size_t idx, num_ty addr_);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
 static int GetDirIMP(const num_ty* num, size_t idx);
-static void SwitchBitsIMP(num_ty* num, size_t idx);
+static void RoundUpAtBitIMP(num_ty* num, size_t idx);
 static size_t CountOccupied(node_ty* node, int height, int total_height);
 
 btrie_ty* BTrieCreate(size_t num_bits_)
@@ -212,7 +212,7 @@ static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 		    return FAIL;
 		}
 		/* set cur bit to 1 and right bits to 0 */
-		SwitchBitsIMP(num, idx - 1);
+		RoundUpAtBitIMP(num, idx - 1);
 		
 		/* if GetIMP return FAIL */
 		if (FAIL == GetIMP((&(*node)->nodes[1]), idx - 1, num))
@@ -239,7 +239,7 @@ static int GetDirIMP(const num_ty* num, size_t idx)
 	return ((*num >> idx) & 1);
 }
 
-static void SwitchBitsIMP(num_ty* num, size_t idx)
+static void RoundUpAtBitIMP(num_ty* num, size_t idx)
 {
 	size_t i = 0;
 	
