@@ -61,11 +61,18 @@ dhcp_ty* DhcpCreate(addr_ty subnet_id_, unsigned int host_numb_)
 void DhcpDestroy(dhcp_ty* dhcp_)
 {
 	/* return if dhcp is NULL */
+	if (NULL == dhcp_)
+	{
+		return;
+	}
 	
 	/* BTrieDestroy */
+	BTrieDestroy(dhcp_->trie);
 	/* bad mem on btrie */
+	DEBUG_ONLY(dhcp_->trie = BAD_MEM(btrie_ty*););
 	
 	/* free dhcp */
+	free(dhcp_);
 }
 
 addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
