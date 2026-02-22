@@ -44,11 +44,18 @@ void DhcpDestroy(dhcp_ty* dhcp_)
 
 addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
 {
-	/* assert subnet id == addr & subnet mask */
+	/* assert addr_ prefix */
+	/* assert dhcp */
 	
-	/*  */
+	/* init ret as addr */
 	
-	/*  */
+	/* add ret to trie */
+	
+	/* if ret is 0 */
+		/* add 0 to trie */
+			/* return 0 */
+			
+	/* return ret with subnet_id */
 }
 
 void DhcpFreeIp(dhcp_ty* dhcp_, addr_ty addr_)
