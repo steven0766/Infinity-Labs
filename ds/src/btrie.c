@@ -20,7 +20,7 @@ struct btrie
 
 static node_ty* CreateNode(void);
 static void DestroyNodes(node_ty* node);
-static int ReleaseIMP(node_ty** node, size_t idx, num_ty addr_);
+static int ReleaseIMP(node_ty** node, size_t height_, num_ty addr_);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
 static int GetDirIMP(const num_ty* num, size_t idx);
 static void RoundUpAtBitIMP(num_ty* num, size_t idx);
@@ -117,7 +117,7 @@ void BTrieRelease(btrie_ty* trie_, num_ty num_)
 	ReleaseIMP(&trie_->root, trie_->num_bits, num_);
 }
 
-static int ReleaseIMP(node_ty** node, size_t idx, num_ty num_)
+static int ReleaseIMP(node_ty** node, size_t height_, num_ty num_)
 {
 	int dir = 0;
 	/* if node is NULL */
@@ -127,8 +127,8 @@ static int ReleaseIMP(node_ty** node, size_t idx, num_ty num_)
 		return FAIL;
 	}
 	/* set is_occupied to false */
-	/* if idx is 0 */
-	if (0 == idx)
+	/* if height_ is 0 */
+	if (0 == height_)
 	{
 		/* return SUCCESS */
 		(*node)->is_occupied = FALSE;
@@ -136,10 +136,10 @@ static int ReleaseIMP(node_ty** node, size_t idx, num_ty num_)
 	}
 	
 	/* get direction to go */	
-	dir = GetDirIMP(&num_, idx - 1);
+	dir = GetDirIMP(&num_, height_ - 1);
 
 	/* if R is success */
-	if (SUCCESS == ReleaseIMP(&((*node)->nodes[dir]), idx - 1, num_))
+	if (SUCCESS == ReleaseIMP(&((*node)->nodes[dir]), height_ - 1, num_))
 	{
 		/* set is_occupied to false */
 		(*node)->is_occupied = FALSE;
@@ -167,7 +167,7 @@ num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
 	return ret;
 }
 
-static int GetIMP(node_ty** node, size_t idx, num_ty* num)
+static int GetIMP(node_ty** node, size_t height_, num_ty* num)
 {
 	size_t dir = 0;
 	int left_occupied = 0;
@@ -192,18 +192,18 @@ static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 	}
 		
 	/* if last bit */
-	if (0 == idx)
+	if (0 == height_)
 	{
 		/* set occupied true */
-		(*node)->is_occupied = 1;
+		(*node)->is_occupied = TRUE;
 		/* return success */
 		return SUCCESS;
 	}
 	
 	/* get direction */
-	dir = GetDirIMP(num, idx - 1);
+	dir = GetDirIMP(num, height_ - 1);
 	/* if GetIMP return FAIL */
-	if (FAIL == GetIMP((&(*node)->nodes[dir]), idx - 1, num))
+	if (FAIL == GetIMP((&(*node)->nodes[dir]), height_ - 1, num))
 	{
 		/* if dir is 1 */
 		if (dir == 1)
@@ -212,10 +212,10 @@ static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 		    return FAIL;
 		}
 		/* set cur bit to 1 and right bits to 0 */
-		RoundUpAtBitIMP(num, idx - 1);
+		RoundUpAtBitIMP(num, height_ - 1);
 		
 		/* if GetIMP return FAIL */
-		if (FAIL == GetIMP((&(*node)->nodes[1]), idx - 1, num))
+		if (FAIL == GetIMP((&(*node)->nodes[1]), height_ - 1, num))
 		{
 			/* return FAIL */
 			return FAIL;
