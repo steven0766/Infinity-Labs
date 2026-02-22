@@ -23,8 +23,7 @@ static void DestroyNodes(node_ty* node);
 static int ReleaseIMP(node_ty** node, size_t idx, num_ty addr_);
 static int GetIMP(node_ty** node, size_t idx, num_ty* num);
 static int GetDirIMP(const num_ty* num, size_t idx);
-static void SwitchBitIMP(num_ty* num, size_t idx);
-static void SetBitIMP(num_ty* num, size_t idx, int bit);
+static void SwitchBitsIMP(num_ty* num, size_t idx);
 static size_t CountOccupied(node_ty* node, int height, int total_height);
 
 btrie_ty* BTrieCreate(size_t num_bits_)
@@ -50,7 +49,11 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 	}
 	ret->num_bits = num_bits_;
 
-	GetIMP(&ret->root, num_bits_, &num);
+	if (FAIL == GetIMP(&ret->root, num_bits_, &num))
+	{
+		BTrieDestroy(ret);
+		DEBUG_ONLY(ret = BAD_MEM(btrie_ty*););
+	}
 
 	/* return ret*/
 	return ret;
@@ -101,6 +104,8 @@ static void DestroyNodes(node_ty* node)
 	DestroyNodes(node->nodes[0]);
 	/* call DestroyNodes(right node) */
 	DestroyNodes(node->nodes[1]);
+	DEBUG_ONLY(node->nodes[0] = BAD_MEM(node_ty*););
+	DEBUG_ONLY(node->nodes[1] = BAD_MEM(node_ty*););
 	/* free node */
 	free(node);
 }
@@ -172,7 +177,7 @@ num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
 	
 	/* if GetIMP(root, num of bits, &ret) is false */
 		/* return 0 */
-	if (0 == GetIMP(&trie_->root, trie_->num_bits, &ret))
+	if (FAIL == GetIMP(&trie_->root, trie_->num_bits, &ret))
 	{
 		return 0;
 	}
@@ -186,78 +191,66 @@ static int GetIMP(node_ty** node, size_t idx, num_ty* num)
 	size_t dir = 0;
 	int left_occupied = 0;
 	int right_occupied = 0;
-	int is_created = 0;
-	int ret = 0;
 	/* if *node is NULL */
-		/* create node */
-		/* handle failure */
 	if (NULL == *node)
 	{
+		/* create node */
 		*node = CreateNode();
+		/* handle failure */
 		if (NULL == *node)
 		{
-			return 0;
+			return FAIL;
 		}
-		is_created = 1;
 	}
 		
 	/* if node is occupied */
-		/* return fail */
 	if (1 == (*node)->is_occupied)
 	{
-		return 0;
+		/* return FAIL */
+		return FAIL;
 	}
 		
 	/* if last bit */
-		/* set occupied true */
-		/* return success */
 	if (0 == idx)
 	{
+		/* set occupied true */
 		(*node)->is_occupied = 1;
-		return 1;
+		/* return success */
+		return SUCCESS;
 	}
 	
-	/* dir = GetDir(num, idx - 1) */
+	/* get direction */
 	dir = GetDirIMP(num, idx - 1);
-	/* ret = GetIMP(node[dir], idx - 1, num) */
-	ret = GetIMP((&(*node)->nodes[dir]), idx - 1, num);
-	
-	/* if ret is fail */
-	if (0 == ret)
+	/* if GetIMP return FAIL */
+	if (FAIL == GetIMP((&(*node)->nodes[dir]), idx - 1, num))
 	{
-		/* if curr bit is 0 */
-			/* set cur bit to 1 and right bits to 0 */
-		/* else */
-			/* set cur bit to 0 and right bits to 1 */
-		SwitchBitIMP(num, idx - 1);
-		if (2 <= idx)
+		/* if dir is 1 */
+		if (dir == 1)
 		{
-			SetBitIMP(num, idx - 2, dir);
+			/* handle FAIL */
+		    return FAIL;
 		}
-		/* ret = GetIMP(node[!dir], idx - 1, num) */
-		/* ret is fail */
-			/* return ret */
-		ret = GetIMP((&(*node)->nodes[!dir]), idx - 1, num);
-		if (0 == ret)
+		/* set cur bit to 1 and right bits to 0 */
+		SwitchBitsIMP(num, idx - 1);
+		
+		/* if GetIMP return FAIL */
+		if (FAIL == GetIMP((&(*node)->nodes[1]), idx - 1, num))
 		{
-			if (1 == is_created)
-			{
-				free(*node);
-				*node = NULL;
-			}
-			return ret;
+			/* return FAIL */
+			return FAIL;
 		}	
 	}
-	/* if both bits occupied */
-		/* set node is ocuupied true */
+	/* check if there is left node and he is occupied*/
 	left_occupied = ((*node)->nodes[0] != NULL) &&
 					 ((*node)->nodes[0]->is_occupied);
+	/* check if there is right node and he is occupied*/
 	right_occupied = ((*node)->nodes[1] != NULL) && 
 					 ((*node)->nodes[1]->is_occupied);
+	/* set node is_ocuupied to 1 if left and right node exist and occupied  */
 	(*node)->is_occupied = left_occupied && right_occupied;
 		
-	/* return ret */
-	return ret;
+	/* return SUCCESS */
+	return SUCCESS;
 }
 
 static int GetDirIMP(const num_ty* num, size_t idx)
@@ -265,21 +258,15 @@ static int GetDirIMP(const num_ty* num, size_t idx)
 	return ((*num >> idx) & 1);
 }
 
-static void SwitchBitIMP(num_ty* num, size_t idx)
-{
-	*num ^= ((size_t)1 << idx);
-}
-
-static void SetBitIMP(num_ty* num, size_t idx, int bit)
+static void SwitchBitsIMP(num_ty* num, size_t idx)
 {
 	size_t i = 0;
-	for (i = 0; i <= idx; ++i)
+	
+	*num |= ((size_t)1 << idx);
+	
+	if (1 <= idx)
 	{
-		if (bit)
-		{
-			*num |= ((size_t)1 << i);
-		}
-		else
+		for (i = 0; i < idx; ++i)
 		{
 			*num &= ~((size_t)1 << i);
 		}
