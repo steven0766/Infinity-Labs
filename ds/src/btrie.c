@@ -75,21 +75,18 @@ static node_ty* CreateNode(void)
 
 void BTrieDestroy(btrie_ty* trie_)
 {
-	node_ty* node = NULL;
 	/* handle trie is NULL */
 	if (!trie_)
 	{
 		return;
 	}
-	
-	/* root = get root */
-	node = trie_->root;
+
 	/* call DestroyNodes(root) */
-	DestroyNodes(node);
+	DestroyNodes(trie_->root);
+	/* set trie root to bad mem */
+	DEBUG_ONLY(trie_->root = BAD_MEM(node_ty*););
 	/* free trie */
 	free(trie_);
-	/* set trie to bad mem */
-	DEBUG_ONLY(trie_ = BAD_MEM(btrie_ty*););
 }
 
 static void DestroyNodes(node_ty* node)
