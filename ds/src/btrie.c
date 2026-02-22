@@ -59,16 +59,19 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 	return ret;
 }
 
-static node_ty* CreateNode(void)
+num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
 {
-	/* allocate ret */
-	node_ty* ret = (node_ty*)calloc(1, sizeof(node_ty));
-	/* handle fail */
-	if (!ret)
+	num_ty ret = num_;
+	/* assert */
+	assert(trie_);
+	
+	/* if GetIMP(root, num of bits, &ret) is false */
+	if (FAIL == GetIMP(&trie_->root, trie_->num_bits, &ret))
 	{
-		return NULL;
+		/* return 0 */
+		return 0;
 	}
-
+	
 	/* return ret */
 	return ret;
 }
@@ -89,6 +92,40 @@ void BTrieDestroy(btrie_ty* trie_)
 	free(trie_);
 }
 
+void BTrieRelease(btrie_ty* trie_, num_ty num_)
+{
+	/* assert */
+	assert(trie_);
+
+	/* ReleaseIMP(root, num of bits, num) */
+	ReleaseIMP(&trie_->root, trie_->num_bits, num_);
+}
+
+size_t BTrieCountAvailable(const btrie_ty* trie_)
+{
+	size_t cnt = 0;
+	/* assert */
+	assert(trie_);
+	/* count = CountOccupied(root, 0) */
+	cnt = CountOccupied(trie_->root, 0, trie_->num_bits);
+	/* return max_numbers - cnt */
+	return (1 << trie_->num_bits) - cnt;
+}
+
+static node_ty* CreateNode(void)
+{
+	/* allocate ret */
+	node_ty* ret = (node_ty*)calloc(1, sizeof(node_ty));
+	/* handle fail */
+	if (!ret)
+	{
+		return NULL;
+	}
+
+	/* return ret */
+	return ret;
+}
+
 static void DestroyNodes(node_ty* node)
 {
 	/* return if node is NULL */
@@ -106,15 +143,6 @@ static void DestroyNodes(node_ty* node)
 	DEBUG_ONLY(node->nodes[1] = BAD_MEM(node_ty*););
 	/* free node */
 	free(node);
-}
-
-void BTrieRelease(btrie_ty* trie_, num_ty num_)
-{
-	/* assert */
-	assert(trie_);
-
-	/* ReleaseIMP(root, num of bits, num) */
-	ReleaseIMP(&trie_->root, trie_->num_bits, num_);
 }
 
 static int ReleaseIMP(node_ty** node, size_t height_, num_ty num_)
@@ -148,23 +176,6 @@ static int ReleaseIMP(node_ty** node, size_t height_, num_ty num_)
 
 	/* return fail */
 	return FAIL;
-}
-
-num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
-{
-	num_ty ret = num_;
-	/* assert */
-	assert(trie_);
-	
-	/* if GetIMP(root, num of bits, &ret) is false */
-	if (FAIL == GetIMP(&trie_->root, trie_->num_bits, &ret))
-	{
-		/* return 0 */
-		return 0;
-	}
-	
-	/* return ret */
-	return ret;
 }
 
 static int GetIMP(node_ty** node, size_t height_, num_ty* num)
@@ -252,17 +263,6 @@ static void RoundUpAtBitIMP(num_ty* num, size_t idx)
 			*num &= ~((size_t)1 << i);
 		}
 	}
-}
-
-size_t BTrieCountAvailable(const btrie_ty* trie_)
-{
-	size_t cnt = 0;
-	/* assert */
-	assert(trie_);
-	/* count = CountOccupied(root, 0) */
-	cnt = CountOccupied(trie_->root, 0, trie_->num_bits);
-	/* return max_numbers - cnt */
-	return (1 << trie_->num_bits) - cnt;
 }
 
 static size_t CountOccupied(node_ty* node, int height, int total_height)
