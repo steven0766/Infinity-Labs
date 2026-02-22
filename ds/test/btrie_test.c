@@ -49,7 +49,8 @@ static void TestBTrieGet(void)
 	num_ty arr[20] = {1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 255, 254,
 					  253, 252, 251, 255, 254, 253, 252, 251};
 	num_ty expected[20] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 255,
-						   254, 253, 252, 251, 250, 249, 248, 247, 246};
+						   254, 253, 252, 251, 0, 0, 0, 0, 0};
+	size_t cnt = 0;
 	num_ty actual = 0;
 	size_t i = 0;
 	
@@ -59,9 +60,10 @@ static void TestBTrieGet(void)
 	{
 		actual = BTrieGet(btrie, arr[i]);
 		ASSERT_INT(expected[i], actual);
+		cnt += (0 != actual);
 	}
 	
-	ASSERT_INT((1 << size) - ARR_SIZE(arr) - 1, BTrieCountAvailable(btrie));
+	ASSERT_INT((1 << size) - cnt - 1, BTrieCountAvailable(btrie));
 	
 	BTrieDestroy(btrie);
 }
@@ -96,21 +98,26 @@ static void TestBTrieRelease(void)
 	num_ty arr[20] = {1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 255, 254,
 					  253, 252, 251, 255, 254, 253, 252, 251};
 	num_ty release[10] = {6, 7, 8, 9, 10, 255, 254, 253, 252, 251};
+	size_t cnt = 0;
 	size_t i = 0;
 	
 	ASSERT_NOT_NULL(btrie);
 	
 	for (i = 0; i < ARR_SIZE(arr); ++i)
 	{
-		BTrieGet(btrie, arr[i]);
+		if (0 != BTrieGet(btrie, arr[i]))
+		{
+			++cnt;
+		}
 	}
 	
 	for (i = 0; i < ARR_SIZE(release); ++i)
 	{
 		BTrieRelease(btrie, release[i]);
+		--cnt;
 	}
 	
-	ASSERT_INT((1 << size) - ARR_SIZE(release) - 1, BTrieCountAvailable(btrie));
+	ASSERT_INT((1 << size) - cnt - 1, BTrieCountAvailable(btrie));
 						    
 	BTrieDestroy(btrie);
 }
