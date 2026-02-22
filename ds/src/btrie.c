@@ -112,20 +112,6 @@ size_t BTrieCountAvailable(const btrie_ty* trie_)
 	return (1 << trie_->num_bits) - cnt;
 }
 
-static node_ty* CreateNode(void)
-{
-	/* allocate ret */
-	node_ty* ret = (node_ty*)calloc(1, sizeof(node_ty));
-	/* handle fail */
-	if (!ret)
-	{
-		return NULL;
-	}
-
-	/* return ret */
-	return ret;
-}
-
 static void DestroyNodes(node_ty* node)
 {
 	/* return if node is NULL */
@@ -245,26 +231,6 @@ static int GetIMP(node_ty** node, size_t height_, num_ty* num)
 	return SUCCESS;
 }
 
-static int GetDirIMP(const num_ty* num, size_t idx)
-{
-	return ((*num >> idx) & 1);
-}
-
-static void RoundUpAtBitIMP(num_ty* num, size_t idx)
-{
-	size_t i = 0;
-	
-	*num |= ((size_t)1 << idx);
-	
-	if (1 <= idx)
-	{
-		for (i = 0; i < idx; ++i)
-		{
-			*num &= ~((size_t)1 << i);
-		}
-	}
-}
-
 static size_t CountOccupied(node_ty* node, int height, int total_height)
 {
 	/* if node is null return 0  */
@@ -283,4 +249,39 @@ static size_t CountOccupied(node_ty* node, int height, int total_height)
 	/* return left nodes occupied + right nodes occupied*/
 	return CountOccupied(node->nodes[0], height + 1, total_height) + 
 		   CountOccupied(node->nodes[1], height + 1, total_height);
+}
+
+/* UTILS */
+static node_ty* CreateNode(void)
+{
+	/* allocate ret */
+	node_ty* ret = (node_ty*)calloc(1, sizeof(node_ty));
+	/* handle fail */
+	if (!ret)
+	{
+		return NULL;
+	}
+
+	/* return ret */
+	return ret;
+}
+
+static int GetDirIMP(const num_ty* num, size_t idx)
+{
+	return ((*num >> idx) & 1);
+}
+
+static void RoundUpAtBitIMP(num_ty* num, size_t idx)
+{
+	size_t i = 0;
+	
+	*num |= ((size_t)1 << idx);
+	
+	if (1 <= idx)
+	{
+		for (i = 0; i < idx; ++i)
+		{
+			*num &= ~((size_t)1 << i);
+		}
+	}
 }
