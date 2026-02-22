@@ -29,7 +29,6 @@ static size_t CountOccupied(node_ty* node, int height, int total_height);
 btrie_ty* BTrieCreate(size_t num_bits_)
 {
 	num_ty num = 0;
-	node_ty* curr = NULL;
 	/* allocate btrie (ret) */
 	btrie_ty* ret = (btrie_ty*)malloc(sizeof(btrie_ty));
 	/* handle fail */
@@ -124,47 +123,34 @@ void BTrieRelease(btrie_ty* trie_, num_ty num_)
 static int ReleaseIMP(node_ty** node, size_t idx, num_ty num_)
 {
 	int dir = 0;
-	int status = 0;
 	/* if node is NULL */
-		/* return fail */
 	if (NULL == *node)
 	{
-		return 0;
+		/* return fail */
+		return FAIL;
 	}
+	/* set is_occupied to false */
 	/* if idx is 0 */
-		/* free node */
-		/* set node to bad mem */
-		/* return success */
 	if (0 == idx)
 	{
-		free(*node);
-		*node = NULL;
-		return 1;
+		/* return SUCCESS */
+		(*node)->is_occupied = FALSE;
+		return SUCCESS;
 	}
 	
-	/* dir = GetDir(addr_, idx - 1) */	
+	/* get direction to go */	
 	dir = GetDirIMP(&num_, idx - 1);
-	/* status = ReleaseIMP(node[dir], idx - 1, addr_) */
-	status = ReleaseIMP(&((*node)->nodes[dir]), idx - 1, num_);
-	/* set is_occupied to 0 */
-	(*node)->is_occupied = 0;
-	
-	/* if status is success */
-	if (1 == status)
+
+	/* if R is success */
+	if (SUCCESS == ReleaseIMP(&((*node)->nodes[dir]), idx - 1, num_))
 	{
-		/* if other child is NULL */
-		if ((*node)->nodes[!dir] == NULL)
-		{
-			/* free node */
-			/* set node to bad mem */
-			/* return success */
-			free(*node);
-			*node = NULL;
-			return 1;
-		}
+		/* set is_occupied to false */
+		(*node)->is_occupied = FALSE;
+		return SUCCESS;
 	}
+
 	/* return fail */
-	return 0;
+	return FAIL;
 }
 
 num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
