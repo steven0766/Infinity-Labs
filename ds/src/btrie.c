@@ -29,7 +29,7 @@ static size_t CountOccupied(node_ty* node, int height, int total_height);
 
 btrie_ty* BTrieCreate(size_t num_bits_)
 {
-	size_t i = 0;
+	num_ty num = 0;
 	node_ty* curr = NULL;
 	/* allocate btrie (ret) */
 	/* handle fail */
@@ -40,9 +40,8 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 	}
 	
 	/* allocate ret->root */
-	/* handle fail */
-	/* curr = root[0] */
 	ret->root = CreateNode();
+	/* handle fail */
 	if (!ret->root)
 	{
 		free(ret);
@@ -50,28 +49,9 @@ btrie_ty* BTrieCreate(size_t num_bits_)
 		return NULL;
 	}
 	ret->num_bits = num_bits_;
-	
-	/* loop from 0 to idx */
-		/* curr[0] = createnode */
-		/* handle fail */
-		/* curr = curr[0] */
-	curr = ret->root;
-	for (i = 0; i < num_bits_; ++i)
-	{
-		curr->nodes[0] = CreateNode();
-		if (!curr->nodes[0])
-		{
-			DestroyNodes(ret->root);
-			free(ret);
-			DEBUG_ONLY(ret = BAD_MEM(btrie_ty*););
-			return NULL;
-		}
-		curr = curr->nodes[0];
-	}
-	
-	/* set curr's is ocuppied to true */
-	curr->is_occupied = 1;
-	
+
+	GetIMP(&ret->root, num_bits_, &num);
+
 	/* return ret*/
 	return ret;
 }
@@ -80,16 +60,12 @@ static node_ty* CreateNode(void)
 {
 	/* allocate ret */
 	/* handle fail */
-	node_ty* ret = (node_ty*)malloc(sizeof(node_ty));
+	node_ty* ret = (node_ty*)calloc(1, sizeof(node_ty));
 	if (!ret)
 	{
 		return NULL;
 	}
-	/* init is_occupied to 0 */
-	ret->is_occupied = 0;
-	ret->nodes[0] = NULL;
-	ret->nodes[1] = NULL;
-	
+
 	/* return ret */
 	return ret;
 }
@@ -107,9 +83,6 @@ void BTrieDestroy(btrie_ty* trie_)
 	node = trie_->root;
 	/* call DestroyNodes(root) */
 	DestroyNodes(node);
-	
-	/*trie->root = bad mem*/
-	DEBUG_ONLY(trie_->root = BAD_MEM(node_ty*););
 	/* free trie */
 	free(trie_);
 	/* set trie to bad mem */
@@ -130,20 +103,18 @@ static void DestroyNodes(node_ty* node)
 	DestroyNodes(node->nodes[1]);
 	/* free node */
 	free(node);
-	/* set node to bad mem */
-	DEBUG_ONLY(node = BAD_MEM(node_ty*););
 }
 
-void BTrieRelease(btrie_ty* trie_, num_ty addr_)
+void BTrieRelease(btrie_ty* trie_, num_ty num_)
 {
 	/* assert */
 	assert(trie_);
 
 	/* ReleaseIMP(root, num of bits, num) */
-	ReleaseIMP(&trie_->root, trie_->num_bits, addr_);
+	ReleaseIMP(&trie_->root, trie_->num_bits, num_);
 }
 
-static int ReleaseIMP(node_ty** node, size_t idx, num_ty addr_)
+static int ReleaseIMP(node_ty** node, size_t idx, num_ty num_)
 {
 	int dir = 0;
 	int status = 0;
@@ -165,9 +136,9 @@ static int ReleaseIMP(node_ty** node, size_t idx, num_ty addr_)
 	}
 	
 	/* dir = GetDir(addr_, idx - 1) */	
-	dir = GetDirIMP(&addr_, idx - 1);
+	dir = GetDirIMP(&num_, idx - 1);
 	/* status = ReleaseIMP(node[dir], idx - 1, addr_) */
-	status = ReleaseIMP(&((*node)->nodes[dir]), idx - 1, addr_);
+	status = ReleaseIMP(&((*node)->nodes[dir]), idx - 1, num_);
 	/* set is_occupied to 0 */
 	(*node)->is_occupied = 0;
 	
@@ -189,7 +160,7 @@ static int ReleaseIMP(node_ty** node, size_t idx, num_ty addr_)
 	return 0;
 }
 
-num_ty BTrieGet(btrie_ty* trie_, num_ty addr_)
+num_ty BTrieGet(btrie_ty* trie_, num_ty num_)
 {
 	num_ty ret = 0;
 	node_ty* node = NULL;
@@ -197,7 +168,7 @@ num_ty BTrieGet(btrie_ty* trie_, num_ty addr_)
 	assert(trie_);
 	
 	/* ret = addr_ */
-	ret = addr_;
+	ret = num_;
 	
 	/* if GetIMP(root, num of bits, &ret) is false */
 		/* return 0 */
