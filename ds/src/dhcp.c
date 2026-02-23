@@ -119,6 +119,8 @@ void DhcpFreeIp(dhcp_ty* dhcp_, addr_ty addr_)
 size_t DhcpCountFree(const dhcp_ty* dhcp_)
 {
 	/* assert */
+	assert(dhcp_);
 	
 	/* BTrieCountAvailable */
+	BTrieCountAvailable(dhcp_->trie);
 }
