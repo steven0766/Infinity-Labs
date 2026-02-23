@@ -83,7 +83,7 @@ addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
 	/* assert dhcp */
 	assert(dhcp_);
 	/* assert addr_ prefix */
-	assert(dhcp_->subnet_id == subnet_mask & addr_);
+	assert(dhcp_->subnet_id == (dhcp_->subnet_mask & addr_));
 	
 	/* add ret to trie */
 	ret = BTrieGet(dhcp_->trie, ret);
@@ -98,20 +98,22 @@ addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
 		{
 			/* return 0 */
 			return 0;
-		{
+		}
 	}
 			
 	/* return ret with subnet_id */
-	return ret | subnet_id;
+	return ret | dhcp_->subnet_id;
 }
 
 void DhcpFreeIp(dhcp_ty* dhcp_, addr_ty addr_)
 {
 	/* assert dhcp */
-	
+	assert(dhcp_);
 	/* assert addr_ prefix */
+	assert(dhcp_->subnet_id == (dhcp_->subnet_mask & addr_));
 	
 	/* BTrieRelease addr_ */
+	BTrieRelease(dhcp_->trie, addr_);
 }
 
 size_t DhcpCountFree(const dhcp_ty* dhcp_)
