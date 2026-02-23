@@ -1,6 +1,10 @@
-#include <stdlib.h>
+#include <stdlib.h>		/* malloc, free, size_t */
+#include <stddef.h>		/* offsetof */
+#include <assert.h>		/* assert */
 
+#include "hmap.h"
 #include "dlist.h"
+#include "utils.h"
 
 struct hmap
 {
@@ -12,6 +16,17 @@ struct hmap
 	dlist_ty* buckets[1];
 };
 
+typedef struct hmap_match_param
+{
+	hmap_ty hmap;
+	void* key;
+}match_param_ty;
+
+typedef struct hmap_action_param
+{
+	hmap_action_ty action_func;
+	void* action_param;
+}action_param_ty;
 
 hmap_ty* HMapCreate(size_t capacity_, hmap_hash_ty hash_func_, 
 			const void* hash_param_, hmap_is_match_ty is_match_, 
