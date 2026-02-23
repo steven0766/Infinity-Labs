@@ -169,6 +169,17 @@ static int IsPairMatch(const void* pair, void* hmap_param)
 	/* return hmap is_match(key1, key2, match_param) */
 }
 
+static int PairAction(void* pair, void* param)
+{
+	/* assert */
+	
+	/* extract hmap action param from param */
+	/* extract hmap action function from param */
+	
+	/* ret = action_func(key from pair, data from pair, action param); */
+	
+	/* return ret */
+}
 
 
 
