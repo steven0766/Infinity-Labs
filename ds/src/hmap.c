@@ -134,7 +134,17 @@ pair_ty HMapFind(hmap_ty* hmap, const void* key)
 
 int HMapForEach(hmap_ty* hmap, action_ty action, void* param)
 {
-
+	/* ret = SUCCESS */
+	
+	/* assert */
+	
+	/* for each idx in buckets */
+		/* lst = hmap buckets[idx] */
+		/* ret =  DListForEach( lst begin, lst end, PairAction,  hmap_action_param); */
+		/* if ret is nonzero */
+			/* return ret */
+	
+	/* return ret */
 }
 
 
