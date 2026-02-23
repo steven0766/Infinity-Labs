@@ -147,6 +147,16 @@ int HMapForEach(hmap_ty* hmap, action_ty action, void* param)
 	/* return ret */
 }
 
+static size_t GetEntry(hmap_ty* hamp_, const void* key)
+{
+	/* assert */
+	
+	/* call to hash func on key */
+	
+	/* ret =  hash value % capacity */
+	
+	/* return ret */
+}
 
 
 
