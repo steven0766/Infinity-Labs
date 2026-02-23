@@ -2,7 +2,11 @@
 #define __HMAP_H__
 
 typedef struct hmap hmap_ty;
-typedef struct pair pair_ty;
+typedef struct pair
+{
+	void* first;
+	void* second;
+}pair_ty;
 
 /* hash function */
 typedef size_t (*hash_ty) (const void* key, const void* param );
@@ -14,7 +18,7 @@ typedef int (*is_match_ty) (const void* key_a, const void* key_b, const void* pa
 typedef int (*action_ty) (const void* key, void* data, void* param);
 
 
-hmap_ty* HMapCreate(size_t capacity, hash_ty hash_func, const void* hash_param, is_match_ty is_match, const void* match param);
+hmap_ty* HMapCreate(size_t capacity, hash_ty hash_func, const void* hash_param, is_match_ty is_match, const void* match_param);
 
 void HMapDestroy(hmap_ty* hmap_);
 

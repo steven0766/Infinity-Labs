@@ -10,9 +10,9 @@ struct hmap
 {
 	size_t capacity;
 	hash_ty hash_func;
-	void* hash_param;
+	const void* hash_param;
 	is_match_ty is_match;
-	void* match param;
+	const void* match_param;
 	dlist_ty* buckets[1];
 };
 
@@ -24,28 +24,51 @@ typedef struct hmap_match_param
 
 typedef struct hmap_action_param
 {
-	hmap_action_ty action_func;
+	action_ty action_func;
 	void* action_param;
 }action_param_ty;
 
-hmap_ty* HMapCreate(size_t capacity_, hmap_hash_ty hash_func_, 
-			const void* hash_param_, hmap_is_match_ty is_match_, 
+hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_, 
+			const void* hash_param_, is_match_ty is_match_, 
 						      const void* match_param_)
 {	
+	size_t i = 0;
 	/* allocate ret(hmap): */
 		/* size of offsetof(hmap, buckets) + sizeof(dlist_ty*) * capacity */
-
+	hmap_ty* ret = (hmap_ty*)malloc(offsetof(hmap_ty, buckets) + sizeof(dlist_ty*) * capacity_);
 	/* assert */
+	assert(hash_func_);
+	assert(is_match_);
+	assert(0 < capacity_);
 
 	/* handle ret allocation failure */
+	if (!ret)
+	{
+		return NULL;
+	}
 
 	/* for each idx in buckets */
+	for (i = 0; i < capacity_; ++i)
+	{
 		/* create dlist */	
+		ret->buckets[i] = DListCreate();
 		/* handle failure */
+		if (!ret->buckets[i])
+		{
+			HMapDestroy(ret);
+			return NULL;
+		}
+	}
 
 	/* init ret with capacity, functions and params */
+	ret->capacity = capacity_;
+	ret->hash_func = hash_func_;
+	ret->hash_param = hash_param_;
+	ret->is_match = is_match_;
+	ret->match_param = match_param_;
 
 	/* return ret */
+	return ret;
 }
 
 void HMapDestroy(hmap_ty* hmap_)
@@ -125,7 +148,7 @@ int HMapIsEmpty(const hmap_ty* hmap_)
 	/* return HMapSize == 0 */
 }
 
-pair_ty HMapFind(hmap_ty* hmap, const void* key)
+pair_ty HMapFind(hmap_ty* hmap_, const void* key_)
 {
 	/* init empty pair ret */
 	
