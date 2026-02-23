@@ -79,7 +79,6 @@ int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 	/* assert */
 	
 	/* handle pair failure */
-
 	/* init pair */
 	
 	/* idx = GetEntry */
@@ -89,13 +88,12 @@ int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 	/* insert pair before end of lst */
 	/* handle failure */
 
-	/* return SUCCESS */
-
+	/* return success */
 }
 
 size_t HMapSize(const hmap_ty* hmap_)
 {
-
+	
 }
 
 int HMapIsEmpty(const hmap_ty* hmap_)
