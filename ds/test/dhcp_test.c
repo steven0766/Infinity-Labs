@@ -9,6 +9,7 @@
 
 static void TestDhcpCreate(void);
 static void TestDhcpAllocateIp(void);
+static void TestStressDhcpAllocateIp(void);
 static void TestDhcpFreeIp(void);
 
 int main()
@@ -21,10 +22,13 @@ int main()
 	TestPrintSection("dhcp allocate");
 	TestDhcpAllocateIp();
 	
+	TestPrintSection("dhcp allocate stress");
+	TestStressDhcpAllocateIp();
+	
 	TestPrintSection("dhcp free allocation");
 	TestDhcpFreeIp();
 	
-	return 0;
+	return TestSuiteEnd();
 }
 
 static void TestDhcpCreate(void)
@@ -65,6 +69,24 @@ static void TestDhcpAllocateIp(void)
 	ASSERT_SIZE(248, DhcpCountFree(dhcp));
 
 	DhcpDestroy(dhcp);
+}
+
+static void TestStressDhcpAllocateIp(void)
+{
+	dhcp_ty* dhcp = DhcpCreate(SUBNET_ID, NUM_BITS);
+	size_t i = 1;
+	
+	if (!ASSERT_NOT_NULL(dhcp))
+	{
+		return;
+	}
+	
+	for (i = 1; i < 254; ++i)
+	{
+		DhcpAllocateIp(dhcp, SUBNET_ID | i);
+	}
+	
+	ASSERT_SIZE(0, DhcpAllocateIp(dhcp, SUBNET_ID | i));
 }
 
 static void TestDhcpFreeIp(void)
