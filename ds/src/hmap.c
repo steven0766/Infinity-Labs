@@ -50,7 +50,26 @@ void HMapDestroy(hmap_ty* hmap_)
 
 void HMapRemove(hmap_ty* hmap_, const void* key_)
 {
+	/* init iter pair_to_remove */
 	
+	/* assert */
+	
+	/* idx = GetEntry */
+	
+	/* lst = hmap_ buckets[idx] */
+	
+	/* create hmap_ param = hmap, key */
+	
+	/* to_remove = DListFind(Begin iter, End iter, IsPairMatch, hmap_param) */
+	
+	/* pair_to_remove = get data from iter to_remove */
+	
+	/* DListRemove(pair_to_remove) */
+	
+	/* set bad mem */
+	
+	/* free pair_to_remove */
+
 }
 
 int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
