@@ -48,14 +48,30 @@ void HMapDestroy(hmap_ty* hmap_)
 }
 
 
-void HMapRemove(hmap_ty* hmap_, const void* key)
+void HMapRemove(hmap_ty* hmap_, const void* key_)
 {
 	
 }
 
-int HMapInsert(hmap_ty* hmap, const void* key, void* data)
+int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 {
+	/* allocate pair */
 	
+	/* assert */
+	
+	/* handle pair failure */
+
+	/* init pair */
+	
+	/* idx = GetEntry */
+	
+	/* lst = hmap buckets[idx] */
+	
+	/* insert pair before end of lst */
+	/* handle failure */
+
+	/* return SUCCESS */
+
 }
 
 size_t HMapSize(const hmap_ty* hmap_)
