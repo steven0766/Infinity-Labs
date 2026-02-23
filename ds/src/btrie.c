@@ -148,12 +148,12 @@ static int ReleaseIMP(node_ty** node, size_t height_, num_ty num_)
 		/* return fail */
 		return FAIL;
 	}
-	/* set is_occupied to false */
 	/* if height_ is 0 */
 	if (0 == height_)
 	{
-		/* return SUCCESS */
+		/* set is_occupied to false */
 		(*node)->is_occupied = FALSE;
+		/* return SUCCESS */
 		return SUCCESS;
 	}
 	
