@@ -158,6 +158,16 @@ static size_t GetEntry(hmap_ty* hamp_, const void* key)
 	/* return ret */
 }
 
+static int IsPairMatch(const void* pair, void* hmap_param)
+{
+	/* assert */
+	
+	/* get key1 from pair */
+	
+	/* get key2 from hmap_param  */
+	
+	/* return hmap is_match(key1, key2, match_param) */
+}
 
 
 
