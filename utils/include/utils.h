@@ -14,4 +14,6 @@
 #define TRUE		1
 #define FALSE		0
 
+#define ARRAY_LEN(arr)	(sizeof(arr) / sizeof(arr[0]))
+
 #endif /*__UTILS_H__*/
