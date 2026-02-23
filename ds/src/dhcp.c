@@ -40,18 +40,13 @@ dhcp_ty* DhcpCreate(addr_ty subnet_id_, unsigned int host_numb_)
 	}
 	
 	/* BTrieGet max (broadcast address */
-	if (0 == BTrieGet(ret->trie, (~(size_t)0)))
-	{
-		/* handle failure */
-		BTrieDestroy(ret->trie);
-		return NULL;
-	}
-	
 	/* BTrieGet max - 1 (server address) */
-	if (0 == BTrieGet(ret->trie, (~(size_t)0 << 1)))
+	if (0 == BTrieGet(ret->trie, (~(size_t)0)) || 
+		0 == BTrieGet(ret->trie, (~(size_t)0 << 1)))
 	{
 		/* handle failure */
 		BTrieDestroy(ret->trie);
+		free(ret);
 		return NULL;
 	}
 	
