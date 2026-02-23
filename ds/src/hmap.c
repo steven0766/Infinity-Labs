@@ -93,7 +93,14 @@ int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 
 size_t HMapSize(const hmap_ty* hmap_)
 {
+	/* ret = 0 */
 	
+	/* assert */
+	
+	/* for each idx in buckets */
+		/* ret =  DListSize of buckets[idx] */
+	
+	/* return ret */
 }
 
 int HMapIsEmpty(const hmap_ty* hmap_)
