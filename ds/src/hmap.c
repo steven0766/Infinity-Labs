@@ -112,7 +112,24 @@ int HMapIsEmpty(const hmap_ty* hmap_)
 
 pair_ty HMapFind(hmap_ty* hmap, const void* key)
 {
-
+	/* init empty pair ret */
+	
+	/* assert */
+	
+	/* idx = GetEntry */
+	
+	/* lst = hmap buckets[idx] */
+	
+	/* init hmap_match_param */
+	
+	/* found iter =  DListFind(Begin iter, End iter, IsPairMatch, hmap_match_param) */
+	
+	/* if found iter is EndIter */
+		/* return ret */
+		
+	/* ret = * get data from found iter */
+	
+	/* return ret */
 }
 
 int HMapForEach(hmap_ty* hmap, action_ty action, void* param)
