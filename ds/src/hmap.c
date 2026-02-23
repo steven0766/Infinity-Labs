@@ -105,7 +105,9 @@ size_t HMapSize(const hmap_ty* hmap_)
 
 int HMapIsEmpty(const hmap_ty* hmap_)
 {
-
+	/* assert */
+	
+	/* return HMapSize == 0 */
 }
 
 pair_ty HMapFind(hmap_ty* hmap, const void* key)
