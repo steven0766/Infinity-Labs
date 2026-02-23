@@ -16,7 +16,8 @@ dhcp_ty* DhcpCreate(addr_ty subnet_id_, unsigned int host_numb_)
 {
 	/* allocate dhcp */
 	dhcp_ty* ret = (dhcp_ty*)malloc(sizeof(dhcp_ty));
-	/* assert host_numb_ max */
+	/* assert host_numb_ max and above 0 */
+	assert(0 > host_numb_);
 	assert(64 >= host_numb_);
 	
 	/* handle failure */
