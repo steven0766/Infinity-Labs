@@ -35,8 +35,18 @@ hmap_ty* HMapCreate(size_t capacity_, hmap_hash_ty hash_func_,
 
 void HMapDestroy(hmap_ty* hmap_)
 {
+	/* if hmap is null return */
+
+	/* for each lst in entries */
+		/* for each pair in lst */
+			/* free pair */
+		
+		/* set bad to entry */
+		/* destroy list */
 	
+	/* free hmap */
 }
+
 
 void HMapRemove(hmap_ty* hmap_, const void* key)
 {
