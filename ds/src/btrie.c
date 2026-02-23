@@ -1,3 +1,11 @@
+/***********************************************************************
+*File_name: btrie.c
+*Reviewer: Nimrod
+*Developer: Steve
+*Version:  1.0
+*Date:	   22.2.26
+************************************************************************/
+
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 #include <math.h>   /* pow */
