@@ -95,7 +95,6 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 
 void HMapDestroy(hmap_ty* hmap_)
 {
-	size_t i = 0;
 	dlist_ty** curr = NULL;
 	dlist_ty** end = NULL;
 
@@ -120,13 +119,18 @@ void HMapDestroy(hmap_ty* hmap_)
 		DListDestroy(*curr);
 		/* set bad mem to bucket */
 		DEBUG_BAD_MEM(*curr, dlist_ty*);
+		
+		++curr;
 	}
+	
+	free(hmap_->buckets);
 	
 	/* set bad mem to all ptrs */
 	DEBUG_BAD_MEM(hmap_->hash_func, hash_ty);
 	DEBUG_BAD_MEM(hmap_->hash_param, void*);
 	DEBUG_BAD_MEM(hmap_->is_match, is_match_ty);
 	DEBUG_BAD_MEM(hmap_->match_param, void*);
+	DEBUG_BAD_MEM(hmap_->buckets, dlist_ty**);
 	/* free hmap_ */
 	free(hmap_);
 }
