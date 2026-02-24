@@ -36,7 +36,32 @@ static int CanIVisitAllIMP(size_t row_, size_t column_, bitarray bit_arr_)
 	/* return FALSE */
 }
 
-
+static void InitDirectionIMP(bitarray bit_arr_)
+{
+	/* bit_arr_ = 2 */
+	/* bit_arr_ = 1 */
+	
+	/* bit_arr_ = 2 */
+	/* bit_arr_ = -1 */
+	
+	/* bit_arr_ = 1 */
+	/* bit_arr_ = -2 */
+	
+	/* bit_arr_ = -1 */
+	/* bit_arr_ = -2 */
+	
+	/* bit_arr_ = -2 */
+	/* bit_arr_ = -1 */
+	
+	/* bit_arr_ = -2 */
+	/* bit_arr_ = 1 */
+	
+	/* bit_arr_ = -1 */
+	/* bit_arr_ = 2 */
+	
+	/* bit_arr_ = 1 */
+	/* bit_arr_ = 2 */
+}
 
 
 
