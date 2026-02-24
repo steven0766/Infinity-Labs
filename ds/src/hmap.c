@@ -13,8 +13,7 @@ struct hmap
 	const void* hash_param;
 	is_match_ty is_match;
 	const void* match_param;
-	/* TODO: dlist_ty** */
-	dlist_ty* buckets[1];
+	dlist_ty** buckets;
 };
 
 typedef struct hmap_match_param
@@ -39,9 +38,11 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 						      const void* match_param_)
 {	
 	size_t i = 0;
+	dlist_ty** curr = NULL;
+	dlist_ty** end = NULL;
 	/* allocate ret(hmap): */
-		/* size of offsetof(hmap, buckets) + sizeof(dlist_ty*) * capacity */
-	hmap_ty* ret = (hmap_ty*)malloc(offsetof(hmap_ty, buckets) + sizeof(dlist_ty*) * capacity_);
+		/* size of hmap */
+	hmap_ty* ret = (hmap_ty*)malloc(sizeof(hmap_ty));
 	/* assert */
 	assert(hash_func_);
 	assert(is_match_);
@@ -53,27 +54,40 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 		return NULL;
 	}
 	
-	/* init capacity */
-	ret->capacity = capacity_;
-
-	/* for each idx in buckets */
-	for (i = 0; i < capacity_; ++i)
+	/* allocate buckets in ret */
+	ret->buckets = (dlist_ty**)calloc(1, sizeof(dlist_ty*) * capacity_);
+	/* handle failure */
+	if (!ret->buckets)
 	{
-		/* create dlist */	
-		ret->buckets[i] = DListCreate();
-		/* handle failure */
-		if (!ret->buckets[i])
-		{
-			HMapDestroy(ret);
-			return NULL;
-		}
+		free(ret);
+		return NULL;
 	}
-
-	/* init ret with functions and params */
+	
+	/* init ret with capacity, functions and params */
+	ret->capacity = capacity_;
 	ret->hash_func = hash_func_;
 	ret->hash_param = hash_param_;
 	ret->is_match = is_match_;
 	ret->match_param = match_param_;
+	
+	/* init curr to the beginning of buckets pts */
+	curr = ret->buckets;
+	/* init end to the end of buckets pts */
+	end = ret->buckets + capacity_;
+	
+	/* for each idx in buckets */
+	while (curr != end)
+	{
+		/* create dlist */
+		*curr = DListCreate();
+		/* handle failure */
+		if (!*curr)
+		{
+			HMapDestroy(ret);
+			return NULL;
+		}
+		++curr;
+	}
 
 	/* return ret */
 	return ret;
@@ -82,28 +96,31 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 void HMapDestroy(hmap_ty* hmap_)
 {
 	size_t i = 0;
-	dlist_ty* lst = NULL;
+	dlist_ty** curr = NULL;
+	dlist_ty** end = NULL;
+
 	/* if hmap_ is null return */
 	if (!hmap_)
 	{
 		return;
 	}
+	
+	/* init curr to begin bucket and end to end bucket */
+	curr = hmap_->buckets;
+	end = hmap_->buckets + hmap_->capacity;
 
 	/* for each lst in buckets */
-	for (i = 0; i < hmap_->capacity; ++i)
+	while (curr != end)
 	{
-		lst = hmap_->buckets[i];
 		/* for each pair in lst */
 			/* free pair */
-		DListForEach(DListBeginIter(lst), DListEndIter(lst), 
+		DListForEach(DListBeginIter(*curr), DListEndIter(*curr), 
 												FreePairIMP, NULL);
-		
 		/* destroy list */
-		DListDestroy(lst);
+		DListDestroy(*curr);
 		/* set bad mem to bucket */
-		DEBUG_BAD_MEM(hmap_->buckets[i], dlist_ty*);
+		DEBUG_BAD_MEM(*curr, dlist_ty*);
 	}
-	
 	
 	/* set bad mem to all ptrs */
 	DEBUG_BAD_MEM(hmap_->hash_func, hash_ty);
@@ -164,7 +181,7 @@ int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 	
 	/* insert pair before end of lst */
 	/* handle failure */
-	if (DListIterIsEqual(DListPushBack(hmap_->buckets[idx], pair),
+	if (DListIterIsEqual(DListPushFront(hmap_->buckets[idx], pair),
 													 DListEndIter(lst)))
 	{
 		free(pair);
