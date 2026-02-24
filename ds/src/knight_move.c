@@ -54,6 +54,7 @@ static int IsPositionValidIMP(size_t row_, size_t column_)
 static bitarray AddPositionIMP(size_t row, size_t column, bitarray bit_arr_)
 {
 	/* call BitArraySetOn with 8 * row + column index */
+	return BitArraySetOn(bit_arr_, GetPosition(row, column));
 }
 
 static size_t GetPosition(size_t row, size_t column)
