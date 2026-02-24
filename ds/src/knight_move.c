@@ -1,7 +1,7 @@
 int KnightTour(size_t row_, size_t column_)
 {
 	/* init bit array */
-	/* call CanIVisitAllIMP */
+	/* return CanIVisitAllIMP */
 }
 
 static int IsPositionValidIMP(size_t row_, size_t column_);
@@ -39,6 +39,11 @@ static int CanIVisitAllIMP(size_t row_, size_t column_, bitarray bit_arr_)
 static int IsPositionValidIMP(size_t row_, size_t column_)
 {
 	/* if row_ under 8 and column_ under 8 */
+}
+
+static void AddPositionIMP(size_t row, size_t column, bitarray bit_arr_)
+{
+	/* call BitArraySetOn with 8 * row + column index */
 }
 
 static void InitDirectionIMP(bitarray bit_arr_)
