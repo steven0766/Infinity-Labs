@@ -34,6 +34,8 @@ static void TestHMapCreate(void)
 		return;
 	}
 	
+	ASSERT_INT(TRUE, HMapIsEmpty(map));
+	
 	HMapDestroy(map);
 }
 
@@ -53,6 +55,8 @@ static void TestHMapInsert(void)
 	{
 		ASSERT_INT(SUCCESS, HMapInsert(map, &keys[i], val[i]));
 	}
+	
+	ASSERT_SIZE(ARRAY_LEN(keys), HMapSize(map));
 	
 	HMapDestroy(map);
 }
