@@ -3,7 +3,7 @@
 #include "hmap.h"
 #include "test_utils.h"
 
-#define CAP					8
+#define CAP					11
 
 static void TestHMapCreate(void);
 static size_t Hash(const void* key, const void* param);
@@ -20,7 +20,12 @@ static void TestHMapCreate(void)
 {
 	hmap_ty* map = HMapCreate(CAP, Hash, NULL, IsMatch, NULL);
 	
-	ASSERT_NOT_NULL(map);
+	if (!ASSERT_NOT_NULL(map))
+	{
+		return;
+	}
+	
+	HMapDestroy(map);
 }
 
 
