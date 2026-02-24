@@ -36,6 +36,11 @@ static int CanIVisitAllIMP(size_t row_, size_t column_, bitarray bit_arr_)
 	/* return FALSE */
 }
 
+static int IsPositionValidIMP(size_t row_, size_t column_)
+{
+	/* if row_ under 8 and column_ under 8 */
+}
+
 static void InitDirectionIMP(bitarray bit_arr_)
 {
 	/* bit_arr_ = 2 */
