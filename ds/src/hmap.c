@@ -28,6 +28,11 @@ typedef struct hmap_action_param
 	void* action_param;
 }action_param_ty;
 
+static size_t GetEntryIMP(hmap_ty* hamp_, const void* key);
+static int IsPairMatchIMP(const void* pair, void* hmap_param);
+static int PairActionIMP(void* pair, void* param);
+static int FreePairIMP(void* data, void* param);
+
 hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_, 
 			const void* hash_param_, is_match_ty is_match_, 
 						      const void* match_param_)
@@ -73,16 +78,38 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 
 void HMapDestroy(hmap_ty* hmap_)
 {
+	size_t i = 0;
+	dlist_ty* lst = NULL;
 	/* if hmap_ is null return */
+	if (!hmap_)
+	{
+		return;
+	}
+	
 
 	/* for each lst in buckets */
+	for (i = 0; i < hmap_->capacity; ++i)
+	{
+		lst = hmap_->buckets[i];
 		/* for each pair in lst */
 			/* free pair */
+		DListForEach(DListBeginIter(lst), DListEndIter(lst), 
+												FreePairIMP, NULL);
 		
-		/* set bad to entry */
 		/* destroy list */
+		DListDestroy(lst);
+		/* set bad mem to bucket */
+		DEBUG_BAD_MEM(hmap_->buckets[i], dlist_ty*);
+	}
 	
+	
+	/* set bad mem to all ptrs */
+	DEBUG_BAD_MEM(hmap_->hash_func, hash_ty);
+	DEBUG_BAD_MEM(hmap_->hash_param, void*);
+	DEBUG_BAD_MEM(hmap_->is_match, is_match_ty);
+	DEBUG_BAD_MEM(hmap_->match_param, void*);
 	/* free hmap_ */
+	free(hmap_);
 }
 
 
@@ -185,7 +212,7 @@ int HMapForEach(hmap_ty* hmap, action_ty action, void* param)
 	/* return ret */
 }
 
-static size_t GetEntry(hmap_ty* hamp_, const void* key)
+static size_t GetEntryIMP(hmap_ty* hamp_, const void* key)
 {
 	/* assert */
 	
@@ -196,7 +223,7 @@ static size_t GetEntry(hmap_ty* hamp_, const void* key)
 	/* return ret */
 }
 
-static int IsPairMatch(const void* pair, void* hmap_param)
+static int IsPairMatchIMP(const void* pair, void* hmap_param)
 {
 	/* assert */
 	
@@ -207,7 +234,7 @@ static int IsPairMatch(const void* pair, void* hmap_param)
 	/* return hmap is_match(key1, key2, match_param) */
 }
 
-static int PairAction(void* pair, void* param)
+static int PairActionIMP(void* pair, void* param)
 {
 	/* assert */
 	
@@ -217,6 +244,15 @@ static int PairAction(void* pair, void* param)
 	/* ret = action_func(key from pair, data from pair, action param); */
 	
 	/* return ret */
+}
+
+static int FreePairIMP(void* data, void* param)
+{
+	(void)param;
+	
+	free(data);
+	
+	return SUCCESS;
 }
 
 
