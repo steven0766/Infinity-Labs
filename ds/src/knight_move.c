@@ -60,6 +60,7 @@ static bitarray AddPositionIMP(size_t row, size_t column, bitarray bit_arr_)
 static size_t GetPosition(size_t row, size_t column)
 {
 	/* return 8 * row + column */
+	return 8 * row + column;
 }
 
 static void InitDirectionIMP(bitarray bit_arr_)
