@@ -13,6 +13,7 @@ struct hmap
 	const void* hash_param;
 	is_match_ty is_match;
 	const void* match_param;
+	/* TODO: dlist_ty** */
 	dlist_ty* buckets[1];
 };
 
@@ -28,7 +29,7 @@ typedef struct hmap_action_param
 	void* action_param;
 }action_param_ty;
 
-static size_t GetEntryIMP(hmap_ty* hamp_, const void* key);
+static size_t GetEntryIMP(hmap_ty* hmap_, const void* key);
 static int IsPairMatchIMP(const void* pair, void* hmap_param);
 static int PairActionIMP(void* pair, void* param);
 static int FreePairIMP(void* data, void* param);
@@ -51,6 +52,9 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 	{
 		return NULL;
 	}
+	
+	/* init capacity */
+	ret->capacity = capacity_;
 
 	/* for each idx in buckets */
 	for (i = 0; i < capacity_; ++i)
@@ -65,8 +69,7 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 		}
 	}
 
-	/* init ret with capacity, functions and params */
-	ret->capacity = capacity_;
+	/* init ret with functions and params */
 	ret->hash_func = hash_func_;
 	ret->hash_param = hash_param_;
 	ret->is_match = is_match_;
@@ -85,7 +88,6 @@ void HMapDestroy(hmap_ty* hmap_)
 	{
 		return;
 	}
-	
 
 	/* for each lst in buckets */
 	for (i = 0; i < hmap_->capacity; ++i)
@@ -134,26 +136,43 @@ void HMapRemove(hmap_ty* hmap_, const void* key_)
 	/* set bad mem */
 	
 	/* free pair_to_remove */
-
 }
 
 int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 {
+	size_t idx = 0;
+	dlist_ty* lst = NULL;
 	/* allocate pair */
+	pair_ty* pair = (pair_ty*)malloc(sizeof(pair_ty));
 	
 	/* assert */
+	assert(key_);
 	
 	/* handle pair failure */
-	/* init pair */
+	if (!pair)
+	{
+		/* init pair */
+		free(pair);
+		return FAIL;
+	}
 	
 	/* idx = GetEntry */
+	idx = GetEntryIMP(hmap_, key_);
 	
 	/* lst = hmap buckets[idx] */
+	lst = hmap_->buckets[idx];
 	
 	/* insert pair before end of lst */
 	/* handle failure */
+	if (DListIterIsEqual(DListPushBack(hmap_->buckets[idx], pair),
+													 DListEndIter(lst)))
+	{
+		free(pair);
+		return FAIL;
+	}
 
 	/* return success */
+	return SUCCESS;
 }
 
 size_t HMapSize(const hmap_ty* hmap_)
@@ -166,6 +185,7 @@ size_t HMapSize(const hmap_ty* hmap_)
 		/* ret =  DListSize of buckets[idx] */
 	
 	/* return ret */
+	return 0;
 }
 
 int HMapIsEmpty(const hmap_ty* hmap_)
@@ -173,6 +193,7 @@ int HMapIsEmpty(const hmap_ty* hmap_)
 	/* assert */
 	
 	/* return HMapSize == 0 */
+	return 0;
 }
 
 pair_ty HMapFind(hmap_ty* hmap_, const void* key_)
@@ -210,20 +231,26 @@ int HMapForEach(hmap_ty* hmap, action_ty action, void* param)
 			/* return ret */
 	
 	/* return ret */
+	return 0;
 }
 
-static size_t GetEntryIMP(hmap_ty* hamp_, const void* key)
+static size_t GetEntryIMP(hmap_ty* hmap_, const void* key_)
 {
+	size_t ret = 0;
 	/* assert */
+	assert(hmap_);
 	
 	/* call to hash func on key */
+	ret = hmap_->hash_func(key_, hmap_->hash_param);
 	
 	/* ret =  hash value % capacity */
+	ret %= hmap_->capacity;
 	
 	/* return ret */
+	return ret;
 }
 
-static int IsPairMatchIMP(const void* pair, void* hmap_param)
+static int IsMatchPairIMP(const void* pair_, void* hmap_param_)
 {
 	/* assert */
 	
@@ -232,9 +259,10 @@ static int IsPairMatchIMP(const void* pair, void* hmap_param)
 	/* get key2 from hmap_param  */
 	
 	/* return hmap is_match(key1, key2, match_param) */
+	return 0;
 }
 
-static int PairActionIMP(void* pair, void* param)
+static int PairActionIMP(void* pair_, void* param_)
 {
 	/* assert */
 	
@@ -244,13 +272,14 @@ static int PairActionIMP(void* pair, void* param)
 	/* ret = action_func(key from pair, data from pair, action param); */
 	
 	/* return ret */
+	return 0;
 }
 
-static int FreePairIMP(void* data, void* param)
+static int FreePairIMP(void* data_, void* ignored)
 {
-	(void)param;
+	(void)ignored;
 	
-	free(data);
+	free(data_);
 	
 	return SUCCESS;
 }
