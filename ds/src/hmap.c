@@ -198,23 +198,55 @@ int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 
 size_t HMapSize(const hmap_ty* hmap_)
 {
-	/* ret = 0 */
+	/* ret = 0, curr & end for ptr arithmetics */
+	size_t ret = 0;
+	dlist_ty** curr = NULL;
+	dlist_ty** end = NULL;
 	
 	/* assert */
+	assert(hmap_);
+	
+	/* init curr to begin bucket and end to end bucket */
+	curr = hmap_->buckets;
+	end = hmap_->buckets + hmap_->capacity;
 	
 	/* for each idx in buckets */
+	while (curr != end)
+	{
 		/* ret =  DListSize of buckets[idx] */
-	
+		ret += DListCount(*curr);
+		
+		++curr;
+	}
 	/* return ret */
-	return 0;
+	return ret;
 }
 
 int HMapIsEmpty(const hmap_ty* hmap_)
 {
-	/* assert */
+	dlist_ty** curr = NULL;
+	dlist_ty** end = NULL;
 	
-	/* return HMapSize == 0 */
-	return 0;
+	/* assert */
+	assert(hmap_);
+	
+	/* init curr to begin bucket and end to end bucket */
+	curr = hmap_->buckets;
+	end = hmap_->buckets + hmap_->capacity;
+	
+	/* for each idx in buckets */
+	while (curr != end)
+	{
+		/* return FALSE if not empty */
+		if (FALSE == DListIsEmpty(*curr))
+		{
+			return FALSE;
+		}
+		++curr;
+	}
+	
+	/* return TRUE */
+	return TRUE;
 }
 
 pair_ty HMapFind(hmap_ty* hmap_, const void* key_)
