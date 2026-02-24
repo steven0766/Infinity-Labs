@@ -1,15 +1,17 @@
 #ifndef __HMAP_H__
 #define __HMAP_H__
 
+#include <stddef.h>
+
 typedef struct hmap hmap_ty;
 typedef struct pair
 {
-	void* first;
-	void* second;
+	const void* key;
+	void* data;
 }pair_ty;
 
 /* hash function */
-typedef size_t (*hash_ty) (const void* key, const void* param );
+typedef size_t (*hash_ty) (const void* key, const void* param);
 
 /* is_match func for key */
 typedef int (*is_match_ty) (const void* key_a, const void* key_b, const void* param);
