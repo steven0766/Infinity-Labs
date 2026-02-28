@@ -19,7 +19,7 @@ struct hmap
 typedef struct hmap_match_param
 {
 	hmap_ty hmap;
-	void* key;
+	const void* key;
 }match_param_ty;
 
 typedef struct hmap_action_param
@@ -29,7 +29,7 @@ typedef struct hmap_action_param
 }action_param_ty;
 
 static size_t GetEntryIMP(hmap_ty* hmap_, const void* key);
-static int IsPairMatchIMP(const void* pair, void* hmap_param);
+static int IsMatchPairIMP(const void* pair, void* hmap_param);
 static int PairActionIMP(void* pair, void* param);
 static int FreePairIMP(void* data, void* param);
 
@@ -138,25 +138,44 @@ void HMapDestroy(hmap_ty* hmap_)
 
 void HMapRemove(hmap_ty* hmap_, const void* key_)
 {
+	size_t idx = 0;
+	match_param_ty hmap_param = {0};
+	dlist_ty** lst = NULL;
 	/* init iter pair_to_remove */
+	dlist_iter_ty to_remove = NULL;
+	pair_ty* pair_to_rm = NULL;
 	
 	/* assert */
+	assert(hmap_);
+	assert(key_);
 	
 	/* idx = GetEntry */
+	idx = GetEntryIMP(hmap_, key_);
 	
 	/* lst = hmap_ buckets[idx] */
-	
+	lst = hmap_->buckets + idx;
 	/* create hmap_ param = hmap, key */
+	hmap_param.hmap = *hmap_;
+	hmap_param.key = key_;
 	
 	/* to_remove = DListFind(Begin iter, End iter, IsPairMatch, hmap_param) */
+	to_remove = DListFind(DListBeginIter(*lst), DListEndIter(*lst), 
+				    IsMatchPairIMP, &hmap_param);
+	/* if didn't find node */
+	if (DListIterIsEqual(to_remove, DListEndIter(*lst)))
+	{
+		return;
+	}
 	
 	/* pair_to_remove = get data from iter to_remove */
-	
+	pair_to_rm = DListIterGetData(to_remove);
 	/* DListRemove(pair_to_remove) */
-	
+	FreePairIMP(pair_to_rm, NULL);
 	/* set bad mem */
-	
+	DEBUG_BAD_MEM(pair_to_rm->key, void*);
+	DEBUG_BAD_MEM(pair_to_rm->data, void*);
 	/* free pair_to_remove */
+	DListRemove(to_remove);
 }
 
 int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
@@ -182,6 +201,10 @@ int HMapInsert(hmap_ty* hmap_, const void* key_, void* data_)
 	
 	/* lst = hmap buckets[idx] */
 	lst = hmap_->buckets[idx];
+	
+	/* init pair */
+	pair->key = key_;
+	pair->data = data_;
 	
 	/* insert pair before end of lst */
 	/* handle failure */
@@ -305,14 +328,23 @@ static size_t GetEntryIMP(hmap_ty* hmap_, const void* key_)
 
 static int IsMatchPairIMP(const void* pair_, void* hmap_param_)
 {
+	const void* k1 = NULL;
+	const void* k2 = NULL;
+	hmap_ty* hmap = NULL;
 	/* assert */
+	assert(pair_);
+	assert(hmap_param_);
 	
 	/* get key1 from pair */
+	k1 = ((pair_ty*)pair_)->key;
 	
 	/* get key2 from hmap_param  */
+	k2 = (pair_ty*)((match_param_ty*)hmap_param_)->key;
+	
+	hmap = &((match_param_ty*)hmap_param_)->hmap;
 	
 	/* return hmap is_match(key1, key2, match_param) */
-	return 0;
+	return hmap->is_match(k1, k2, hmap->match_param);
 }
 
 static int PairActionIMP(void* pair_, void* param_)
