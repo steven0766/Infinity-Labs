@@ -16,11 +16,16 @@ void shellRun(void)
 static int IsInternalCommandIMP(const char* user_input_)
 {
     /* assert */
-    
+    assert(user_input_);
     /* if user_input == "exit" */
+    if (strcmp(user_input_, "exit"))
+    {
         /* return true */
+        return TRUE;
+    }
         
     /*return FALSE;*/
+    return FALSE;
 }
 
 static void SpawnIMP(char* command_)
