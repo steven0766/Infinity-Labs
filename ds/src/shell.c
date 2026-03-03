@@ -8,6 +8,7 @@
 static int HandleInternalCommandIMP(const char* user_input_);
 static void SpawnIMP(char* command_);
 static void HandleErrorIMP(const char* error_msg_);
+static void ParseArgsIMP(char* user_input_, char* args_[]);
 
 static int last_status = 0;
 
@@ -80,8 +81,32 @@ static void SpawnIMP(char* args_[])
 
 static void HandleErrorIMP(const char* error_msg_)
 {
-    /* error message is not null */
-    assert(error_msg_);
-        /* print error message */
+    /* print error message */
+    perror(error_msg_);
     /* exit */
+    exit();
+}
+
+static void ParseArgsIMP(char* user_input_, char* args_[])
+{
+    char* token = NULL;
+    size_t argc = 0;
+
+	/* assert */
+    assert(user_input_);
+    assert(args_);
+	
+	/* devide user input to tokens */
+    token = strtok(user_input_, " ");
+	
+	/* add akk tokens to args_ in loop */
+    while (token && argc < (MAX_ARGS - 1))
+    {
+    	/* add token to argc */
+        args_[argc++] = token;
+        /* next token */
+        token = strtok(NULL, " ");
+    }
+	/* last arg is NULL */
+    args_[argc] = NULL;
 }
