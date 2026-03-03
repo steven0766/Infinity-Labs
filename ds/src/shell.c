@@ -110,3 +110,19 @@ static void ParseArgsIMP(char* user_input_, char* args_[])
 	/* last arg is NULL */
     args_[argc] = NULL;
 }
+
+static int ReadInputIMP(char* buffer_)
+{
+	/* assert */
+    assert(buffer_);
+	/* return FAIL if input is empty */
+    if (NULL == fgets(buffer_, MAX_LEN, stdin))
+    {
+        return FAILURE;
+    }
+	/* remove \n */
+    buffer_[strcspn(buffer_, "\n")] = '\0';
+	
+	/* return SUCCESS */
+    return SUCCESS;
+}
