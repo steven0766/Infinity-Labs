@@ -2,38 +2,61 @@
 #include <stdio.h>		/* printf */
 #include <unistd.h>		/* fork, wait, execvp */
 #include <stdlib.h>		/* exit */
+#include <sys/wait.h>	/* wait */
+#include <string.h>		/* strcmp */
 
 #include "utils.h"		/* TRUE, FALSE */
 
 static int HandleInternalCommandIMP(const char* user_input_);
-static void SpawnIMP(char* command_);
+static void SpawnIMP(char** args_);
 static void HandleErrorIMP(const char* error_msg_);
 static void ParseArgsIMP(char* user_input_, char* args_[]);
+static void ReadInputIMP(char* buffer_);
+
+enum
+{
+    MAX_LEN = 256,
+    MAX_ARGS = 8
+};
 
 static int last_status = 0;
 
-void shellRun(void)
+void ShellRun(void)
 {
+	char user_input[MAX_LEN];
+    char* args[MAX_ARGS];
+    
     /* while 1 */
     while (TRUE)
     {
         /* input command */
+        ReadInputIMP(user_input);
+        
+        ParseArgsIMP(user_input, args);
         /* if IsInternalCommandIMP */
-            /* break */
+        if (TRUE == HandleInternalCommandIMP(args[0]))
+        {
+        	/* continue */
+            continue;
+        }
         
         /* spawn */
+        SpawnIMP(args);
     }
 }
 
 static int HandleInternalCommandIMP(const char* user_input_)
 {
-    /* assert */
-    assert(user_input_);
+	/* if input is NULL */
+	if (!user_input_)
+	{
+		return TRUE;
+	}
     /* if user_input == "exit" */
-    if (strcmp(user_input_, "exit"))
+    if (0 == strcmp(user_input_, "exit"))
     {
-        /* return true */
-        return TRUE;
+        /* exit(0) */
+        exit(0);
     }
         
     /*return FALSE;*/
@@ -71,7 +94,7 @@ static void SpawnIMP(char* args_[])
     {
         /* ret_wait = wait(NULL) */
             /* if ret_wait == -1*/
-        if (-1 == wait(&last_status);
+        if (-1 == wait(&last_status))
         {
                 /* HandleErrorIMP */
             HandleErrorIMP("wait Failed");
@@ -84,7 +107,7 @@ static void HandleErrorIMP(const char* error_msg_)
     /* print error message */
     perror(error_msg_);
     /* exit */
-    exit();
+    exit(1);
 }
 
 static void ParseArgsIMP(char* user_input_, char* args_[])
@@ -111,18 +134,15 @@ static void ParseArgsIMP(char* user_input_, char* args_[])
     args_[argc] = NULL;
 }
 
-static int ReadInputIMP(char* buffer_)
+static void ReadInputIMP(char* buffer_)
 {
 	/* assert */
     assert(buffer_);
 	/* return FAIL if input is empty */
     if (NULL == fgets(buffer_, MAX_LEN, stdin))
     {
-        return FAILURE;
+        HandleErrorIMP("fail to read input");
     }
 	/* remove \n */
     buffer_[strcspn(buffer_, "\n")] = '\0';
-	
-	/* return SUCCESS */
-    return SUCCESS;
 }
