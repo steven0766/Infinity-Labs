@@ -37,7 +37,6 @@ hmap_ty* HMapCreate(size_t capacity_, hash_ty hash_func_,
 			const void* hash_param_, is_match_ty is_match_, 
 						      const void* match_param_)
 {	
-	size_t i = 0;
 	dlist_ty** curr = NULL;
 	dlist_ty** end = NULL;
 	/* allocate ret(hmap): */
@@ -274,24 +273,38 @@ int HMapIsEmpty(const hmap_ty* hmap_)
 
 pair_ty HMapFind(hmap_ty* hmap_, const void* key_)
 {
-	/* init empty pair ret */
+	size_t idx = 0;
+	dlist_ty* lst = NULL;
+	match_param_ty hmap_param = {0};
+	pair_ty ret = {0};
+	dlist_iter_ty is_found = NULL;
 	
 	/* assert */
+	assert(hmap_);
 	
 	/* idx = GetEntry */
+	idx = GetEntryIMP(hmap_, key_);	
 	
 	/* lst = hmap buckets[idx] */
+	lst = hmap_->buckets[idx];	
 	
 	/* init hmap_match_param */
+	hmap_param.hmap = *hmap_;
+	hmap_param.key = key_;
 	
-	/* found iter =  DListFind(Begin iter, End iter, IsPairMatch, hmap_match_param) */
-	
+	/* is_found =  DListFind(Begin iter, End iter, IsPairMatch, hmap_match_param) */
+	is_found = DListFind(DListBeginIter(lst), DListEndIter(lst), 
+				    IsMatchPairIMP, &hmap_param);
 	/* if found iter is EndIter */
 		/* return ret */
-		
+	if (DListIterIsEqual(is_found, DListEndIter(lst)))
+	{
+		return ret;
+	}
 	/* ret = * get data from found iter */
-	
+	ret = *(pair_ty*)DListIterGetData(is_found);
 	/* return ret */
+	return ret;
 }
 
 int HMapForEach(hmap_ty* hmap, action_ty action, void* param)
@@ -349,15 +362,20 @@ static int IsMatchPairIMP(const void* pair_, void* hmap_param_)
 
 static int PairActionIMP(void* pair_, void* param_)
 {
+	pair_ty* pair = NULL;
+	action_param_ty* param = NULL;
 	/* assert */
+	assert(pair_);
+	assert(param_);
 	
-	/* extract hmap action param from param */
-	/* extract hmap action function from param */
+	/* extract pair from pair_ */
+	pair = (pair_ty*)pair_;
 	
-	/* ret = action_func(key from pair, data from pair, action param); */
+	/* extract param_ty from param_ */
+	param = (action_param_ty*)param_;
 	
-	/* return ret */
-	return 0;
+	/* return action_func(key from pair, data from pair, action param); */
+	return param->action_func(pair->key, pair->data, param->action_param);
 }
 
 static int FreePairIMP(void* data_, void* ignored)
