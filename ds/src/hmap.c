@@ -18,7 +18,8 @@ struct hmap
 
 typedef struct hmap_match_param
 {
-	hmap_ty hmap;
+	is_match_ty is_match;
+	const void* match_param;
 	const void* key;
 }match_param_ty;
 
@@ -139,9 +140,9 @@ void HMapRemove(hmap_ty* hmap_, const void* key_)
 {
 	size_t idx = 0;
 	match_param_ty hmap_param = {0};
-	dlist_ty** lst = NULL;
-	/* init iter pair_to_remove */
+	dlist_ty* lst = NULL;
 	dlist_iter_ty to_remove = NULL;
+	dlist_iter_ty end = NULL;
 	pair_ty* pair_to_rm = NULL;
 	
 	/* assert */
@@ -152,16 +153,20 @@ void HMapRemove(hmap_ty* hmap_, const void* key_)
 	idx = GetEntryIMP(hmap_, key_);
 	
 	/* lst = hmap_ buckets[idx] */
-	lst = hmap_->buckets + idx;
+	lst = hmap_->buckets[idx];
+	
 	/* create hmap_ param = hmap, key */
-	hmap_param.hmap = *hmap_;
+	hmap_param.is_match = hmap_->is_match;
+	hmap_param.match_param = hmap_->match_param;
 	hmap_param.key = key_;
 	
+	end = DListEndIter(lst);
+	
 	/* to_remove = DListFind(Begin iter, End iter, IsPairMatch, hmap_param) */
-	to_remove = DListFind(DListBeginIter(*lst), DListEndIter(*lst), 
-				    IsMatchPairIMP, &hmap_param);
+	to_remove = DListFind(DListBeginIter(lst), end, 
+				    	  IsMatchPairIMP, &hmap_param);
 	/* if didn't find node */
-	if (DListIterIsEqual(to_remove, DListEndIter(*lst)))
+	if (DListIterIsEqual(to_remove, end))
 	{
 		return;
 	}
@@ -170,9 +175,7 @@ void HMapRemove(hmap_ty* hmap_, const void* key_)
 	pair_to_rm = DListIterGetData(to_remove);
 	/* DListRemove(pair_to_remove) */
 	FreePairIMP(pair_to_rm, NULL);
-	/* set bad mem */
-	DEBUG_BAD_MEM(pair_to_rm->key, void*);
-	DEBUG_BAD_MEM(pair_to_rm->data, void*);
+
 	/* free pair_to_remove */
 	DListRemove(to_remove);
 }
@@ -277,7 +280,8 @@ pair_ty HMapFind(hmap_ty* hmap_, const void* key_)
 	dlist_ty* lst = NULL;
 	match_param_ty hmap_param = {0};
 	pair_ty ret = {0};
-	dlist_iter_ty is_found = NULL;
+	dlist_iter_ty target = NULL;
+	dlist_iter_ty end = NULL;
 	
 	/* assert */
 	assert(hmap_);
@@ -288,21 +292,24 @@ pair_ty HMapFind(hmap_ty* hmap_, const void* key_)
 	/* lst = hmap buckets[idx] */
 	lst = hmap_->buckets[idx];	
 	
+	end = DListEndIter(lst);
+	
 	/* init hmap_match_param */
-	hmap_param.hmap = *hmap_;
+	hmap_param.is_match = hmap_->is_match;
+	hmap_param.match_param = hmap_->match_param;
 	hmap_param.key = key_;
 	
-	/* is_found =  DListFind(Begin iter, End iter, IsPairMatch, hmap_match_param) */
-	is_found = DListFind(DListBeginIter(lst), DListEndIter(lst), 
+	/* target =  DListFind(Begin iter, End iter, IsPairMatch, hmap_match_param) */
+	target = DListFind(DListBeginIter(lst), end, 
 				    IsMatchPairIMP, &hmap_param);
 	/* if found iter is EndIter */
 		/* return ret */
-	if (DListIterIsEqual(is_found, DListEndIter(lst)))
+	if (DListIterIsEqual(target, end))
 	{
 		return ret;
 	}
 	/* ret = * get data from found iter */
-	ret = *(pair_ty*)DListIterGetData(is_found);
+	ret = *(pair_ty*)DListIterGetData(target);
 	/* return ret */
 	return ret;
 }
@@ -339,25 +346,18 @@ static size_t GetEntryIMP(hmap_ty* hmap_, const void* key_)
 	return ret;
 }
 
-static int IsMatchPairIMP(const void* pair_, void* hmap_param_)
+static int IsMatchPairIMP(const void* pair_, void* param_)
 {
-	const void* k1 = NULL;
-	const void* k2 = NULL;
-	hmap_ty* hmap = NULL;
+	match_param_ty* param = NULL;
 	/* assert */
 	assert(pair_);
-	assert(hmap_param_);
-	
-	/* get key1 from pair */
-	k1 = ((pair_ty*)pair_)->key;
-	
-	/* get key2 from hmap_param  */
-	k2 = (pair_ty*)((match_param_ty*)hmap_param_)->key;
-	
-	hmap = &((match_param_ty*)hmap_param_)->hmap;
+	assert(param_);
+
+	param = (match_param_ty*)param_;
 	
 	/* return hmap is_match(key1, key2, match_param) */
-	return hmap->is_match(k1, k2, hmap->match_param);
+	return param->is_match(((pair_ty*)pair_)->key,
+							param->key, param->match_param);
 }
 
 static int PairActionIMP(void* pair_, void* param_)
@@ -386,30 +386,4 @@ static int FreePairIMP(void* data_, void* ignored)
 	
 	return SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
