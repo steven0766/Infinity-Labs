@@ -8,6 +8,7 @@
 
 static void TestHMapCreate(void);
 static void TestHMapInsertAndRemove(void);
+static void TestHMapFind(void);
 
 static size_t Hash(const void* key, const void* param);
 static int IsMatch(const void* key_a, const void* key_b, const void* param);
@@ -21,6 +22,9 @@ int main()
 	
 	TestPrintSection("Test insert and remove");
 	TestHMapInsertAndRemove();
+	
+	TestPrintSection("Test find");
+	TestHMapFind();
 	
 	return TestSuiteEnd();
 }
@@ -72,6 +76,42 @@ static void TestHMapInsertAndRemove(void)
 	
 	
 	
+	HMapDestroy(map);
+}
+
+static void TestHMapFind(void)
+{
+	hmap_ty* map = HMapCreate(CAP, Hash, NULL, IsMatch, NULL);
+	pair_ty pair = {0};
+
+	char* keys[3] = {"1000", "2455", "378676"};
+	char* vals[3] = {"asd", "zxc", "qwe"};
+
+	size_t i = 0;
+
+	if (!ASSERT_NOT_NULL(map))
+	{
+		return;
+	}
+
+	for (i = 0; i < ARRAY_LEN(keys); ++i)
+	{
+		ASSERT_INT(SUCCESS, HMapInsert(map, keys[i], vals[i]));
+	}
+
+	for (i = 0; i < ARRAY_LEN(keys); ++i)
+	{
+		pair = HMapFind(map, keys[i]);
+
+		ASSERT_PTR(keys[i], pair.key);
+		ASSERT_PTR(vals[i], pair.data);
+	}
+
+	pair = HMapFind(map, "128");
+
+	ASSERT_NULL(pair.key);
+	ASSERT_NULL(pair.data);
+
 	HMapDestroy(map);
 }
 
