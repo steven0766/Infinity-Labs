@@ -314,20 +314,41 @@ pair_ty HMapFind(hmap_ty* hmap_, const void* key_)
 	return ret;
 }
 
-int HMapForEach(hmap_ty* hmap, action_ty action, void* param)
+int HMapForEach(hmap_ty* hmap_, action_ty action_, void* param_)
 {
-	/* ret = SUCCESS */
+	dlist_ty** curr = NULL;
+    dlist_ty** end = NULL;
+    int ret = SUCCESS;
+    action_param_ty hmap_action_param = {0};
 	
 	/* assert */
+	assert(hmap_);
+    assert(action_);
+	
+	/* init action_param */
+	hmap_action_param.action_func = action_;
+    hmap_action_param.action_param = param_;
+    
+    curr = hmap_->buckets;
+    end = hmap_->buckets + hmap_->capacity;
 	
 	/* for each idx in buckets */
-		/* lst = hmap buckets[idx] */
+	while (curr != end)
+    {
 		/* ret =  DListForEach( lst begin, lst end, PairAction,  hmap_action_param); */
+		ret = DListForEach(DListBeginIter(*curr), DListEndIter(*curr),
+                           			PairActionIMP, &hmap_action_param);
 		/* if ret is nonzero */
 			/* return ret */
-	
-	/* return ret */
-	return 0;
+		if (ret != SUCCESS)
+        {
+            return ret;
+        }
+
+        ++curr;
+    }
+	/* return SUCCESS */
+	return SUCCESS;
 }
 
 static size_t GetEntryIMP(hmap_ty* hmap_, const void* key_)
