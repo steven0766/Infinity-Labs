@@ -110,6 +110,10 @@ void DhcpFreeIp(dhcp_ty* dhcp_, addr_ty addr_)
 	/* assert on addr_ not equal to server addr */
 	assert(addr_ != ((~(size_t)0 - 1) & (~dhcp_->subnet_mask)) | dhcp_->subnet_id);
 	
+	assert(addr_ != ((~(size_t)0) & (~dhcp_->subnet_mask)) | dhcp_->subnet_id);
+	
+	assert(addr_ != dhcp_->subnet_id);
+	
 	/* BTrieRelease addr_ */
 	BTrieRelease(dhcp_->trie, addr_);
 }
