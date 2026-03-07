@@ -88,7 +88,7 @@ addr_ty DhcpAllocateIp(dhcp_ty* dhcp_, addr_ty addr_)
 	if (0 == ret)
 	{
 		/* add 0 to trie */
-		ret = BTrieGet(dhcp_->trie, ret);
+		ret = BTrieGet(dhcp_->trie, 0);
 		/* if ret still 0 */
 		if (0 == ret)
 		{
