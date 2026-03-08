@@ -22,5 +22,7 @@ int main()
 static void SignalHandlerIMP(int sig_)
 {
 	/* (void)sig_ */
+	(void)sig_;
 	/* toggle was_signal_receive on */
+	was_signal_receive = 1;
 }
