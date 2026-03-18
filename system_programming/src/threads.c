@@ -9,7 +9,7 @@ static void* WriteIndexIMP(void *arg);
 
 enum
 {
-    NUM_THREADS = 100000
+    NUM_THREADS = 700000
 };
 
 static int g_arr[NUM_THREADS];
@@ -20,6 +20,9 @@ int main(void)
     int i = 0;
     int status = 0;
     time_t start, end;
+    pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
     
     start = time(NULL);
 
@@ -32,6 +35,8 @@ int main(void)
     }
     
 	end = time(NULL);
+	
+	pthread_attr_destroy(&attr);
 
     sleep(10);
 
@@ -42,11 +47,6 @@ int main(void)
         	printf("arr[%d] = %d\n", i, g_arr[i]);
         }
     }
-    
-    for (i = 0; i < NUM_THREADS; ++i)
-	{
-		pthread_join(threads[i], NULL);
-	}
 
 	printf("time: %ld seconds\n", end - start);
 
