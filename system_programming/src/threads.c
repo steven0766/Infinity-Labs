@@ -42,6 +42,11 @@ int main(void)
         	printf("arr[%d] = %d\n", i, g_arr[i]);
         }
     }
+    
+    for (i = 0; i < NUM_THREADS; ++i)
+	{
+		pthread_join(threads[i], NULL);
+	}
 
 	printf("time: %ld seconds\n", end - start);
 
