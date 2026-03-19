@@ -1,7 +1,29 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
+#include <stdio.h>		/* perror */
+#include <stdlib.h>		/* exit */
 
 #define BAD_MEM(type) 			((type)0xDEADBEEFDEADBEEF)
+
+#define EXIT_IF_BAD(condition, status, msg)	\
+	do					\
+	{					\
+		if (!(condition))		\
+		{				\
+			perror((msg));		\
+			exit((status));		\
+		}				\
+	} while (0)								
+
+#define RETURN_IF_BAD(condition, status, msg)	\
+	do					\
+	{					\
+		if (!(condition))		\
+		{				\
+			perror((msg));		\
+			return (status);	\
+		}				\
+	} while (0)
 
 #if !DNDEBUG
 	#define DEBUG_ONLY(expression) do {expression;} while(0);
