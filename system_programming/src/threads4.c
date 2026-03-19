@@ -24,6 +24,11 @@ int main(void)
     int status = 0;
     void* ret_val = NULL;
     size_t i = 0;
+    
+    time_t start = 0;
+    time_t end = 0;
+
+    start = time(NULL);
 
     for (i = 0; i < NUM_THREADS; ++i)
     {
@@ -32,6 +37,8 @@ int main(void)
 
         ++curr_thread;
     }
+    
+    end = time(NULL);
 
     curr_thread = threads;
 
