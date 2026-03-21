@@ -177,7 +177,7 @@ static int ParseNumberIMP(const char *str_, int *out_num_)
 		return 1;
 	}
 
-	if (value < 0 || value > 32767)
+	if (0 > value || 32767 < value)
 	{
 		return 1;
 	}
@@ -194,7 +194,7 @@ static void ParseCmdIMP(char *user_input_, cmd_ty *cmd_)
 	assert(cmd_);
 
 	token = strtok(user_input_, " ");
-	EXIT_IF_BAD(NULL != token, 1, "command cannot be empty");
+	EXIT_IF_BAD(NULL != token, 1, "command can't be empty");
 
 	EXIT_IF_BAD('\0' != token[0], 1, "invalid command");
 	cmd_->op = token[0];
@@ -250,7 +250,7 @@ static void HandleCommandIMP(int sem_id_, cmd_ty *cmd_)
 
 		case 'D':
 			OperateIMP(sem_id_, -cmd_->amount, cmd_->undo);
-			printf("OK, value = ");
+			printf("ok, value = ");
 			PrintSemValIMP(sem_id_);
 			break;
 
@@ -259,7 +259,7 @@ static void HandleCommandIMP(int sem_id_, cmd_ty *cmd_)
 			break;
 
 		case 'X':
-			printf("Exiting...\n");
+			printf("Exiting\n");
 			exit(0);
 
 		default:
