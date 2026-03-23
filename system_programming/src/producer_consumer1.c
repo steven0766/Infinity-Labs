@@ -1,4 +1,4 @@
-
+#include <stdio.h> /* printf */
 
 int main()
 {
@@ -41,4 +41,5 @@ static int ProduceIMP(int value_)
 static void ConsumeIMP(int value_)
 {
 	/* print */
+	printf("consumed: %d", value_);
 }
