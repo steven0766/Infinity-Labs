@@ -17,12 +17,29 @@ int main()
 
 static void* Producer(void* arg)
 {
+	size_t i = 0;
+
+	(void)arg;
+
 	/* loop to deploy some messages */
+	while (i < NUM_MESSAGES)
+	{
 		/* busy wait when message ready to be consumed */
+		while (TRUE == __atomic_load_n(&g_message_produced, __ATOMIC_SEQ_CST))
+		{
+			/* do nothing */
+		}
 		
 		/* message = ProduceIMP */
+		g_message = ProduceIMP();
 		
 		/* atomic op message_produced flag on */
+		__atomic_store_n(&g_message_produced, TRUE, __ATOMIC_SEQ_CST);
+
+		++i;
+	}
+
+	return NULL;
 }
 
 static void* Consumer(void* arg)
