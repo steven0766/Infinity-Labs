@@ -1,18 +1,44 @@
 #include <stdio.h> /* printf */
+#include <pthread.h>    /* pthread_t, pthread_create, pthread_join */
 
 #include "utils.h"      /* EXIT_IF_BAD, TRUE, FALSE */
 
+enum
+{
+	NUM_MESSAGES = 50
+};
+
+static void* Producer(void* arg);
+static void* Consumer(void* arg);
+static int ProduceIMP(void);
+static void ConsumeIMP(int value_);
+
+static int g_message = 0;
+static int g_message_produced = FALSE;
+
 int main()
 {
+	int status = 0;
+	pthread_t producer_thread = 0;
+	pthread_t consumer_thread = 0;
+
 	/* create thread for producer */
-		/* handle fail */
-	
+	status = pthread_create(&producer_thread, NULL, Producer, NULL);
+	EXIT_IF_BAD(0 == status, 1, "pthread_create producer failed");
+
 	/* create thread for consumer */
-		/* handle fail */
+	status = pthread_create(&consumer_thread, NULL, Consumer, NULL);
+	EXIT_IF_BAD(0 == status, 1, "pthread_create consumer failed");
 		
 	/* wait till both threads finish*/
+	status = pthread_join(producer_thread, NULL);
+	EXIT_IF_BAD(0 == status, 1, "pthread_join producer failed");
+
+	status = pthread_join(consumer_thread, NULL);
+	EXIT_IF_BAD(0 == status, 1, "pthread_join consumer failed");
 	
 	/* return 0 */
+	return 0;
 }
 
 static void* Producer(void* arg)
