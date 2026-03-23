@@ -15,7 +15,12 @@ int main()
 
 void* Producer(void* arg)
 {
-
+	/* loop to deploy some messages */
+		/* busy wait when message ready to be consumed */
+		
+		/* message = ProduceIMP */
+		
+		/* atomic op message_produced flag on */
 }
 
 void* Consumer(void* arg)
