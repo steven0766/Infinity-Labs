@@ -13,4 +13,7 @@ int main()
 	/* return 0 */
 }
 
-
+static void ConsumeIMP(int value_)
+{
+	/* print */
+}
