@@ -25,12 +25,17 @@ void* Producer(void* arg)
 
 void* Consumer(void* arg)
 {
-
+	/* loop to deploy some messages */
+		/* busy wait when message ready to be produced */
+		
+		/* get produced message */
+		/* consumeIMP produced message */
 }
 
 static int ProduceIMP(int value_)
 {
 	/* return value * 5 */
+	return value_ * 5;
 }
 
 static void ConsumeIMP(int value_)
