@@ -34,3 +34,26 @@ static void* Producer(void* arg)
 
 	/* return NULL */
 }
+
+static void* Consumer(void* arg)
+{
+	/* extract id from arg, list and mutex */
+
+	/* loop forever */
+		/* lock mutex */
+
+		/* if list is not empty */
+			/* value = pop from linked list */
+			/* unlock mutex */
+			/* ConsumeIMP(id, value) */
+
+		/* else if producers_finished == TRUE */
+			/* unlock mutex */
+			/* break */
+
+		/* else */
+			/* unlock mutex */
+			/* continue */
+
+	/* return NULL */
+}
