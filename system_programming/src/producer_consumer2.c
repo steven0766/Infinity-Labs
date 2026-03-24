@@ -57,3 +57,12 @@ static void* Consumer(void* arg)
 
 	/* return NULL */
 }
+
+static int ProduceIMP(int id, int i)
+{
+	/* generate value id * 1000 + i */
+
+	/* print "Producer id produced value" */
+
+	/* return value */
+}
