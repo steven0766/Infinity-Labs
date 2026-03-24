@@ -60,14 +60,18 @@ static void* Consumer(void* arg)
 
 static int ProduceIMP(int id, int i)
 {
-	/* generate value id * 1000 + i */
+	/* generate value id * 100 + i */
+	int ret = id * 100 + i;
 
 	/* print "Producer id produced value" */
+	printf("thread id: %d produced: %d\n", id, ret);
 
 	/* return value */
+	return ret;
 }
 
 static void ConsumeIMP(int id, int value)
 {
 	/* print "Consumer id consumed value" */
+	printf("thread id: %d, consumed: %d\n", id, value);
 }
