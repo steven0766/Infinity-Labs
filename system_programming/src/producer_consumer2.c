@@ -17,4 +17,20 @@ int main(void)
 	/* cleanup */
 }
 
+static void* Producer(void* arg)
+{
+	/* extract id from arg, list and mutex */
 
+	/* loop NUM_PRODUCTS_PER_PRODUCER times */
+		/* value = ProduceIMP(id, i) */
+
+		/* lock mutex */
+
+		/* push value into linked list */
+
+		/* print "Producer id produced value" */
+
+		/* unlock mutex */
+
+	/* return NULL */
+}
