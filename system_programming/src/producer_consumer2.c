@@ -6,18 +6,50 @@ static void ConsumeIMP(int id, int value);
 int main(void)
 {
 	/* init shared list */
-	/* init mutex */
+	g_products = SListCreate();
+	EXIT_IF_BAD(NULL != g_products, 1, "failed to create list");
 
-	/* create producer args */
-	/* create consumer args */
+	/* init mutex */
+	pthread_mutex_init(&g_products_mutex, NULL);
 
 	/* create producers in loop */
+	while (curr_producer != end_producers)
+	{
+		pthread_create(curr_producer, NULL, ProducerThreadIMP, &producer_info[i]);
+		++curr_producer;
+		++i;
+	}
+
+	i = 0;
+
 	/* create consumers in loop */
+	while (curr_consumer != end_consumers)
+	{
+		pthread_create(curr_consumer, NULL, ConsumerThreadIMP, &consumer_info[i]);
+		++curr_consumer;
+		++i;
+	}
 
 	/* join producers */
+	curr_producer = producers;
+	while (curr_producer != end_producers)
+	{
+		pthread_join(*curr_producer, NULL);
+		++curr_producer;
+	}
+
 	/* join consumers */
+	curr_consumer = consumers;
+	while (curr_consumer != end_consumers)
+	{
+		pthread_join(*curr_consumer, NULL);
+		++curr_consumer;
+	}
 
 	/* cleanup */
+	pthread_mutex_destroy(&g_products_mutex);
+
+	return 0;
 }
 
 static void* ProducerThreadIMP(void* arg_)
