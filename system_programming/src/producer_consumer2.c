@@ -1,4 +1,7 @@
-
+static void* ProducerThreadIMP(void* arg_);
+static void* ConsumerThreadIMP(void* arg_);
+static int ProduceIMP(int id, int i);
+static void ConsumeIMP(int id, int value);
 
 int main(void)
 {
@@ -17,25 +20,37 @@ int main(void)
 	/* cleanup */
 }
 
-static void* Producer(void* arg)
+static void* ProducerThreadIMP(void* arg_)
 {
-	/* extract id from arg, list and mutex */
+	thread_info_t* info = (thread_info_t*)arg_;
+	size_t i = 0;
+	int* product = NULL;
+
+	assert(NULL != info);
 
 	/* loop NUM_PRODUCTS_PER_PRODUCER times */
+	while (i < NUM_PRODUCTS)
+	{
 		/* value = ProduceIMP(id, i) */
+		product = ProduceIMP(info->id);
+		EXIT_IF_BAD(NULL != product, 1, "failed to create product");
 
 		/* lock mutex */
+		pthread_mutex_lock(&g_products_mutex);
 
 		/* push value into linked list */
-
-		/* print "Producer id produced value" */
+		AddProductIMP(product);
 
 		/* unlock mutex */
+		pthread_mutex_unlock(&g_products_mutex);
 
-	/* return NULL */
+		++i;
+	}
+
+	return NULL;
 }
 
-static void* Consumer(void* arg)
+static void* ConsumerThreadIMP(void* arg_)
 {
 	/* extract id from arg, list and mutex */
 
@@ -75,3 +90,5 @@ static void ConsumeIMP(int id, int value)
 	/* print "Consumer id consumed value" */
 	printf("thread id: %d, consumed: %d\n", id, value);
 }
+
+
