@@ -52,25 +52,50 @@ static void* ProducerThreadIMP(void* arg_)
 
 static void* ConsumerThreadIMP(void* arg_)
 {
-	/* extract id from arg, list and mutex */
+	thread_info_t* info = (thread_info_t*)arg_;
+	int* product = NULL;
+
+	assert(NULL != info);
 
 	/* loop forever */
+	while (1)
+	{
 		/* lock mutex */
+		pthread_mutex_lock(&g_products_mutex);
 
 		/* if list is not empty */
+		if (!SListIterIsEqual(SListEndIter(g_products), SListBeginIter(g_products)))
+		{
 			/* value = pop from linked list */
+			product = RemoveProductIMP();
+
 			/* unlock mutex */
+			pthread_mutex_unlock(&g_products_mutex);
+
 			/* ConsumeIMP(id, value) */
-
+			ConsumeIMP(info->id, product);
+		}
 		/* else if producers_finished == TRUE */
+		else if (TRUE == g_producers_finished)
+		{
 			/* unlock mutex */
+			pthread_mutex_unlock(&g_products_mutex);
+
 			/* break */
-
+			break;
+		}
 		/* else */
+		else
+		{
 			/* unlock mutex */
-			/* continue */
+			pthread_mutex_unlock(&g_products_mutex);
 
-	/* return NULL */
+			/* continue */
+			continue;
+		}
+	}
+
+	return NULL;
 }
 
 static int ProduceIMP(int id, int i)
