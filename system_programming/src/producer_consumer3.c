@@ -28,3 +28,15 @@ static void* ProducerThreadIMP(void* arg_)
 
 	/* return NULL */
 }
+
+static void* ConsumerThreadIMP(void* arg_)
+{
+	/* loop */
+		/* sem_wait */
+		/* lock mutex */
+		/* value = pop from linked list */
+		/* unlock mutex */
+		/* ConsumeIMP(...) */
+
+	/* return NULL */
+}
