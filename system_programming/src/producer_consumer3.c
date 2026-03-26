@@ -16,3 +16,15 @@ int main(void)
 
 	/* cleanup */
 }
+
+static void* ProducerThreadIMP(void* arg_)
+{
+	/* loop */
+		/* value = ProduceIMP(...) */
+		/* lock mutex */
+		/* push value into linked list */
+		/* unlock mutex */
+		/* sem_post */
+
+	/* return NULL */
+}
