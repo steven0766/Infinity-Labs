@@ -20,7 +20,7 @@ int main(void)
 static void* ProducerThreadIMP(void* arg_)
 {
 	/* loop */
-		/* value = ProduceIMP(...) */
+		/* value = ProduceIMP() */
 		/* lock mutex */
 		/* push value into linked list */
 		/* unlock mutex */
@@ -36,7 +36,7 @@ static void* ConsumerThreadIMP(void* arg_)
 		/* lock mutex */
 		/* value = pop from linked list */
 		/* unlock mutex */
-		/* ConsumeIMP(...) */
+		/* ConsumeIMP() */
 
 	/* return NULL */
 }
