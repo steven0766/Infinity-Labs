@@ -40,3 +40,12 @@ static void* ConsumerThreadIMP(void* arg_)
 
 	/* return NULL */
 }
+
+static int ProduceIMP(int id, int i)
+{
+	/* generate product value */
+
+	/* print generated value */
+
+	/* return generated value */
+}
