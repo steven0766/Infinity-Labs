@@ -44,10 +44,13 @@ static void* ConsumerThreadIMP(void* arg_)
 static int ProduceIMP(int id, int i)
 {
 	/* generate product value */
+	int ret = id * 100 + i;
 
 	/* print generated value */
+	printf("Producer %d produced %d\n", id, ret);
 
 	/* return generated value */
+	return ret;
 }
 
 static void ConsumeIMP(int id, int value)
