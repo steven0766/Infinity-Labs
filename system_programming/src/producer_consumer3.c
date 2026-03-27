@@ -19,14 +19,32 @@ int main(void)
 
 static void* ProducerThreadIMP(void* arg_)
 {
-	/* loop */
-		/* value = ProduceIMP() */
-		/* lock mutex */
-		/* push value into linked list */
-		/* unlock mutex */
-		/* sem_post */
+	thread_info_t* info = (thread_info_t*)arg_;
+	size_t i = 0;
+	int value = 0;
 
-	/* return NULL */
+	/* loop */
+	while (i < NUM_PRODUCTS)
+	{
+		/* value = ProduceIMP() */
+		value = ProduceIMP(info->id, (int)i);
+
+		/* lock mutex */
+		pthread_mutex_lock(&g_mutex);
+
+		/* push value into linked list */
+		AddProductIMP(value);
+
+		/* unlock mutex */
+		pthread_mutex_unlock(&g_mutex);
+
+		/* sem_post */
+		sem_post(&g_sem);
+
+		++i;
+	}
+
+	return NULL;
 }
 
 static void* ConsumerThreadIMP(void* arg_)
@@ -72,6 +90,19 @@ static void ConsumeIMP(int id, int value)
 {
 	/* print consumer id and value */
 	printf("Consumer %d consumed %d\n", id, value);
+}
+
+static void AddProductIMP(int value_)
+{
+	int* data = (int*)malloc(sizeof(int));
+	slist_iter_ty iter = {0};
+
+	EXIT_IF_BAD(NULL != data, 1, "malloc failed");
+
+	*data = value_;
+	iter = SlistInsertBefore(g_products, SListEndIter(g_products), data);
+
+	EXIT_IF_BAD(!IterIsEqual(iter, SListEndIter(g_products)), 1, "insert failed");
 }
 
 static int RemoveProductIMP(void)
