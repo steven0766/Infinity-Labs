@@ -31,14 +31,29 @@ static void* ProducerThreadIMP(void* arg_)
 
 static void* ConsumerThreadIMP(void* arg_)
 {
-	/* loop */
-		/* sem_wait */
-		/* lock mutex */
-		/* value = pop from linked list */
-		/* unlock mutex */
-		/* ConsumeIMP() */
+	thread_info_t* info = (thread_info_t*)arg_;
+	int value = 0;
 
-	/* return NULL */
+	/* loop */
+	while (1)
+	{
+		/* sem_wait */
+		sem_wait(&g_sem);
+
+		/* lock mutex */
+		pthread_mutex_lock(&g_mutex);
+
+		/* value = pop from linked list */
+		value = RemoveProductIMP();
+
+		/* unlock mutex */
+		pthread_mutex_unlock(&g_mutex);
+
+		/* ConsumeIMP() */
+		ConsumeIMP(info->id, value);
+	}
+
+	return NULL;
 }
 
 static int ProduceIMP(int id, int i)
@@ -57,4 +72,21 @@ static void ConsumeIMP(int id, int value)
 {
 	/* print consumer id and value */
 	printf("Consumer %d consumed %d\n", id, value);
+}
+
+static int RemoveProductIMP(void)
+{
+	slist_iter_ty iter = SListBeginIter(g_products);
+	int* data = NULL;
+	int ret = 0;
+
+	EXIT_IF_BAD(!IterIsEqual(iter, SListEndIter(g_products)), 1, "empty list");
+
+	data = (int*)IterGetData(iter);
+	ret = *data;
+
+	SListRemove(iter);
+	free(data);
+
+	return ret;
 }
