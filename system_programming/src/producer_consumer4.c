@@ -64,3 +64,8 @@ static int ProduceIMP(int id, int i)
 
 	/* return generated value */
 }
+
+static void ConsumeIMP(int id, int value)
+{
+	/* print consumer id and value */
+}
