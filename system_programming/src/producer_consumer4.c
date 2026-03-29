@@ -92,6 +92,18 @@ static void ConsumeIMP(int id, int value)
 	printf("Consumer %d consumed %d\n", id, value);
 }
 
+static void EnqueueProductIMP(int value_)
+{
+	int* data = (int*)malloc(sizeof(int));
+	int enqueue_status = 0;
+
+	EXIT_IF_BAD(NULL != data, 1, "malloc failed");
+
+	*data = value_;
+	enqueue_status = QueueEnqueue(g_queue, data);
+	EXIT_IF_BAD(0 == enqueue_status, 1, "QueueEnqueue failed");
+}
+
 static int DequeueProductIMP(void)
 {
 	int* data = NULL;
