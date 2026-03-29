@@ -36,3 +36,22 @@ static void* ProducerThreadIMP(void* arg_)
 
 	/* return NULL */
 }
+
+static void* ConsumerThreadIMP(void* arg_)
+{
+	/* loop */
+		/* sem_wait full */
+
+		/* lock mutex */
+
+		/* value = peek queue */
+		/* dequeue value from queue */
+
+		/* unlock mutex */
+
+		/* sem_post empty */
+
+		/* ConsumeIMP() */
+
+	/* return NULL */
+}
