@@ -18,3 +18,21 @@ int main(void)
 
 	/* cleanup */
 }
+
+static void* ProducerThreadIMP(void* arg_)
+{
+	/* loop */
+		/* value = ProduceIMP() */
+
+		/* sem_wait empty */
+
+		/* lock mutex */
+
+		/* enqueue value into queue */
+
+		/* unlock mutex */
+
+		/* sem_post full */
+
+	/* return NULL */
+}
