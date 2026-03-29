@@ -68,4 +68,5 @@ static int ProduceIMP(int id, int i)
 static void ConsumeIMP(int id, int value)
 {
 	/* print consumer id and value */
+	printf("Consumer %d consumed %d\n", id, value);
 }
