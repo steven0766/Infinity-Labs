@@ -39,21 +39,39 @@ static void* ProducerThreadIMP(void* arg_)
 
 static void* ConsumerThreadIMP(void* arg_)
 {
+	thread_info_t* info = (thread_info_t*)arg_;
+	int value = 0;
+
+	assert(NULL != info);
+
 	/* loop */
+	while (1)
+	{
 		/* sem_wait full */
+		sem_wait(&g_full_sem);
 
 		/* lock mutex */
+		pthread_mutex_lock(&g_queue_mutex);
 
-		/* value = peek queue */
-		/* dequeue value from queue */
+		/* value = dequeue value from queue */
+		value = DequeueProductIMP();
 
 		/* unlock mutex */
+		pthread_mutex_unlock(&g_queue_mutex);
 
 		/* sem_post empty */
+		sem_post(&g_empty_sem);
+
+		if (POISON_PILL == value)
+		{
+			break;
+		}
 
 		/* ConsumeIMP() */
+		ConsumeIMP(info->id, value);
+	}
 
-	/* return NULL */
+	return NULL;
 }
 
 static int ProduceIMP(int id, int i)
@@ -72,4 +90,20 @@ static void ConsumeIMP(int id, int value)
 {
 	/* print consumer id and value */
 	printf("Consumer %d consumed %d\n", id, value);
+}
+
+static int DequeueProductIMP(void)
+{
+	int* data = NULL;
+	int ret = 0;
+
+	EXIT_IF_BAD(0 == QueueIsEmpty(g_queue), 1, "dequeue from empty queue");
+
+	data = (int*)QueuePeek(g_queue);
+	ret = *data;
+
+	QueueDequeue(g_queue);
+	free(data);
+
+	return ret;
 }
