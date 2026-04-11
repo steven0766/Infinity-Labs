@@ -12,6 +12,7 @@
 #include <string.h>     /* strcpy, strcmp */
 #include <linux/if.h>   /* IFF_LOOPBACK */
 #include <sys/types.h>  /* size_t, pid_t */
+#include <stdatomic.h>  /* atomic_fetch_add */
 
 #include "uid.h"
 
