@@ -32,8 +32,7 @@ uid_ty UidCreate(void)
 	    return invalid_uid_g;
 	}
 
-	++counter;
-	uid.counter = counter;
+	uid.counter = atomic_fetch_add(&counter, 1) + 1;
 	uid.pid = getpid();
 
 	SetIP(uid.ip);
