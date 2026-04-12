@@ -11,7 +11,21 @@
 
 int main(int arg, char* argv[])
 {
-
+	/* validate arguments */
+	
+	/* extract interval */
+	
+	/* init wd */
+	
+	/* create scheduler */
+	
+	/* handle failure */
+	
+	/* add task */
+	
+	/* handle failure */
+	
+	/* run scheduler */
 }
 
 static sch_op_ty WatchDogIMP(void* param_)
