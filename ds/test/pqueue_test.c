@@ -1,135 +1,148 @@
-/***********************************************************************
-*File_name: uid.c
-*Reviewer: itay
-*Version:  1.0
-*Date:	   6.1.26
-************************************************************************/
+#include <stdio.h>		/* printf */
+#include "pqueue.h"		/* queue api */
 
-#include <stdio.h> /* printf */
+#include "test_utils.h"	
 
-#include "pqueue.h"
+#define UNUSED(var)	((void)var)
+#define ARRAY_LEN(arr)	(sizeof((arr)) / sizeof((arr[0])))
 
-static void PQCreateTest(void);
-static void PQEnqueueAndDequeue(void);
-static void PQRemoveTest(void);
+static void TestPQCreate(void);
+static void TestPQEnqueue(void);
+static void TestPQDequeue(void);
+static void TestPQRemove(void);
 
-static int Cmp(const void* data1, const void* data2, void* param);
 static int IsMatch(const void* data, void* param);
-static void Print(char* func, char* problem);
+static int CompareAscending(const void* data1, const void* data2, void* param);
 
 int main()
 {
-    PQCreateTest();
-    PQEnqueueAndDequeue();
-    PQRemoveTest();
-    
-    return 0;
+	TestSuiteBegin("Priority Queue");
+	
+	TestPrintSection("Creation Tests");
+	TestPQCreate();
+	
+	TestPrintSection("Enqueue Tests");
+	TestPQEnqueue();
+	
+	TestPrintSection("Dequeue Tests");
+	TestPQDequeue();
+
+	TestPrintSection("Remove Tests");
+	TestPQRemove();
+
+	return TestSuiteEnd();
 }
 
-static void PQCreateTest(void)
+static void TestPQCreate(void)
 {
-    int param = 1;
-    pq_ty* p_q = PQCreate(Cmp, &param);
-    
-    if (NULL == p_q)
-    {
-        Print("PQCreateTest", "PQcreate");
-    }
-    
-    if (!PQIsEmpty(p_q))
-    {
-        Print("PQCreateTest", "PQIsEmpty");
-    }
-    
-    PQDestroy(p_q);
+	pq_ty* pq = PQCreate(CompareAscending, NULL);
+	if (!ASSERT_NOT_NULL(pq))
+	{
+		return;
+	}
+	
+	ASSERT_SIZE(0, PQCount(pq));
+    	ASSERT_TRUE(PQIsEmpty(pq));
+
+	PQDestroy(pq);
 }
 
-static void PQEnqueueAndDequeue(void)
+static void TestPQEnqueue(void)
 {
-    int param = 1;
-    pq_ty* p_q = PQCreate(Cmp, &param);
-    int a = 1, b = 2, c = 3, d = 4, e = 5;
-    
-    if (NULL == p_q)
-    {
-        Print("PQEnqueueAndDequeue", "PQcreate");
-    }
-    
-    PQEnqueue(p_q, &c);
-    PQEnqueue(p_q, &e);
-    PQEnqueue(p_q, &a);
-    PQEnqueue(p_q, &d);
-    PQEnqueue(p_q, &b);
-    
-    if (1 != *(int*)PQDequeue(p_q))
-    {
-        Print("PQEnqueueAndDequeue", "PQDequeue");
-    }
-    
-    if (2 != *(int*)PQPeek(p_q))
-    {
-        Print("PQEnqueueAndDequeue", "PQPeek");
-    }
-
-    if (4 !=PQCount(p_q))
-    {
-        Print("PQEnqueueAndDequeue", "PQCount");
-    }
-    
-    PQDestroy(p_q);
+	static int inputs[] = {5, 3, 2, 4, 1};
+	size_t i = 0;
+	
+	pq_ty* pq = PQCreate(CompareAscending, NULL);
+	if (!ASSERT_NOT_NULL(pq))
+	{
+		return;
+	}
+	
+	for(i = 0; i < ARRAY_LEN(inputs); ++i)
+	{
+		ASSERT_SIZE(i, PQCount(pq));
+		ASSERT_SUCCESS(PQEnqueue(pq, &inputs[i]));
+		ASSERT_SIZE(i + 1, PQCount(pq));
+	}
+	
+	PQDestroy(pq);
 }
 
-static void PQRemoveTest(void)
+static void TestPQDequeue(void)
 {
-    int param = 1;
-    pq_ty* p_q = PQCreate(Cmp, &param);
-    int a = 1, b = 2, c = 3, d = 4, e = 5;
-    int is_match_param = 3;
-    
-    if (NULL == p_q)
-    {
-        Print("PQRemoveTest", "PQcreate");
-    }
-    
-    PQEnqueue(p_q, &c);
-    PQEnqueue(p_q, &e);
-    PQEnqueue(p_q, &a);
-    PQEnqueue(p_q, &d);
-    PQEnqueue(p_q, &b);
-    
-    if (3 != *(int*)PQRemove(p_q, IsMatch, &is_match_param))
-    {
-        Print("PQRemoveTest", "PQRemove");
-    }
-    
-    PQDestroy(p_q);
+	static int inputs[] = {5, 3, 2, 4, 1};
+	static int expected[] = {1, 2, 3, 4, 5};
+	size_t i = 0;
+	
+	pq_ty* pq = PQCreate(CompareAscending, NULL);
+	if (!ASSERT_NOT_NULL(pq))
+	{
+		return;
+	}
+	
+	for(i = 0; i < ARRAY_LEN(inputs); ++i)
+	{
+		ASSERT_SUCCESS(PQEnqueue(pq, &inputs[i]));
+	}
+	ASSERT_SIZE(ARRAY_LEN(inputs), PQCount(pq));
+	
+	for(i = 0; i < ARRAY_LEN(expected); ++i)
+	{
+		ASSERT_INT(expected[i], *(int*)PQDequeue(pq));
+		ASSERT_SIZE(ARRAY_LEN(expected) - (i + 1), PQCount(pq));
+	}
+	ASSERT_TRUE(PQIsEmpty(pq));
+	
+	PQDestroy(pq);
 }
 
-static int Cmp(const void* data1, const void* data2, void* param)
+static void TestPQRemove(void)
 {
-    int result = 0;
+	static int inputs[] = {5, 3, 2, 4, 1};
+	size_t i = 0;
+	int t1 = 1, t2 = 3, t3 = 5, t4 = 12;
+	
+	pq_ty* pq = PQCreate(CompareAscending, NULL);
+	if (!ASSERT_NOT_NULL(pq))
+	{
+		return;
+	}
+	
+	for(i = 0; i < ARRAY_LEN(inputs); ++i)
+	{
+		ASSERT_SUCCESS(PQEnqueue(pq, &inputs[i]));
+	}
+	
+	ASSERT_INT(1, *(int*)PQPeek(pq));
     
-    switch (*(int*)param)
-    {
-        case 1:
-            result = *(size_t*)data1 - *(size_t*)data2;
-            break;
-        
-        default:
-            result = *(size_t*)data2 - *(size_t*)data1;
-            break;
-    }
+    	ASSERT_INT(1, *(int*)PQRemove(pq, IsMatch, &t1));
+    	ASSERT_SIZE(4, PQCount(pq));
+    	ASSERT_INT(2, *(int*)PQPeek(pq));
     
-    return result;
+    	ASSERT_INT(3, *(int*)PQRemove(pq, IsMatch, &t2));
+    	ASSERT_INT(2, *(int*)PQPeek(pq));
+    	ASSERT_SIZE(3, PQCount(pq));
+    
+    	ASSERT_INT(5, *(int*)PQRemove(pq, IsMatch, &t3));
+    	ASSERT_INT(2, *(int*)PQPeek(pq));
+    	ASSERT_SIZE(2, PQCount(pq));
+    	
+    	ASSERT_NULL(PQRemove(pq, IsMatch, &t4));
+	
+	PQDestroy(pq);
+}
+
+static int CompareAscending(const void* data1, const void* data2, void* param)
+{
+	UNUSED(param);
+	return *(int*)data1 - *(int*)data2;
 }
 
 static int IsMatch(const void* data, void* param)
 {
-    return (0 == *(int*)data % *(int*)param);
+	int* num = (int*)data;
+	int* target = (int*)param;
+	
+	return *num == *target;
 }
 
-static void Print(char* func, char* problem)
-{
-    printf("houston we have a problem in \"%s\" function!\n"
-           "problem in:  %s\n", func, problem);
-}
