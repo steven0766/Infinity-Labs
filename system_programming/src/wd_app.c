@@ -16,10 +16,18 @@ int main(int arg, char* argv[])
 
 static sch_op_ty WatchDogIMP(void* param_)
 {
-
+	/* assert */
+	
+	/* send signal to parent */
+	
+	/* if parent is RIP */
+		/* exec */
+		/* handle failure */
+	
+	/* return repeat */
 }
 
 static void FuncIMP(void* unused_)
 {
-	
+	(void)unused_;
 }
