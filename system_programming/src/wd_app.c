@@ -1,8 +1,8 @@
 #define _POSIX_SOURCE
-#include <stdio.h>		/* printf */
 #include <signal.h>		/* kill */
 #include <assert.h>		/* assert */
 #include <unistd.h>  	/* getppid */
+#include <stdlib.h>		/* atoi */
 
 #include "utils.h"		/* EXIT_IF_BAD */
 #include "scheduler.h"	/* SchedulerCreate */
@@ -73,7 +73,7 @@ static sch_op_status_ty WatchDogIMP(void* param_)
 	status = kill(wd_param->ppid, 0);
 	
 	/* if parent is RIP */
-	if (FAIL == status)
+	if (SUCCESS != status)
 	{
 		/* exec */
 		execvp(wd_param->argv[0], wd_param->argv);
