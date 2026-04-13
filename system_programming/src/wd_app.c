@@ -21,7 +21,7 @@ enum
 	MIN_ARGC = 3
 };
 
-static sch_op_status_ty WatchDogIMP(void* param_);
+static sch_op_status_ty WatchDogTSK(void* param_);
 static void EmptyFuncIMP(void* unused_);
 
 int main(int argc, char* argv[])
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	EXIT_IF_BAD(NULL != sch, 1, "Failed to create scheduler");
 	
 	/* add task */
-	task_uid = SchedulerAddTask(sch, interval, WatchDogIMP, &wd_param, EmptyFuncIMP, NULL);
+	task_uid = SchedulerAddTask(sch, interval, WatchDogTSK, &wd_param, EmptyFuncIMP, NULL);
 	/* handle failure */
 	EXIT_IF_BAD(1 != IsMatchId(invalid_uid_g, task_uid), 1, "Failed to add task");
 	
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	return FAIL;
 }
 
-static sch_op_status_ty WatchDogIMP(void* param_)
+static sch_op_status_ty WatchDogTSK(void* param_)
 {
 	int status = 0;
 	wd_param_ty* wd_param = (wd_param_ty*)param_;
