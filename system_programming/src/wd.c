@@ -1,24 +1,35 @@
 #include "wd.h"
 
-int MakeMeImmortal(size_t cmd_len, const char** cmd, int how_often)
+static pid_t g_wd_pid = 0;
+
+int MakeMeImmortal(size_t cmd_len, const char **cmd, int how_often)
 {
-	/* validate arguments */
-	
-	/* if app is running */
-		/* return SUCCESS */
-		
-	/* fork */
-	/* if fork failed */
-		/* return error */
-		
-	/* if I am child */
-		/* exec app */
-		
-	/* return SUCCESS */
+    /* validate arguments */
+
+    /* if watchdog already alive */
+        /* return SUCCESS */
+
+    /* build argv for wd_app */
+
+    /* fork */
+    /* if fork failed */
+        /* free resources */
+        /* return FAIL */
+
+    /* if child */
+        /* exec wd_app */
+        /* if exec failed -> _exit(FAIL) */
+
+    /* parent saves wd pid */
+
+    /* free temporary resources */
+
+    /* return SUCCESS */
 }
 
 void DoNotResussitate(void)
 {
-	/* if wd_app alive */
-		/* kill wd_app */
+    /* if watchdog alive */
+        /* kill watchdog */
+        /* reset pid */
 }
