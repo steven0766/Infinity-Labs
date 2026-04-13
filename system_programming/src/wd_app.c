@@ -3,6 +3,7 @@
 #include <assert.h>		/* assert */
 #include <unistd.h>  	/* getppid */
 #include <stdlib.h>		/* atoi */
+#include <errno.h>		/* errno */
 
 #include "utils.h"		/* EXIT_IF_BAD */
 #include "scheduler.h"	/* SchedulerCreate */
@@ -27,8 +28,8 @@ static void EmptyFuncIMP(void* unused_);
 int main(int argc, char* argv[])
 {
 	scheduler_ty* sch = NULL;
-	uid_ty task_uid;
-	wd_param_ty wd_param;
+	uid_ty task_uid = {0};
+	wd_param_ty wd_param = {0};
 	int interval = 0;
 	/* validate arguments */
 	EXIT_IF_BAD(MIN_ARGC <= argc, 1, "Invalid arguments");
@@ -72,11 +73,17 @@ static sch_op_status_ty WatchDogTSK(void* param_)
 	/* send signal to parent */
 	status = kill(wd_param->ppid, 0);
 	
+	
+	/* if statement change to look at error */
+	
 	/* if parent is RIP */
 	if (SUCCESS != status)
 	{
 		/* exec */
-		execvp(wd_param->argv[0], wd_param->argv);
+		if (ESRCH == errno)
+		{
+			execvp(wd_param->argv[0], wd_param->argv);
+		}
 		/* handle failure */
 		return SCH_NOT_REPEAT;
 	}
