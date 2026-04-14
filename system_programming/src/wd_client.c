@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     status = MakeMeImmortal((size_t)argc, (const char **)argv, 1);
     EXIT_IF_BAD(SUCCESS == status, 1, "MakeMeImmortal failed");
     
-    printf("Client alive. PID: %d\n", getpid());
+    printf("PID: %d\n", getpid());
 
     while (1){}
 
