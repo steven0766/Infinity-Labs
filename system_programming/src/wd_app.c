@@ -72,10 +72,7 @@ static sch_op_status_ty WatchDogTSK(void* param_)
 	
 	/* send signal to parent */
 	status = kill(wd_param->ppid, 0);
-	
-	
-	/* if statement change to look at error */
-	
+
 	/* if parent is RIP */
 	if (SUCCESS != status)
 	{
