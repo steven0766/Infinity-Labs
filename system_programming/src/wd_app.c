@@ -18,8 +18,8 @@ typedef struct
 enum
 {
   INTERVAL_IDX = 1,
-  CLIENT_ARGV_IDX = 2,
-  MIN_ARGC = 3
+  CLIENT_ARGV_IDX = 3,
+  MIN_ARGC = 4
 };
 
 static sch_op_status_ty WatchDogTSK(void* param_);
@@ -31,15 +31,21 @@ int main(int argc, char* argv[])
   uid_ty task_uid = {0};
   wd_param_ty wd_param = {0};
   int interval = 0;
+  int write_fd = 0;
 
-  /*write success on pipe (wd)*/
-  write(argv[2], 2, 1);
+
   /* validate arguments */
-  EXIT_IF_BAD(MIN_ARGC <= argc, 1, "Invalid arguments");
+  EXIT_IF_BAD(MIN_ARGC <= argc, 1, "Invalid arguments wdapp");
 
   /* extract interval */
   interval = atoi(argv[INTERVAL_IDX]);
   EXIT_IF_BAD(0 != interval, 1, "Invalid interval");
+
+  /* parse fd */
+  write_fd = atoi(argv[2]);
+  /*write success on pipe (wd)*/
+  write(write_fd, "2", 1);
+  close(write_fd);
 
   /* init wd */
   wd_param.ppid = getppid();
@@ -83,6 +89,7 @@ static sch_op_status_ty WatchDogTSK(void* param_)
     /* exec */
     if (ESRCH == errno)
     {
+      printf("wd_app find parent dead\n");
       execvp(wd_param->argv[0], wd_param->argv);
     }
     /* handle failure */
