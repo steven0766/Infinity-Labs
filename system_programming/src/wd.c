@@ -32,6 +32,13 @@ typedef struct
 
 enum
 {
+  NORMAL = 1,
+  REVIVE = 2,
+  EXIT = 3
+} wd_mode_ty;
+
+enum
+{
   HOW_OFTEN_IDX = 1,
   FAIL_CNT_IDX = 2,
   CLIENT_ARGS_IDX = 3,
@@ -41,6 +48,7 @@ enum
 static pid_t g_wd_pid = 0;
 static pthread_t g_wd_guard_thread = 0;
 static volatile size_t g_cnt = 0;
+static volatile wd_mode_ty g_mode = NORMAL;
 
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
                             int write_fd_);
@@ -112,6 +120,7 @@ static sch_op_status_ty InitSchedulerTSK(void* tsk_info_)
   /* add SendSignalTSK */
   /* add IncrementCounterTSK*/
   /* add CheckCounterTSK */
+  /* add CheckModeAndUpdateSchTSK */
 
   /* return NOT_REPEAT */
 }
@@ -168,6 +177,15 @@ static sch_op_status_ty StopSchedulerTSK(void* tsk_info_)
   /* return NOT_REPEAT */
 }
 
+static sch_op_status_ty CheckModeAndUpdateSchTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* CheckModeIMP*/
+
+  /* return REPEAT */
+}
+
 static void ResetCounterSigHandlerIMP(int sig_)
 {
   /* atomic g_cnt = 0 */
@@ -175,6 +193,19 @@ static void ResetCounterSigHandlerIMP(int sig_)
 
 static void TerminateWDSigHandlerIMP(int sig_)
 {
+  /* stop scheduler */
+}
+
+static void TerminateWDSigHandlerIMP(int sig)
+{
+  /* g_mode = EXIT */
+}
+
+static void CheckModeIMP(tsk_info_ty* tsk_info_)
+{
+  /* assert */
+
+  /* if h_mode is EXIT */
   /* stop scheduler */
 }
 
