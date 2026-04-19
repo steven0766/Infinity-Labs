@@ -30,6 +30,15 @@ int MakeMeImmortal(size_t cmd_len_, const char** cmd_, int how_often_)
 
 void DoNotResussitate(void)
 {
+  /* assert */
+
+  /* signal thread to stop scheduler with SIGUSR2 */
+  /* wait for thread to finish */
+
+  /* kill thread */
+  /* waitpid */
+
+  /* g_wd_pid = 0*/
 }
 
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
