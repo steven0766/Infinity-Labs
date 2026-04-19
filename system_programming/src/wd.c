@@ -1,5 +1,6 @@
 #define _POSIX_SOURCE
 #include <assert.h> /* assert */
+#include <semaphore.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h> /* memmove */
@@ -18,6 +19,23 @@ typedef struct
   int fail_cnt;
   int interval;
 } tsk_info_ty;
+
+typedef struct
+{
+  sem_t* sem;
+  char** cmd;
+  size_t cmd_len;
+  int how_often;
+  int fail_cnt;
+} wd_guard_info_ty;
+
+enum
+{
+  HOW_OFTEN_IDX = 1,
+  FAIL_CNT_IDX = 2,
+  CLIENT_ARGS_IDX = 3,
+  INT_MAX_DIGITS = 11
+};
 
 static pid_t g_wd_pid = 0;
 
