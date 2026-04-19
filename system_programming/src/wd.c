@@ -168,6 +168,11 @@ static sch_op_status_ty StopSchedulerTSK(void* tsk_info_)
   /* return NOT_REPEAT */
 }
 
+static void ResetCounterSigHandlerIMP(int sig_)
+{
+  /* atomic g_cnt = 0 */
+}
+
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
                             int write_fd_)
 {
