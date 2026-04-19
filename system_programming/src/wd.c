@@ -11,6 +11,14 @@
 #include "utils.h"
 #include "wd.h"
 
+typedef struct
+{
+  scheduler_ty* sch;
+  char** wd_cmd;
+  int fail_cnt;
+  int interval;
+} tsk_info_ty;
+
 static pid_t g_wd_pid = 0;
 
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
