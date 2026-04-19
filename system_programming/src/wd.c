@@ -1,5 +1,6 @@
 #define _POSIX_SOURCE
 #include <assert.h> /* assert */
+#include <pthread.h>
 #include <semaphore.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -38,6 +39,8 @@ enum
 };
 
 static pid_t g_wd_pid = 0;
+static pthread_t g_wd_guard_thread = 0;
+static volatile size_t g_cnt = 0;
 
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
                             int write_fd_);
@@ -120,6 +123,15 @@ static sch_op_status_ty SendSignalTSK(void* tsk_info_)
   /* kill - send SIGUSR1*/
 
   /* return REPEAT*/
+}
+
+static sch_op_status_ty IncrementCounterTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* atomic g_cnt */
+
+  /* return REPEAT */
 }
 
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
