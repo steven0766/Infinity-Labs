@@ -159,6 +159,15 @@ static sch_op_status_ty ReviveWDTSK(void* tsk_info_)
   /* return NOT REPEAT */
 }
 
+static sch_op_status_ty StopSchedulerTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* stop scheduler */
+
+  /* return NOT_REPEAT */
+}
+
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
                             int write_fd_)
 {
