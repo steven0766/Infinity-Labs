@@ -46,11 +46,13 @@ int MakeMeImmortal(size_t cmd_len_, const char** cmd_, int how_often_)
 {
   /* assert */
 
-  /* init wd guard */
+  /* open semaphore */
+
+  /* init wd guard info */
 
   /* create wd guard thread */
 
-  /* wait for wd guard thread to be ready */
+  /* sem_wait till thread signals ready */
 
   /* return SUCCESS/FAIL */
 }
