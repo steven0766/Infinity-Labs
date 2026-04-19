@@ -53,6 +53,7 @@ int MakeMeImmortal(size_t cmd_len_, const char** cmd_, int how_often_)
   /* create wd guard thread */
 
   /* sem_wait till thread signals ready */
+  /* sem_close */
 
   /* return SUCCESS/FAIL */
 }
@@ -95,7 +96,7 @@ static void* WDGuardThread(void* wd_args_)
 
   /* if parent */
   /* g_wd_pid = pid */
-  /* wait for wd_app */
+  /* sem_post */
   /* run scheduler */
   /* destroy scheduler */
   /* free alloc */
