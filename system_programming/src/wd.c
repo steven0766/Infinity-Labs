@@ -41,6 +41,37 @@ void DoNotResussitate(void)
   /* g_wd_pid = 0*/
 }
 
+static void* WDGuardThread(void* wd_args_)
+{
+  /* assert */
+
+  /* set signals:
+      1. SIGUSR1 with ResetCounterSigHandleIMP
+      2. SIGUSR2 with TerminateWDSigHandlerIMP*/
+
+  /* alloc wd_cmd */
+
+  /* create scheduler */
+  /* add InitSchedulerTSK */
+  /* init tsk_info */
+
+  /* pid = fork */
+
+  /* handle fork failed*/
+
+  /* if child */
+  /* exec wd_app */
+  /* handle fail */
+  /* free ar*/
+
+  /* if parent */
+  /* g_wd_pid = pid */
+  /* wait for wd_app */
+  /* run scheduler */
+  /* destroy scheduler */
+  /* free alloc */
+}
+
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
                             int write_fd_)
 {
