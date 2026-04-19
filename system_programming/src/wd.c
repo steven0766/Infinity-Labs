@@ -7,6 +7,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "scheduler.h"
 #include "utils.h"
 #include "wd.h"
 
@@ -70,6 +71,17 @@ static void* WDGuardThread(void* wd_args_)
   /* run scheduler */
   /* destroy scheduler */
   /* free alloc */
+}
+
+static sch_op_status_ty InitSchedulerTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* add SendSignalTSK */
+  /* add IncrementCounterTSK*/
+  /* add CheckCounterTSK */
+
+  /* return NOT_REPEAT */
 }
 
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
