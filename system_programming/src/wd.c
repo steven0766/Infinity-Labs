@@ -173,6 +173,11 @@ static void ResetCounterSigHandlerIMP(int sig_)
   /* atomic g_cnt = 0 */
 }
 
+static void TerminateWDSigHandlerIMP(int sig_)
+{
+  /* stop scheduler */
+}
+
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
                             int write_fd_)
 {
