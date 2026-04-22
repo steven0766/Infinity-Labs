@@ -76,7 +76,19 @@ static sch_op_status_ty CheckStopWDTSK(void* tsk_info_)
 {
   /* assert */
 
-  /* if g_should_stop -> SchedulerStop -> return SCH_NOT_REPEAT */
+  /* if g_should_stop
+     SchedulerStop
+    return SCH_NOT_REPEAT */
 
   /* return SCH_REPEAT */
+}
+
+static void ResetCounterSH(int sig_)
+{
+  /* g_counter = 0 */
+}
+
+static void SetStopSH(int sig_)
+{
+  /* g_should_stop = 1 */
 }
