@@ -62,3 +62,21 @@ static sch_op_status_ty SendSignalToParentTSK(void* tsk_info_)
 
   /* return SCH_REPEAT */
 }
+
+static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* IncrementAndCheckCounterIMP */
+
+  /* return SCH_REPEAT */
+}
+
+static sch_op_status_ty CheckStopWDTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* if g_should_stop -> SchedulerStop -> return SCH_NOT_REPEAT */
+
+  /* return SCH_REPEAT */
+}
