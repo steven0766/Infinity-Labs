@@ -164,3 +164,20 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
 
   /* return SCH_NOT_REPEAT */
 }
+
+static void ResetCounterSH(int sig_)
+{
+  /* atomic store g_counter = 0 */
+}
+
+static void SendSignalIMP(tsk_info_ty* info_)
+{
+  /* assert */
+
+  /* kill g_wd_app_pid SIGUSR1 */
+  /* if success -> return */
+
+  /* if ESRCH -> SwitchToReviveModeIMP */
+
+  /* else -> EXIT_IF_BAD_PERROR */
+}
