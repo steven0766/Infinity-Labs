@@ -257,3 +257,13 @@ static void AddTaskIMP(tsk_info_ty* info_, int interval_,
 
   /* EXIT_IF_BAD */
 }
+
+static int InitSignalMaskIMP(sigset_t* mask_)
+{
+  /* assert */
+
+  /* sigemptyset */
+  /* sigaddset SIGUSR1 */
+  /* sigaddset SIGUSR2 */
+  /* return SUCCESS */
+}
