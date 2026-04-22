@@ -132,3 +132,17 @@ static void InitSignalHandlersIMP(void)
 
   /* sa_handler = SetStopimp SIGUSR2 */
 }
+
+static void AddTaskIMP(tsk_info_ty* info_, scheduler_op_ty func_)
+{
+  /* assert */
+
+  /* SchedulerAddTask with m_interval */
+
+  /* EXIT_IF_BAD */
+}
+
+static void CleanupIMP(void* unused_)
+{
+  /* (void)unused_ */
+}
