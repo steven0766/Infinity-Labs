@@ -121,6 +121,28 @@ static void* WDGuardThread(void* wd_args_)
   /* return NULL */
 }
 
+static sch_op_status_ty BuildWDTSK(void* tsk_info_)
+{
+  tsk_info_ty* info = (tsk_info_ty*)tsk_info_;
+  int sig_received = 0;
+
+  /* assert */
+
+  /* sigwait m_sig_mask -> wait for SIGUSR1 or SIGUSR2 from wd_app */
+
+  /* if SIGUSR2 -> notify main thread SIGUSR2, return SCH_NOT_REPEAT */
+
+  /* SIGUSR1 received — switch to normal state */
+  /* unblock signals (pthread_sigmask SIG_UNBLOCK) */
+  /* add SendSignalTSK (m_interval) */
+  /* add IncrementAndCheckCounterTSK (m_interval) */
+  /* add CheckModeTSK (m_interval) */
+
+  /* notify main thread SIGUSR1 */
+
+  /* return SCH_NOT_REPEAT */
+}
+
 static sch_op_status_ty SendSignalTSK(void* tsk_info_)
 {
   /* assert */
@@ -158,7 +180,7 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
 
   /* waitpid g_wd_app_pid */
 
-  /* pthread_kill m_main_thread SIGUSR1 -> signal DoNotResuscitate done */
+  /* signal main thread SIGUSR1 */
 
   /* SchedulerStop m_sch */
 
@@ -167,7 +189,7 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
 
 static void ResetCounterSH(int sig_)
 {
-  /* atomic store g_counter = 0 */
+  /* atomic g_counter = 0 */
 }
 
 static void SendSignalIMP(tsk_info_ty* info_)
@@ -175,19 +197,21 @@ static void SendSignalIMP(tsk_info_ty* info_)
   /* assert */
 
   /* kill g_wd_app_pid SIGUSR1 */
-  /* if success -> return */
+  /* if success return */
 
-  /* if ESRCH -> SwitchToReviveModeIMP */
+  /* if ESRCH SwitchToReviveModeIMP */
 
-  /* else -> EXIT_IF_BAD_PERROR */
+  /* EXIT_IF_BAD_PERROR */
 }
 
 static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
 {
   /* assert */
 
-  /* atomic increment g_counter */
-  /* if g_counter >= m_fail_cnt -> SwitchToReviveModeIMP */
+  /* atomic increment cnt */
+
+  /* if g_counter >= m_fail_cnt */
+  /* SwitchToReviveModeIMP */
 }
 
 static void SwitchToReviveModeIMP(tsk_info_ty* info_)
