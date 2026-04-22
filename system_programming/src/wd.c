@@ -235,3 +235,13 @@ static void CheckModeIMP(tsk_info_ty* info_)
 
   /* if EXIT == g_mode -> AddTaskIMP KillWDAppTSK (interval=0) */
 }
+
+static pid_t SpawnIMP(char** wd_argv_)
+{
+  /* assert */
+
+  /* fork */
+  /* if -1 -> return -1 */
+  /* if child -> execvp, exit(FAIL) */
+  /* return pid */
+}
