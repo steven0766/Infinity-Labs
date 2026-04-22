@@ -180,7 +180,7 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
 
   /* waitpid g_wd_app_pid */
 
-  /* signal main thread SIGUSR1 */
+  /* signal main thread SIGUSR1 - DoNotResuscitate */
 
   /* SchedulerStop m_sch */
 
@@ -227,4 +227,11 @@ static void SwitchToReviveModeIMP(tsk_info_ty* info_)
   /* atomic store g_counter = 0 */
 
   /* AddTaskIMP BuildWDTSK (interval=0) */
+}
+
+static void CheckModeIMP(tsk_info_ty* info_)
+{
+  /* assert */
+
+  /* if EXIT == g_mode -> AddTaskIMP KillWDAppTSK (interval=0) */
 }
