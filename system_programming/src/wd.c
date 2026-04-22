@@ -129,3 +129,38 @@ static sch_op_status_ty SendSignalTSK(void* tsk_info_)
 
   /* return SCH_REPEAT */
 }
+
+static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* IncrementAndCheckCounterIMP */
+
+  /* return SCH_REPEAT */
+}
+
+static sch_op_status_ty CheckModeTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* CheckModeIMP */
+
+  /* return SCH_REPEAT */
+}
+
+static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
+{
+  tsk_info_ty* info = (tsk_info_ty*)tsk_info_;
+
+  /* assert */
+
+  /* kill g_wd_app_pid SIGKILL */
+
+  /* waitpid g_wd_app_pid */
+
+  /* pthread_kill m_main_thread SIGUSR1 -> signal DoNotResuscitate done */
+
+  /* SchedulerStop m_sch */
+
+  /* return SCH_NOT_REPEAT */
+}
