@@ -267,3 +267,13 @@ static int InitSignalMaskIMP(sigset_t* mask_)
   /* sigaddset SIGUSR2 */
   /* return SUCCESS */
 }
+
+static int InitSigHandlersIMP(void)
+{
+  /* sigemptyset sa_mask */
+
+  /* sa_handler = ResetCounterSH */
+  /* sigaction SIGUSR1 */
+
+  /* return SUCCESS */
+}
