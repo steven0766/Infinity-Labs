@@ -98,17 +98,28 @@ static void SendSignalToParentIMP(tsk_info_ty* info_)
   /* assert */
 
   /* kill(getppid(), SIGUSR1) */
-  /* if success -> return */
+  /* if success return */
 
-  /* if ESRCH -> SpawnIMP */
+  /* if ESRCH SpawnIMP */
 
-  /* else -> EXIT_IF_BAD_PERROR */
+  /* EXIT_IF_BAD_PERROR */
 }
 
 static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
 {
   /* assert */
 
-  /* atomic increment g_counter */
-  /* if g_counter >= m_fail_cnt -> SpawnIMP */
+  /* increment g_cnt */
+
+  /* if g_cnt >= m_fail_cnt
+     SpawnIMP */
+}
+
+static void SpawnIMP(tsk_info_ty* info_)
+{
+  /* assert */
+
+  /* execvp(m_wd_args[0], m_wd_args) */
+
+  /* EXIT_IF_BAD_PERROR */
 }
