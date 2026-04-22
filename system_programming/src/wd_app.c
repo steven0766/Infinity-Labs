@@ -123,3 +123,12 @@ static void SpawnIMP(tsk_info_ty* info_)
 
   /* EXIT_IF_BAD_PERROR */
 }
+
+static void InitSignalHandlersIMP(void)
+{
+  /* sigemptyset sa_mask */
+
+  /* sa_handler = ResetCounterIMP SIGUSR1 */
+
+  /* sa_handler = SetStopimp SIGUSR2 */
+}
