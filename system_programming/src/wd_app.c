@@ -53,3 +53,12 @@ int main(int argc, char* argv[])
 
   /* return SUCCESS */
 }
+
+static sch_op_status_ty SendSignalToParentTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* SendSignalToParentIMP */
+
+  /* return SCH_REPEAT */
+}
