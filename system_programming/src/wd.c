@@ -120,3 +120,12 @@ static void* WDGuardThread(void* wd_args_)
 
   /* return NULL */
 }
+
+static sch_op_status_ty SendSignalTSK(void* tsk_info_)
+{
+  /* assert */
+
+  /* SendSignalIMP */
+
+  /* return SCH_REPEAT */
+}
