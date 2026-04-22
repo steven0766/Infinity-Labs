@@ -76,11 +76,11 @@ void DoNotResussitate(void)
 {
   /* assert */
 
-  /* signal thread to stop scheduler with SIGUSR2 */
-  /* wait for thread to finish */
+  /* g_mode = EXIT */
 
-  /* kill thread */
-  /* waitpid */
+  /* wait for KillWDAppTSK finish */
+
+  /* join g_wd_guard_thread */
 
   /* g_wd_pid = 0*/
 }
