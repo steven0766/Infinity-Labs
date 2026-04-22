@@ -245,3 +245,15 @@ static pid_t SpawnIMP(char** wd_argv_)
   /* if child -> execvp, exit(FAIL) */
   /* return pid */
 }
+
+static void AddTaskIMP(tsk_info_ty* info_, int interval_,
+                       sch_op_status_ty (*func_)(void*))
+{
+  uid_ty task_id = {0};
+
+  /* assert */
+
+  /* SchedulerAddTask */
+
+  /* EXIT_IF_BAD */
+}
