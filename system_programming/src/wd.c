@@ -181,3 +181,26 @@ static void SendSignalIMP(tsk_info_ty* info_)
 
   /* else -> EXIT_IF_BAD_PERROR */
 }
+
+static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
+{
+  /* assert */
+
+  /* atomic increment g_counter */
+  /* if g_counter >= m_fail_cnt -> SwitchToReviveModeIMP */
+}
+
+static void SwitchToReviveModeIMP(tsk_info_ty* info_)
+{
+  pid_t pid = 0;
+
+  /* assert */
+
+  /* loop: SpawnIMP until pid != -1 */
+
+  /* g_wd_app_pid = pid */
+
+  /* atomic store g_counter = 0 */
+
+  /* AddTaskIMP BuildWDTSK (interval=0) */
+}
