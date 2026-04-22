@@ -30,7 +30,7 @@ typedef struct
   int fail_cnt;
 } wd_guard_info_ty;
 
-enum
+typedef enum
 {
   NORMAL = 1,
   REVIVE = 2,
@@ -57,16 +57,19 @@ int MakeMeImmortal(size_t cmd_len_, const char** cmd_, int how_often_)
 {
   /* assert */
 
-  /* open semaphore */
-
+  /* init signal mask */
   /* init wd guard info */
+
+  /* pthread_sigmask*/
 
   /* create wd guard thread */
 
-  /* sem_wait till thread signals ready */
-  /* sem_close */
+  /* sigwait */
 
-  /* return SUCCESS/FAIL */
+  /* if received SIGUSR1 */
+  /* return SUCCESS*/
+
+  /* return FAIL */
 }
 
 void DoNotResussitate(void)
@@ -103,7 +106,7 @@ static void* WDGuardThread(void* wd_args_)
   /* if child */
   /* exec wd_app */
   /* handle fail */
-  /* free ar*/
+  /* free alloc*/
 
   /* if parent */
   /* g_wd_pid = pid */
