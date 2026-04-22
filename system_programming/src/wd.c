@@ -277,3 +277,22 @@ static int InitSigHandlersIMP(void)
 
   /* return SUCCESS */
 }
+
+static void InitTskInfoIMP(tsk_info_ty* info_, char** wd_argv_,
+                           scheduler_ty* sch_, int interval_, int fail_cnt_,
+                           pthread_t main_thread_, sigset_t* mask_)
+{
+  /* assert */
+
+  /* set all m_ fields */
+}
+
+static void InitWDGuardInfoIMP(wd_guard_info_ty* info_, char** argv_,
+                               size_t argv_len_, int interval_, int fail_cnt_,
+                               sigset_t* mask_)
+{
+  /* assert */
+
+  /* set all m_ fields */
+  /* m_main_thread = pthread_self() */
+}
