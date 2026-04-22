@@ -59,8 +59,32 @@ static pthread_t g_wd_guard_thread = 0;
 static volatile size_t g_cnt = 0;
 static volatile wd_mode_ty g_mode = NORMAL;
 
-static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
-                            int write_fd_);
+static void* WDGuardThreadIMP(void* wd_info_);
+static sch_op_status_ty BuildWDTSK(void* tsk_info_);
+static sch_op_status_ty SendSignalTSK(void* tsk_info_);
+static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_);
+static sch_op_status_ty CheckModeTSK(void* tsk_info_);
+static sch_op_status_ty KillWDAppTSK(void* tsk_info_);
+static void ResetCounterSH(int sig_);
+static void SendSignalIMP(tsk_info_ty* info_);
+static void IncrementAndCheckCounterIMP(tsk_info_ty* info_);
+static void SwitchToReviveModeIMP(tsk_info_ty* info_);
+static void CheckModeIMP(tsk_info_ty* info_);
+static pid_t SpawnIMP(char** wd_argv_);
+static void AddTaskIMP(tsk_info_ty* info_, int interval_,
+                       sch_op_status_ty (*func_)(void*));
+static int InitSignalMaskIMP(sigset_t* mask_);
+static int InitSigHandlersIMP(void);
+static void InitTskInfoIMP(tsk_info_ty* info_, char** wd_argv_,
+                           scheduler_ty* sch_, int interval_, int fail_cnt_,
+                           pthread_t main_thread_, sigset_t* mask_);
+static void InitWDGuardInfoIMP(wd_guard_info_ty* info_, char** argv_,
+                               size_t argv_len_, int interval_, int fail_cnt_,
+                               sigset_t* mask_);
+static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
+                                    int interval_, int fail_cnt_);
+static void FreeWDArgvIMP(char** wd_argv_);
+static void CleanupIMP(void* unused_);
 
 int MakeMeImmortal(size_t cmd_len_, char* cmd_[], int how_often_, int fail_cnt_)
 {
@@ -77,9 +101,12 @@ int MakeMeImmortal(size_t cmd_len_, char* cmd_[], int how_often_, int fail_cnt_)
 
   /* create wd guard thread */
 
-  /* sigwait: SIGUSR1=SUCCESS, SIGUSR2=FAIL */
+  /* sigwait */
 
-  /* return SUCCESS/FAIL */
+  /* if SIGUSR1
+     return SUCCESS */
+  /* if SIGUSR2
+     return FAIL*/
 }
 
 void DoNotResuscitate(void)
@@ -110,10 +137,11 @@ static void* WDGuardThread(void* wd_args_)
 
   /* InitTskInfoIMP */
 
-  /* SpawnIMP -> g_wd_app_pid = pid */
+  /* SpawnIMP */
+  /* g_wd_app_pid = pid */
   /* handle failure SIGUSR2 */
 
-  /* AddTaskIMP BuildWDTSK (interval=0) */
+  /* AddTaskIMP BuildWDTSK */
 
   /* SchedulerRun */
 
@@ -129,15 +157,17 @@ static sch_op_status_ty BuildWDTSK(void* tsk_info_)
 
   /* assert */
 
-  /* sigwait m_sig_mask -> wait for SIGUSR1 or SIGUSR2 from wd_app */
+  /* sigwait m_sig_mask, wait for SIGUSR1 or SIGUSR2 */
 
-  /* if SIGUSR2 -> notify main thread SIGUSR2, return SCH_NOT_REPEAT */
+  /* if SIGUSR2
+     notify main thread SIGUSR2
+     return SCH_NOT_REPEAT */
 
-  /* SIGUSR1 received — switch to normal state */
-  /* unblock signals (pthread_sigmask SIG_UNBLOCK) */
-  /* add SendSignalTSK (m_interval) */
-  /* add IncrementAndCheckCounterTSK (m_interval) */
-  /* add CheckModeTSK (m_interval) */
+  /* SIGUSR1 received, switch to normal state */
+  /* unblock signals */
+  /* add SendSignalTSK  */
+  /* add IncrementAndCheckCounterTSK  */
+  /* add CheckModeTSK */
 
   /* notify main thread SIGUSR1 */
 
@@ -198,9 +228,12 @@ static void SendSignalIMP(tsk_info_ty* info_)
   /* assert */
 
   /* kill g_wd_app_pid SIGUSR1 */
-  /* if success return */
 
-  /* if ESRCH SwitchToReviveModeIMP */
+  /* if success
+     return */
+
+  /* if ESRCH
+     SwitchToReviveModeIMP */
 
   /* EXIT_IF_BAD_PERROR */
 }
@@ -211,8 +244,8 @@ static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
 
   /* atomic increment cnt */
 
-  /* if g_counter >= m_fail_cnt */
-  /* SwitchToReviveModeIMP */
+  /* if g_counter >= m_fail_cnt
+     SwitchToReviveModeIMP */
 }
 
 static void SwitchToReviveModeIMP(tsk_info_ty* info_)
@@ -221,7 +254,8 @@ static void SwitchToReviveModeIMP(tsk_info_ty* info_)
 
   /* assert */
 
-  /* loop: SpawnIMP until pid != -1 */
+  /* SpawnIMP */
+  /* exit if fork is -1 */
 
   /* g_wd_app_pid = pid */
 
@@ -234,7 +268,8 @@ static void CheckModeIMP(tsk_info_ty* info_)
 {
   /* assert */
 
-  /* if EXIT == g_mode -> AddTaskIMP KillWDAppTSK (interval=0) */
+  /* if EXIT == g_mode
+     AddTaskIMP KillWDAppTSK (interval=0) */
 }
 
 static pid_t SpawnIMP(char** wd_argv_)
@@ -242,7 +277,8 @@ static pid_t SpawnIMP(char** wd_argv_)
   /* assert */
 
   /* fork */
-  /* if -1 -> return -1 */
+  /* if -1
+     return -1 */
   /* if child -> execvp, exit(FAIL) */
   /* return pid */
 }
@@ -273,7 +309,7 @@ static int InitSigHandlersIMP(void)
 {
   /* sigemptyset sa_mask */
 
-  /* sa_handler = ResetCounterSH */
+  /* sa_handler = ResetCounterIMP */
   /* sigaction SIGUSR1 */
 
   /* return SUCCESS */
@@ -308,9 +344,9 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
   /* malloc fail_cnt */
 
   /* wd_argv[0] = WD_APP */
-  /* sprintf interval -> wd_argv[INTERVAL_IDX] */
-  /* sprintf fail_cnt -> wd_argv[FAIL_CNT_IDX] */
-  /* memmove rest -> wd_argv[WD_APP_ARGS_IDX] */
+  /* sprintf interval */
+  /* sprintf fail_cnt  */
+  /* memmove rest */
   /* NULL terminator */
 
   /* return wd_argv */

@@ -25,6 +25,18 @@ enum
   MIN_ARGS = 4
 };
 
+static sch_op_status_ty SendSignalToParentTSK(void* tsk_info_);
+static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_);
+static sch_op_status_ty CheckStopWDTSK(void* tsk_info_);
+static void ResetCounterSH(int sig_);
+static void SetStopSH(int sig_);
+static void SendSignalToParentIMP(tsk_info_ty* info_);
+static void IncrementAndCheckCounterIMP(tsk_info_ty* info_);
+static void SpawnIMP(tsk_info_ty* info_);
+static void InitSignalHandlersIMP(void);
+static void AddTaskIMP(tsk_info_ty* info_, scheduler_op_ty func_);
+static void CleanupIMP(void* unused_);
+
 static volatile int g_should_stop = 0;
 static volatile unsigned int g_cnt = 0;
 
@@ -41,7 +53,7 @@ int main(int argc, char* argv[])
   /* SchedulerCreate */
   /* handle failure */
 
-  /* init tsk_info fields */
+  /* init tsk_info */
 
   /* AddTaskIMP SendSignalToParentTSK */
   /* AddTaskIMP IncrementAndCheckCounterTSK */
