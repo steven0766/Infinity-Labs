@@ -11,96 +11,45 @@
 
 typedef struct
 {
-  pid_t ppid;
-  char** argv;
-} wd_param_ty;
+  char** m_wd_args;
+  scheduler_ty* m_sch;
+  unsigned int m_fail_cnt;
+  unsigned int m_interval;
+} tsk_info_ty;
 
 enum
 {
   INTERVAL_IDX = 1,
-  CLIENT_ARGV_IDX = 3,
-  MIN_ARGC = 4
+  FAIL_CNT_IDX = 2,
+  CLIENT_ARGS_IDX = 3,
+  MIN_ARGS = 4
 };
 
-static sch_op_status_ty WatchDogTSK(void* param_);
-static void EmptyFuncIMP(void* unused_);
+static volatile int g_should_stop = 0;
+static volatile unsigned int g_cnt = 0;
 
 int main(int argc, char* argv[])
 {
-  scheduler_ty* sch = NULL;
-  uid_ty task_uid = {0};
-  wd_param_ty wd_param = {0};
-  int interval = 0;
-  int write_fd = 0;
+  /* validate argc */
 
+  /* parse interval */
 
-  /* validate arguments */
-  EXIT_IF_BAD(MIN_ARGC <= argc, 1, "Invalid arguments wdapp");
+  /* parse fail count */
 
-  /* extract interval */
-  interval = atoi(argv[INTERVAL_IDX]);
-  EXIT_IF_BAD(0 != interval, 1, "Invalid interval");
+  /* InitSignalHandlersIMP */
 
-  /* parse fd */
-  write_fd = atoi(argv[2]);
-  /*write success on pipe (wd)*/
-  write(write_fd, "2", 1);
-  close(write_fd);
-
-  /* init wd */
-  wd_param.ppid = getppid();
-  wd_param.argv = argv + CLIENT_ARGV_IDX;
-
-  /* create scheduler */
-  sch = SchedulerCreate();
+  /* SchedulerCreate */
   /* handle failure */
-  EXIT_IF_BAD(NULL != sch, 1, "Failed to create scheduler");
 
-  /* add task */
-  task_uid = SchedulerAddTask(sch, interval, WatchDogTSK, &wd_param,
-                              EmptyFuncIMP, NULL);
-  /* handle failure */
-  EXIT_IF_BAD(1 != IsMatchId(invalid_uid_g, task_uid), 1, "Failed to add task");
+  /* init tsk_info fields */
 
-  /* run scheduler */
-  SchedulerRun(sch);
+  /* AddTaskIMP SendSignalToParentTSK */
+  /* AddTaskIMP IncrementAndCheckCounterTSK */
+  /* AddTaskIMP CheckStopWDTSK */
 
-  /* handle failure */
-  SchedulerDestroy(sch);
+  /* SchedulerRun */
 
-  /* run scheduler */
-  return FAIL;
-}
+  /* SchedulerDestroy */
 
-static sch_op_status_ty WatchDogTSK(void* param_)
-{
-  int status = 0;
-  wd_param_ty* wd_param = (wd_param_ty*)param_;
-
-  /* assert */
-  assert(param_);
-
-  /* send signal to parent */
-  status = kill(wd_param->ppid, 0);
-
-  /* if parent is RIP */
-  if (SUCCESS != status)
-  {
-    /* exec */
-    if (ESRCH == errno)
-    {
-      printf("wd_app find parent dead\n");
-      execvp(wd_param->argv[0], wd_param->argv);
-    }
-    /* handle failure */
-    return SCH_NOT_REPEAT;
-  }
-
-  /* return repeat */
-  return SCH_REPEAT;
-}
-
-static void EmptyFuncIMP(void* unused_)
-{
-  (void)unused_;
+  /* return SUCCESS */
 }
