@@ -1,7 +1,8 @@
 #define _POSIX_SOURCE
 #include <assert.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <pthread.h>
-#include <semaphore.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
@@ -187,7 +188,7 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
   /* return SCH_NOT_REPEAT */
 }
 
-static void ResetCounterSH(int sig_)
+static void ResetCounterIMP(int sig_)
 {
   /* atomic g_counter = 0 */
 }
