@@ -1,51 +1,59 @@
 #define _POSIX_SOURCE
-#include <assert.h> /* assert */
+#include <assert.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <signal.h>
 #include <stdlib.h>
-#include <string.h> /* memmove */
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 #include "scheduler.h"
+#include "uid.h"
 #include "utils.h"
 #include "wd.h"
 
+#define WD_APP "./wd_app"
+
 typedef struct
 {
-  scheduler_ty* sch;
-  char** wd_cmd;
-  int fail_cnt;
-  int interval;
+  scheduler_ty* m_sch;
+  char** m_argv;
+  int m_fail_cnt;
+  int m_interval;
+  pthread_t m_main_thread;
+  sigset_t* m_sig_mask;
 } tsk_info_ty;
 
 typedef struct
 {
-  sem_t* sem;
-  char** cmd;
-  size_t cmd_len;
-  int how_often;
-  int fail_cnt;
+  char** m_argv;
+  size_t m_argv_len;
+  int m_interval;
+  int m_fail_cnt;
+  pthread_t m_main_thread;
+  sigset_t* m_sig_mask;
 } wd_guard_info_ty;
 
 typedef enum
 {
-  NORMAL = 1,
-  REVIVE = 2,
-  EXIT = 3
+  NORMAL = 0,
+  EXIT = 1
 } wd_mode_ty;
 
 enum
 {
-  HOW_OFTEN_IDX = 1,
+  INT_MAX_DIGITS = 11,
+  INTERVAL_IDX = 1,
   FAIL_CNT_IDX = 2,
-  CLIENT_ARGS_IDX = 3,
-  INT_MAX_DIGITS = 11
+  WD_APP_ARGS_IDX = 3,
+  REQUIRED_ARGS = 3,
+  MIN_ARGS = 4
 };
 
-static pid_t g_wd_pid = 0;
+static pid_t g_wd_app_pid = 0;
+static sigset_t g_mask = {0};
 static pthread_t g_wd_guard_thread = 0;
 static volatile size_t g_cnt = 0;
 static volatile wd_mode_ty g_mode = NORMAL;
@@ -53,166 +61,62 @@ static volatile wd_mode_ty g_mode = NORMAL;
 static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
                             int write_fd_);
 
-int MakeMeImmortal(size_t cmd_len_, const char** cmd_, int how_often_)
+int MakeMeImmortal(size_t cmd_len_, char* cmd_[], int how_often_, int fail_cnt_)
 {
+  wd_guard_info_ty guard_info = {0};
+  int sig = 0;
+
   /* assert */
 
-  /* init signal mask */
-  /* init wd guard info */
+  /* InitSignalMaskIMP */
 
-  /* pthread_sigmask*/
+  /* InitWDGuardInfoIMP */
+
+  /* block signals in main thread */
 
   /* create wd guard thread */
 
-  /* sigwait */
+  /* sigwait: SIGUSR1=SUCCESS, SIGUSR2=FAIL */
 
-  /* if received SIGUSR1 */
-  /* return SUCCESS*/
-
-  /* return FAIL */
+  /* return SUCCESS/FAIL */
 }
 
-void DoNotResussitate(void)
+void DoNotResuscitate(void)
 {
-  /* assert */
+  /* assert wd is on */
 
-  /* g_mode = EXIT */
+  /* set EXIT flag */
 
-  /* wait for KillWDAppTSK finish */
+  /* sigwait KillWDAppTSK to signal done */
 
-  /* join g_wd_guard_thread */
+  /* pthread_join */
 
-  /* g_wd_pid = 0*/
+  /* g_wd_app_pid = 0 */
 }
 
 static void* WDGuardThread(void* wd_args_)
 {
   /* assert */
 
-  /* set signals:
-      1. SIGUSR1 with ResetCounterSigHandleIMP
-      2. SIGUSR2 with TerminateWDSigHandlerIMP*/
+  /* AllocAndInitWDArgvIMP */
+  /* handle failure SIGUSR2 */
 
-  /* alloc wd_cmd */
+  /* SchedulerCreate */
+  /* handle failure SIGUSR2 */
 
-  /* create scheduler */
-  /* add InitSchedulerTSK */
-  /* init tsk_info */
+  /* InitSigHandlersIMP */
+  /* handle failure SIGUSR2 */
 
-  /* pid = fork */
+  /* InitTskInfoIMP */
 
-  /* handle fork failed*/
+  /* SpawnIMP -> g_wd_app_pid = pid */
+  /* handle failure SIGUSR2 */
 
-  /* if child */
-  /* exec wd_app */
-  /* handle fail */
-  /* free alloc*/
+  /* AddTaskIMP BuildWDTSK (interval=0) */
 
-  /* if parent */
-  /* g_wd_pid = pid */
-  /* sem_post */
-  /* run scheduler */
-  /* destroy scheduler */
-  /* free alloc */
-}
+  /* SchedulerRun */
 
-static sch_op_status_ty InitSchedulerTSK(void* tsk_info_)
-{
-  /* assert */
+  /* cleanup: SchedulerDestroy, FreeWDArgvIMP */
 
-  /* add SendSignalTSK */
-  /* add IncrementCounterTSK*/
-  /* add CheckCounterTSK */
-  /* add CheckModeAndUpdateSchTSK */
-
-  /* return NOT_REPEAT */
-}
-
-static sch_op_status_ty SendSignalTSK(void* tsk_info_)
-{
-  /* assert */
-
-  /* kill - send SIGUSR1*/
-
-  /* return REPEAT*/
-}
-
-static sch_op_status_ty IncrementCounterTSK(void* tsk_info_)
-{
-  /* assert */
-
-  /* atomic g_cnt */
-
-  /* return REPEAT */
-}
-
-static sch_op_status_ty CheckCounterTSK(void* tsk_info_)
-{
-  /* if g_cnt >= FAIL_CNT_IDX*/
-  /* add ReviveWDTSK with interval 0*/
-  /* return NOT_REPEAT */
-
-  /* return REPEAT */
-}
-
-static sch_op_status_ty ReviveWDTSK(void* tsk_info_)
-{
-  /* pid = fork */
-  /* handle fail */
-
-  /* if child */
-  /* exec wd_app */
-
-  /* if parent */
-  /* g_wd_pid = pid */
-  /* atomic g_cnt = 0 */
-  /* add InitSchedulerTSK with interval 0 */
-
-  /* return NOT REPEAT */
-}
-
-static sch_op_status_ty StopSchedulerTSK(void* tsk_info_)
-{
-  /* assert */
-
-  /* stop scheduler */
-
-  /* return NOT_REPEAT */
-}
-
-static sch_op_status_ty CheckModeAndUpdateSchTSK(void* tsk_info_)
-{
-  /* assert */
-
-  /* CheckModeIMP*/
-
-  /* return REPEAT */
-}
-
-static void ResetCounterSigHandlerIMP(int sig_)
-{
-  /* atomic g_cnt = 0 */
-}
-
-static void TerminateWDSigHandlerIMP(int sig_)
-{
-  /* stop scheduler */
-}
-
-static void TerminateWDSigHandlerIMP(int sig)
-{
-  /* g_mode = EXIT */
-}
-
-static void CheckModeIMP(tsk_info_ty* tsk_info_)
-{
-  /* assert */
-
-  /* if h_mode is EXIT */
-  /* stop scheduler */
-}
-
-static char** InitWDArgsIMP(size_t cmd_len_, const char** cmd_, int how_often_,
-                            int write_fd_)
-{
+  /* return NULL */
 }
