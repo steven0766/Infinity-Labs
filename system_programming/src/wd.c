@@ -296,3 +296,21 @@ static void InitWDGuardInfoIMP(wd_guard_info_ty* info_, char** argv_,
   /* set all m_ fields */
   /* m_main_thread = pthread_self() */
 }
+
+static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
+                                    int interval_, int fail_cnt_)
+{
+  /* assert */
+
+  /* malloc wd_argv */
+  /* malloc interval */
+  /* malloc fail_cnt */
+
+  /* wd_argv[0] = WD_APP */
+  /* sprintf interval -> wd_argv[INTERVAL_IDX] */
+  /* sprintf fail_cnt -> wd_argv[FAIL_CNT_IDX] */
+  /* memmove rest -> wd_argv[WD_APP_ARGS_IDX] */
+  /* NULL terminator */
+
+  /* return wd_argv */
+}
