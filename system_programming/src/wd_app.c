@@ -83,12 +83,32 @@ static sch_op_status_ty CheckStopWDTSK(void* tsk_info_)
   /* return SCH_REPEAT */
 }
 
-static void ResetCounterSH(int sig_)
+static void ResetCounterIMP(int sig_)
 {
   /* g_counter = 0 */
 }
 
-static void SetStopSH(int sig_)
+static void SetStopIMP(int sig_)
 {
   /* g_should_stop = 1 */
+}
+
+static void SendSignalToParentIMP(tsk_info_ty* info_)
+{
+  /* assert */
+
+  /* kill(getppid(), SIGUSR1) */
+  /* if success -> return */
+
+  /* if ESRCH -> SpawnIMP */
+
+  /* else -> EXIT_IF_BAD_PERROR */
+}
+
+static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
+{
+  /* assert */
+
+  /* atomic increment g_counter */
+  /* if g_counter >= m_fail_cnt -> SpawnIMP */
 }
