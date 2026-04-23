@@ -253,15 +253,23 @@ static void SwitchToReviveModeIMP(tsk_info_ty* info_)
   pid_t pid = 0;
 
   /* assert */
+  assert(info_);
 
   /* SpawnIMP */
+  pid = SpawnIMP(info_);
   /* exit if fork is -1 */
+  if (-1 == pid)
+  {
+    exit(1);
+  }
 
   /* g_wd_app_pid = pid */
+  g_wd_app_pid = pid;
 
   /* atomic store g_counter = 0 */
-
+  __atomic_store_n(&g_cnt, 0, __ATOMIC_SEQ_CST);
   /* AddTaskIMP BuildWDTSK (interval=0) */
+  AddTaskIMP(info_, 0, BuildWDTSK);
 }
 
 static void CheckModeIMP(tsk_info_ty* info_)
