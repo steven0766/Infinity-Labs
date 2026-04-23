@@ -221,6 +221,7 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
 static void ResetCounterIMP(int sig_)
 {
   /* atomic g_counter = 0 */
+  __atomic_store_n(&sig_, 0, __ATOMIC_SEQ_CST);
 }
 
 static void SendSignalIMP(tsk_info_ty* info_)
