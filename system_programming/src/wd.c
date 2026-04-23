@@ -267,9 +267,14 @@ static void SwitchToReviveModeIMP(tsk_info_ty* info_)
 static void CheckModeIMP(tsk_info_ty* info_)
 {
   /* assert */
+  assert(info_);
 
-  /* if EXIT == g_mode
-     AddTaskIMP KillWDAppTSK (interval=0) */
+  /* if EXIT == g_mode */
+  if (EXIT == g_mode)
+  {
+    /* AddTaskIMP KillWDAppTSK (interval=0) */
+    AddTaskIMP(info_, 0, KillWDAppTSK);
+  }
 }
 
 static pid_t SpawnIMP(char** wd_argv_)
