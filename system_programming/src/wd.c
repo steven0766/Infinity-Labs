@@ -355,13 +355,18 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
 static void FreeWDArgvIMP(char** wd_argv_)
 {
   /* assert */
+  assert(wd_argv_);
 
   /* free wd_argv_[INTERVAL_IDX] */
+  free(wd_argv_[INTERVAL_IDX]);
   /* free wd_argv_[FAIL_CNT_IDX] */
+  free wd_argv_[FAIL_CNT_IDX]);
   /* free wd_argv_ */
+  free(wd_argv_);
 }
 
 static void CleanupIMP(void* unused_)
 {
   /* (void)unused_ */
+  (void)unused_;
 }
