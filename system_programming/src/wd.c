@@ -194,6 +194,7 @@ static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_)
   IncrementAndCheckCounterIMP(info);
 
   /* return SCH_REPEAT */
+  return SCH_REPEAT;
 }
 
 static sch_op_status_ty CheckModeTSK(void* tsk_info_)
