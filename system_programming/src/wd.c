@@ -299,6 +299,8 @@ static void AddTaskIMP(tsk_info_ty* info_, int interval_,
                              CleanupIMP, empty);
 
   /* EXIT_IF_BAD */
+  EXIT_IF_BAD(TaskIsMatch(invalid_uid_g, task_id), 1,
+              "add task to scheduler faield");
 }
 
 static int InitSignalMaskIMP(sigset_t* mask_)
@@ -326,6 +328,9 @@ static void InitTskInfoIMP(tsk_info_ty* info_, char** wd_argv_,
                            pthread_t main_thread_, sigset_t* mask_)
 {
   /* assert */
+  assert(wd_argv_);
+  assert(sch_);
+  assert(0 <= interval_);
 
   /* set all m_ fields */
 }
@@ -349,8 +354,8 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
 
   /* assert */
   assert(argv_);
-  assert(interval < 0);
-  assert(argv_len_ < 2);
+  assert(0 > interval);
+  assert(2 > argv_len_);
 
   /* malloc wd_argv */
   wd_argv = (char**)malloc(sizeof(char*) * (argv_len_ + REQUIRED_ARGS + 1));
