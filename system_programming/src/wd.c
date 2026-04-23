@@ -287,10 +287,16 @@ static void AddTaskIMP(tsk_info_ty* info_, int interval_,
                        sch_op_status_ty (*func_)(void*))
 {
   uid_ty task_id = {0};
+  void* empty = NULL;
 
   /* assert */
+  assert(info_);
+  assert(0 < interval_);
+  assert(func_);
 
   /* SchedulerAddTask */
+  task_id = SchedulerAddTask(info_->m_sch, interval_, func_, info_->m_argv,
+                             CleanupIMP, empty);
 
   /* EXIT_IF_BAD */
 }
