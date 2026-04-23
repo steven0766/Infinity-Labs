@@ -127,19 +127,19 @@ static void* WDGuardThread(void* wd_args_)
   /* assert */
 
   /* AllocAndInitWDArgvIMP */
-  /* handle failure SIGUSR2 */
+  /* handle failure */
 
   /* SchedulerCreate */
-  /* handle failure SIGUSR2 */
+  /* handle failure */
 
   /* InitSigHandlersIMP */
-  /* handle failure SIGUSR2 */
+  /* handle failure */
 
   /* InitTskInfoIMP */
 
   /* SpawnIMP */
   /* g_wd_app_pid = pid */
-  /* handle failure SIGUSR2 */
+  /* handle failure */
 
   /* AddTaskIMP BuildWDTSK */
 
