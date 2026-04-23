@@ -241,11 +241,17 @@ static void SendSignalIMP(tsk_info_ty* info_)
 static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
 {
   /* assert */
+  assert(info_);
 
   /* atomic increment cnt */
+  __atomic_add_fetch(&g_cnt, 1, __ATOMIC_SEQ_CST);
 
-  /* if g_counter >= m_fail_cnt
-     SwitchToReviveModeIMP */
+  /* if g_cnt >= m_fail_cnt */
+  if (g_cnt >= info_->m_fail_cnt)
+  {
+    /*   SwitchToReviveModeIMP */
+    SwitchToReviveModeIMP(info_);
+  }
 }
 
 static void SwitchToReviveModeIMP(tsk_info_ty* info_)
