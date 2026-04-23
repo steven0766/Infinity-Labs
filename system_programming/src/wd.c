@@ -144,6 +144,7 @@ static void* WDGuardThread(void* wd_args_)
   /* AddTaskIMP BuildWDTSK */
 
   /* SchedulerRun */
+  /* handle FAIL */
 
   /* cleanup: SchedulerDestroy, FreeWDArgvIMP */
 
@@ -206,16 +207,22 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
   tsk_info_ty* info = (tsk_info_ty*)tsk_info_;
 
   /* assert */
+  assert(tsk_info_);
 
   /* kill g_wd_app_pid SIGKILL */
+  kill(g_wd_app_pid, SIGKILL);
 
   /* waitpid g_wd_app_pid */
+  waitpid(g_wd_app_pid, NULL, 0);
 
   /* signal main thread SIGUSR1 - DoNotResuscitate */
+  pthread_kill(info->m_main_thread, SIGUSR1);
 
   /* SchedulerStop m_sch */
+  SchedulerStop(info->m_sch);
 
   /* return SCH_NOT_REPEAT */
+  return SCH_NOT_REPEAT;
 }
 
 static void ResetCounterIMP(int sig_)
@@ -226,17 +233,25 @@ static void ResetCounterIMP(int sig_)
 
 static void SendSignalIMP(tsk_info_ty* info_)
 {
+  int is_sent = 0;
   /* assert */
+  assert(info_);
 
   /* kill g_wd_app_pid SIGUSR1 */
+  is_sent = kill(g_wd_app_pid, SIGUSR1);
 
-  /* if success
-     return */
+  /* if FAIL*/
+  if (FAIL == is_sent)
+  {
+    /* if ESRCH */
+    if (ESRCH == errno)
+    {
+      /* SwitchToReviveModeIMP */
+      SwitchToReviveModeIMP(info_);
+    }
 
-  /* if ESRCH
-     SwitchToReviveModeIMP */
-
-  /* EXIT_IF_BAD_PERROR */
+    /* EXIT_IF_BAD_PERROR */
+  }
 }
 
 static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
