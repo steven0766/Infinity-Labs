@@ -360,7 +360,7 @@ static void FreeWDArgvIMP(char** wd_argv_)
   /* free wd_argv_[INTERVAL_IDX] */
   free(wd_argv_[INTERVAL_IDX]);
   /* free wd_argv_[FAIL_CNT_IDX] */
-  free wd_argv_[FAIL_CNT_IDX]);
+  free(wd_argv_[FAIL_CNT_IDX]);
   /* free wd_argv_ */
   free(wd_argv_);
 }
