@@ -186,9 +186,12 @@ static sch_op_status_ty SendSignalTSK(void* tsk_info_)
 
 static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_)
 {
+  tsk_info_ty* info = (tsk_info_ty*)tsk_info_;
   /* assert */
+  assert(tsk_info_);
 
   /* IncrementAndCheckCounterIMP */
+  IncrementAndCheckCounterIMP(info);
 
   /* return SCH_REPEAT */
 }
