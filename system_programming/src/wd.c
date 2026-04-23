@@ -274,13 +274,26 @@ static void CheckModeIMP(tsk_info_ty* info_)
 
 static pid_t SpawnIMP(char** wd_argv_)
 {
+  pid_t pid = 0;
   /* assert */
+  assert(wd_argv_);
 
   /* fork */
-  /* if -1
-     return -1 */
-  /* if child -> execvp, exit(FAIL) */
+  pid = fork();
+  /* if -1 */
+  if (-1 == pid)
+  {
+    /* return -1 */
+    return -1;
+  }
+  /* if child*/
+  if (0 == pid)
+  {
+    /* execvp, exit(FAIL) */
+    execvp(WD_APP, wd_argv_);
+  }
   /* return pid */
+  return pid;
 }
 
 static void AddTaskIMP(tsk_info_ty* info_, int interval_,
