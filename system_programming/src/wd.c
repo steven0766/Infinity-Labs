@@ -337,19 +337,40 @@ static void InitWDGuardInfoIMP(wd_guard_info_ty* info_, char** argv_,
 static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
                                     int interval_, int fail_cnt_)
 {
+  char** wd_argv = NULL;
+  char* interval = NULL;
+  char* fail_cnt = NULL;
+
   /* assert */
+  assert(argv_);
+  assert(interval < 0);
+  assert(argv_len_ < 2);
 
   /* malloc wd_argv */
+  wd_argv = (char**)malloc(sizeof(char*) * (argv_len_ + REQUIRED_ARGS + 1));
+  EXIT_IF_BAD(NULL != wd_argv, 1, "wd_argv malloc failed");
   /* malloc interval */
+  interval = (char*)malloc((sizeof(char*)));
+  EXIT_IF_BAD(NULL != interval, 1, "interval malloc failed");
   /* malloc fail_cnt */
+  fail_cnt = (char*)malloc((sizeof(char*)));
+  EXIT_IF_BAD(NULL != fail_cnt, 1, "fail_cnt malloc failed");
 
   /* wd_argv[0] = WD_APP */
+  wd_argv[0] = WD_APP;
   /* sprintf interval */
+  sprintf(interval, "%d", interval_);
+  wd_argv[1] = interval;
   /* sprintf fail_cnt  */
+  sprintf(fail_cnt, "%d", fail_cnt_);
+  wd_argv[2] = fail_cnt;
   /* memmove rest */
+  memmove(wd_argv + 3, argv_, argv_len_);
   /* NULL terminator */
+  wd_argv[3 + argv_len_] = NULL;
 
   /* return wd_argv */
+  return wd_argv;
 }
 
 static void FreeWDArgvIMP(char** wd_argv_)
