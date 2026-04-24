@@ -388,11 +388,20 @@ static void InitTskInfoIMP(tsk_info_ty* info_, char** wd_argv_,
                            pthread_t main_thread_, sigset_t* mask_)
 {
   /* assert */
+  assert(info_);
   assert(wd_argv_);
   assert(sch_);
-  assert(0 <= interval_);
+  assert(0 < interval_);
+  assert(0 < fail_cnt_);
+  assert(mask_);
 
   /* set all m_ fields */
+  info_->m_argv = wd_argv_;
+  info_->m_sch = sch_;
+  info_->m_interval = interval_;
+  info_->m_fail_cnt = fail_cnt_;
+  info_->m_main_thread = main_thread_;
+  info_->m_sig_mask = mask_;
 }
 
 static void InitWDGuardInfoIMP(wd_guard_info_ty* info_, char** argv_,
