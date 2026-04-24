@@ -338,6 +338,7 @@ static pid_t SpawnIMP(char** wd_argv_)
   {
     /* execvp, exit(FAIL) */
     execvp(WD_APP, wd_argv_);
+    exit(1);
   }
   /* return pid */
   return pid;
@@ -347,7 +348,6 @@ static void AddTaskIMP(tsk_info_ty* info_, int interval_,
                        sch_op_status_ty (*func_)(void*))
 {
   uid_ty task_id = {0};
-  void* empty = NULL;
 
   /* assert */
   assert(info_);
@@ -356,7 +356,7 @@ static void AddTaskIMP(tsk_info_ty* info_, int interval_,
 
   /* SchedulerAddTask */
   task_id = SchedulerAddTask(info_->m_sch, interval_, func_, info_->m_argv,
-                             CleanupIMP, empty);
+                             CleanupIMP, NULL);
 
   /* EXIT_IF_BAD */
   EXIT_IF_BAD(TaskIsMatch(invalid_uid_g, task_id), 1,
