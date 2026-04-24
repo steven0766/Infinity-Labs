@@ -366,11 +366,16 @@ static void AddTaskIMP(tsk_info_ty* info_, int interval_,
 static int InitSignalMaskIMP(sigset_t* mask_)
 {
   /* assert */
+  assert(mask_);
 
   /* sigemptyset */
+  RETURN_IF_BAD(0 == sigemptyset(mask_), 1, "sigemptyset fail");
   /* sigaddset SIGUSR1 */
+  RETURN_IF_BAD(0 == sigaddset(mask_, SIGUSR1), 1, "siggaddset SIGUSR1 fail");
   /* sigaddset SIGUSR2 */
+  RETURN_IF_BAD(0 == sigaddset(mask_, SIGUSR2), 1, "siggaddset SIGUSR1 fail");
   /* return SUCCESS */
+  return SUCCESS;
 }
 
 static int InitSigHandlersIMP(void)
