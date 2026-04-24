@@ -414,29 +414,29 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
 
   /* assert */
   assert(argv_);
-  assert(0 > interval);
-  assert(2 > argv_len_);
+  assert(0 < interval);
+  assert(0 < qw argv_len_);
 
   /* malloc wd_argv */
   wd_argv = (char**)malloc(sizeof(char*) * (argv_len_ + REQUIRED_ARGS + 1));
   EXIT_IF_BAD(NULL != wd_argv, 1, "wd_argv malloc failed");
   /* malloc interval */
-  interval = (char*)malloc((sizeof(char*)));
+  interval = (char*)malloc(INT_MAX_DIGITS);
   EXIT_IF_BAD(NULL != interval, 1, "interval malloc failed");
   /* malloc fail_cnt */
-  fail_cnt = (char*)malloc((sizeof(char*)));
+  fail_cnt = (char*)malloc(INT_MAX_DIGITS);
   EXIT_IF_BAD(NULL != fail_cnt, 1, "fail_cnt malloc failed");
 
   /* wd_argv[0] = WD_APP */
   wd_argv[0] = WD_APP;
   /* sprintf interval */
   sprintf(interval, "%d", interval_);
-  wd_argv[1] = interval;
+  wd_argv[INTERVAL_IDX] = interval;
   /* sprintf fail_cnt  */
   sprintf(fail_cnt, "%d", fail_cnt_);
-  wd_argv[2] = fail_cnt;
+  wd_argv[FAIL_CNT_IDX] = fail_cnt;
   /* memmove rest */
-  memmove(wd_argv + 3, argv_, argv_len_);
+  memmove(wd_argv + REQUIRED_ARGS, argv_, argv_len_);
   /* NULL terminator */
   wd_argv[3 + argv_len_] = NULL;
 
