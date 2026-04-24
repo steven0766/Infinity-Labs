@@ -400,9 +400,19 @@ static void InitWDGuardInfoIMP(wd_guard_info_ty* info_, char** argv_,
                                sigset_t* mask_)
 {
   /* assert */
+  assert(info_);
+  assert(argv_);
+  assert(0 < interval_);
+  assert(0 < fail_cnt_);
+  assert(mask_);
 
   /* set all m_ fields */
-  /* m_main_thread = pthread_self() */
+  info_->m_argv = argv_;
+  info_->m_argv_len = argv_len_;
+  info_->m_interval = interval_;
+  info_->m_fail_cnt = fail_cnt_;
+  info_->m_sig_mask = mask_;
+  info_->m_main_thread = pthread_self();
 }
 
 static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
@@ -415,7 +425,7 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
   /* assert */
   assert(argv_);
   assert(0 < interval);
-  assert(0 < qw argv_len_);
+  assert(0 < argv_len_);
 
   /* malloc wd_argv */
   wd_argv = (char**)malloc(sizeof(char*) * (argv_len_ + REQUIRED_ARGS + 1));
@@ -438,7 +448,7 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
   /* memmove rest */
   memmove(wd_argv + REQUIRED_ARGS, argv_, argv_len_);
   /* NULL terminator */
-  wd_argv[3 + argv_len_] = NULL;
+  wd_argv[REQUIRED_ARGS + argv_len_] = NULL;
 
   /* return wd_argv */
   return wd_argv;
