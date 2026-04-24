@@ -375,12 +375,18 @@ static int InitSignalMaskIMP(sigset_t* mask_)
 
 static int InitSigHandlersIMP(void)
 {
+  struct sigaction sa = {0};
   /* sigemptyset sa_mask */
+  RETURN_IF_BAD(0 == sigemptyset(&sa.sa_mask), 1, "sigemptyset fail");
 
   /* sa_handler = ResetCounterIMP */
   /* sigaction SIGUSR1 */
+  sa.sa_handler = ResetCounterSH;
+  RETURN_IF_BAD_PERROR(0 == sigaction(SIGUSR1, &sa, NULL), 1,
+                       "sigaction SIGUSR1 fail");
 
   /* return SUCCESS */
+  return SUCCESS;
 }
 
 static void InitTskInfoIMP(tsk_info_ty* info_, char** wd_argv_,
