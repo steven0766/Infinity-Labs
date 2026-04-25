@@ -111,15 +111,22 @@ int MakeMeImmortal(size_t cmd_len_, char* cmd_[], int how_often_, int fail_cnt_)
 
 void DoNotResuscitate(void)
 {
+  int sig = 0;
+
   /* assert wd is on */
+  assert(0 != g_wd_app_pid);
 
   /* set EXIT flag */
+  __atomic_store_n(&g_mode, EXIT, __ATOMIC_SEQ_CST);
 
   /* sigwait KillWDAppTSK to signal done */
+  sigwait(&g_mask, &sig);
 
   /* pthread_join */
+  pthread_join(g_wd_guard_thread, NULL);
 
   /* g_wd_app_pid = 0 */
+  g_wd_app_pid = 0;
 }
 
 static void* WDGuardThread(void* wd_info_)
