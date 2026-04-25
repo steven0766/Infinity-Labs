@@ -95,9 +95,12 @@ static sch_op_status_ty CheckStopWDTSK(void* tsk_info_)
   /* return SCH_REPEAT */
 }
 
-static void ResetCounterIMP(int sig_)
+static void ResetCounterSH(int sig_)
 {
+  (void)sig_;
+
   /* g_counter = 0 */
+  __atomic_store_n(&g_cnt, 0, __ATOMIC_SEQ_CST);
 }
 
 static void SetStopSH(int sig_)
@@ -163,7 +166,7 @@ static void InitSignalHandlersIMP(void)
   /* sigemptyset sa_mask */
   EXIT_IF_BAD(0 == sigemptyset(&sa.sa_mask), 1, "sigemptyset failed");
 
-  /* sa_handler = ResetCounterIMP SIGUSR1 */
+  /* sa_handler = ResetCounterSH SIGUSR1 */
   sa.sa_handler = ResetCounterSH;
   EXIT_IF_BAD_PERROR(0 == sigaction(SIGUSR1, &sa, NULL), 1,
                      "sigaction SIGUSR1 failed");
