@@ -92,21 +92,36 @@ int MakeMeImmortal(size_t cmd_len_, char* cmd_[], int how_often_, int fail_cnt_)
   int sig = 0;
 
   /* assert */
+  assert(0 == g_wd_app_pid);
+  assert(1 <= cmd_len_);
+  assert(0 < how_often_);
+  assert(0 < fail_cnt_);
 
   /* InitSignalMaskIMP */
+  RETURN_IF_BAD(0 == InitSignalMaskIMP(&g_mask), FAIL,
+                "failed to init signal mask");
 
   /* InitWDGuardInfoIMP */
+  InitWDGuardInfoIMP(&guard_info, cmd_, cmd_len_, how_often_, fail_cnt_,
+                     &g_mask);
 
   /* block signals in main thread */
+  RETURN_IF_BAD(0 == pthread_sigmask(SIG_BLOCK, &g_mask, NULL), FAIL,
+                "failed to block signals");
 
   /* create wd guard thread */
+  RETURN_IF_BAD(0 == pthread_create(&g_wd_guard_thread, NULL, WDGuardThreadIMP,
+                                    &guard_info),
+                FAIL, "failed to create wd guard thread");
 
   /* sigwait */
+  RETURN_IF_BAD(0 == sigwait(&g_mask, &sig), FAIL, "sigwait failed");
 
   /* if SIGUSR1
      return SUCCESS */
   /* if SIGUSR2
      return FAIL*/
+  return (SIGUSR1 == sig) ? SUCCESS : FAIL;
 }
 
 void DoNotResuscitate(void)
