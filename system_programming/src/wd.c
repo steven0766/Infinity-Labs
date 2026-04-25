@@ -351,15 +351,14 @@ static void AddTaskIMP(tsk_info_ty* info_, int interval_,
 
   /* assert */
   assert(info_);
-  assert(0 < interval_);
   assert(func_);
 
   /* SchedulerAddTask */
-  task_id = SchedulerAddTask(info_->m_sch, interval_, func_, info_->m_argv,
-                             CleanupIMP, NULL);
+  task_id =
+      SchedulerAddTask(info_->m_sch, interval_, func_, info_, CleanupIMP, NULL);
 
   /* EXIT_IF_BAD */
-  EXIT_IF_BAD(TaskIsMatch(invalid_uid_g, task_id), 1,
+  EXIT_IF_BAD(!IsMatchId(invalid_uid_g, task_id), 1,
               "add task to scheduler faield");
 }
 
