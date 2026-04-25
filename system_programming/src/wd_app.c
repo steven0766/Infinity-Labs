@@ -130,10 +130,13 @@ static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
 static void SpawnIMP(tsk_info_ty* info_)
 {
   /* assert */
+  assert(info_);
 
   /* execvp(m_wd_args[0], m_wd_args) */
+  execvp(info_->m_wd_args[0], info_->m_wd_args);
 
   /* EXIT_IF_BAD_PERROR */
+  EXIT_IF_BAD_PERROR(0, 1, "execvp failed");
 }
 
 static void InitSignalHandlersIMP(void)
