@@ -120,11 +120,15 @@ static void SendSignalToParentIMP(tsk_info_ty* info_)
 static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
 {
   /* assert */
+  assert(info_);
 
   /* increment g_cnt */
-
-  /* if g_cnt >= m_fail_cnt
-     SpawnIMP */
+  /* if g_cnt >= m_fail_cnt */
+  if (__atomic_add_fetch(&g_cnt, 1, __ATOMIC_SEQ_CST) >= info_->m_fail_cnt)
+  {
+    /*SpawnIMP */
+    SpawnIMP(info_);
+  }
 }
 
 static void SpawnIMP(tsk_info_ty* info_)
