@@ -157,22 +157,35 @@ static sch_op_status_ty BuildWDTSK(void* tsk_info_)
   int sig_received = 0;
 
   /* assert */
+  assert(tsk_info_);
 
   /* sigwait m_sig_mask, wait for SIGUSR1 or SIGUSR2 */
+  sigwait(info->m_sig_mask, &sig_received);
 
-  /* if SIGUSR2
-     notify main thread SIGUSR2
-     return SCH_NOT_REPEAT */
+  /* if SIGUSR2 */
+  if (SIGUSR2 == sig_received)
+  {
+    /*notify main thread SIGUSR2
+    return SCH_NOT_REPEAT */
+    pthread_kill(info->m_main_thread, SIGUSR2);
+    return SCH_NOT_REPEAT;
+  }
 
   /* SIGUSR1 received, switch to normal state */
   /* unblock signals */
+  pthread_sigmask(SIG_UNBLOCK, info->m_sig_mask, NULL);
   /* add SendSignalTSK  */
+  AddTaskIMP(info, info->m_interval, SendSignalTSK);
   /* add IncrementAndCheckCounterTSK  */
+  AddTaskIMP(info, info->m_interval, IncrementAndCheckCounterTSK);
   /* add CheckModeTSK */
+  AddTaskIMP(info, info->m_interval, CheckModeTSK);
 
   /* notify main thread SIGUSR1 */
+  pthread_kill(info->m_main_thread, SIGUSR1);
 
   /* return SCH_NOT_REPEAT */
+  return SCH_NOT_REPEAT;
 }
 
 static sch_op_status_ty SendSignalTSK(void* tsk_info_)
@@ -239,6 +252,7 @@ static sch_op_status_ty KillWDAppTSK(void* tsk_info_)
 
 static void ResetCounterSH(int sig_)
 {
+  (void)sig_;
   /* atomic g_counter = 0 */
   __atomic_store_n(&g_cnt, 0, __ATOMIC_SEQ_CST);
 }
