@@ -138,11 +138,19 @@ static void SpawnIMP(tsk_info_ty* info_)
 
 static void InitSignalHandlersIMP(void)
 {
+  struct sigaction sa = {0};
   /* sigemptyset sa_mask */
+  EXIT_IF_BAD(0 == sigemptyset(&sa.sa_mask), 1, "sigemptyset failed");
 
   /* sa_handler = ResetCounterIMP SIGUSR1 */
+  sa.sa_handler = ResetCounterSH;
+  EXIT_IF_BAD_PERROR(0 == sigaction(SIGUSR1, &sa, NULL), 1,
+                     "sigaction SIGUSR1 failed");
 
   /* sa_handler = SetStopimp SIGUSR2 */
+  sa.sa_handler = SetStopSH;
+  EXIT_IF_BAD_PERROR(0 == sigaction(SIGUSR2, &sa, NULL), 1,
+                     "sigaction SIGUSR2 failed");
 }
 
 static void AddTaskIMP(tsk_info_ty* info_, scheduler_op_ty func_)
