@@ -122,33 +122,66 @@ void DoNotResuscitate(void)
   /* g_wd_app_pid = 0 */
 }
 
-static void* WDGuardThread(void* wd_args_)
+static void* WDGuardThread(void* wd_info_)
 {
+  wd_guard_info_ty* wd_info = (wd_guard_info_ty*)wd_info_;
+  tsk_info_ty tsk_info = {0};
+  scheduler_ty* sch = NULL;
+  char** wd_argv = NULL;
+  pid_t pid = 0;
+
   /* assert */
+  assert(wd_info_);
+  assert(0 == g_wd_app_pid);
 
   /* AllocAndInitWDArgvIMP */
+  wd_argv = AllocAndInitWDArgvIMP(wd_info->m_argv_len, wd_info->m_argv,
+                                  wd_info->m_interval, wd_info->m_fail_cnt);
   /* handle failure */
+  RETURN_IF_BAD_CLEAN(NULL != wd_argv, NULL, "failed to alloc wd argv",
+                      pthread_kill(wd_info->m_main_thread, SIGUSR2));
 
   /* SchedulerCreate */
+  sch = SchedulerCreate();
   /* handle failure */
+  RETURN_IF_BAD_CLEAN(
+      NULL != sch, NULL, "failed to create scheduler",
+      (FreeWDArgvIMP(wd_argv), pthread_kill(wd_info->m_main_thread, SIGUSR2)));
 
   /* InitSigHandlersIMP */
   /* handle failure */
+  RETURN_IF_BAD_CLEAN(0 == InitSigHandlersIMP(), NULL,
+                      "failed to init sig handlers",
+                      (FreeWDArgvIMP(wd_argv), SchedulerDestroy(sch),
+                       pthread_kill(wd_info->m_main_thread, SIGUSR2)));
 
   /* InitTskInfoIMP */
+  InitTskInfoIMP(&tsk_info, wd_argv, sch, wd_info->m_interval,
+                 wd_info->m_fail_cnt, wd_info->m_main_thread,
+                 wd_info->m_sig_mask);
 
   /* SpawnIMP */
-  /* g_wd_app_pid = pid */
+  pid = SpawnIMP(wd_argv);
   /* handle failure */
+  RETURN_IF_BAD_CLEAN(-1 != pid, NULL, "failed to spawn wd_app",
+                      (FreeWDArgvIMP(wd_argv), SchedulerDestroy(sch),
+                       pthread_kill(wd_info->m_main_thread, SIGUSR2)));
+  /* g_wd_app_pid = pid */
+  g_wd_app_pid = pid;
 
   /* AddTaskIMP BuildWDTSK */
+  AddTaskIMP(&tsk_info, 0, BuildWDTSK);
 
   /* SchedulerRun */
-  /* handle FAIL */
+  SchedulerRun(sch);
 
+  /* handle FAIL */
   /* cleanup: SchedulerDestroy, FreeWDArgvIMP */
+  SchedulerDestroy(sch);
+  FreeWDArgvIMP(wd_argv);
 
   /* return NULL */
+  return NULL;
 }
 
 static sch_op_status_ty BuildWDTSK(void* tsk_info_)
