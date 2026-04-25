@@ -108,13 +108,24 @@ static void SetStopIMP(int sig_)
 static void SendSignalToParentIMP(tsk_info_ty* info_)
 {
   /* assert */
+  assert(info_);
 
   /* kill(getppid(), SIGUSR1) */
   /* if success return */
+  if (0 == kill(getppid(), SIGUSR1))
+  {
+    return;
+  }
 
   /* if ESRCH SpawnIMP */
+  if (ESRCH == errno)
+  {
+    SpawnIMP(info_);
+    return;
+  }
 
   /* EXIT_IF_BAD_PERROR */
+  EXIT_IF_BAD_PERROR(0, 1, "kill failed");
 }
 
 static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
