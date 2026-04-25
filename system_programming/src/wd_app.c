@@ -100,9 +100,12 @@ static void ResetCounterIMP(int sig_)
   /* g_counter = 0 */
 }
 
-static void SetStopIMP(int sig_)
+static void SetStopSH(int sig_)
 {
+  (void)sig_;
+
   /* g_should_stop = 1 */
+  __atomic_store_n(&g_should_stop, 1, __ATOMIC_SEQ_CST);
 }
 
 static void SendSignalToParentIMP(tsk_info_ty* info_)
