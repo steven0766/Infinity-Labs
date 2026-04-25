@@ -260,9 +260,11 @@ static void SendSignalIMP(tsk_info_ty* info_)
     {
       /* SwitchToReviveModeIMP */
       SwitchToReviveModeIMP(info_);
+      return;
     }
 
     /* EXIT_IF_BAD_PERROR */
+    EXIT_IF_BAD_PERROR(0, 1, "kill failed");
   }
 }
 
@@ -272,12 +274,11 @@ static void IncrementAndCheckCounterIMP(tsk_info_ty* info_)
   assert(info_);
 
   /* atomic increment cnt */
-  __atomic_add_fetch(&g_cnt, 1, __ATOMIC_SEQ_CST);
-
   /* if g_cnt >= m_fail_cnt */
-  if (g_cnt >= info_->m_fail_cnt)
+  if (__atomic_add_fetch(&g_cnt, 1, __ATOMIC_SEQ_CST) >=
+      (size_t)info_->m_fail_cnt)
   {
-    /*   SwitchToReviveModeIMP */
+    /* SwitchToReviveModeIMP */
     SwitchToReviveModeIMP(info_);
   }
 }
