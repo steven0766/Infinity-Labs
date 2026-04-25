@@ -147,14 +147,22 @@ static void InitSignalHandlersIMP(void)
 
 static void AddTaskIMP(tsk_info_ty* info_, scheduler_op_ty func_)
 {
+  uid_ty task_id = {0};
+
   /* assert */
+  assert(info_);
+  assert(func_);
 
   /* SchedulerAddTask with m_interval */
+  task_id = SchedulerAddTask(info_->m_sch, info_->m_interval, func_, info_,
+                             CleanupIMP, NULL);
 
   /* EXIT_IF_BAD */
+  EXIT_IF_BAD(!IsMatchId(invalid_uid_g, task_id), 1, "failed to add task");
 }
 
 static void CleanupIMP(void* unused_)
 {
   /* (void)unused_ */
+  (void)unused_;
 }
