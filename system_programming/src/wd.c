@@ -444,7 +444,7 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
 
   /* assert */
   assert(argv_);
-  assert(0 < interval);
+  assert(0 < interval_);
   assert(0 < argv_len_);
 
   /* malloc wd_argv */
@@ -466,7 +466,7 @@ static char** AllocAndInitWDArgvIMP(size_t argv_len_, char* argv_[],
   sprintf(fail_cnt, "%d", fail_cnt_);
   wd_argv[FAIL_CNT_IDX] = fail_cnt;
   /* memmove rest */
-  memmove(wd_argv + REQUIRED_ARGS, argv_, argv_len_);
+  memmove(wd_argv + REQUIRED_ARGS, argv_, sizeof(char*) * (argv_len_ + 1));
   /* NULL terminator */
   wd_argv[REQUIRED_ARGS + argv_len_] = NULL;
 
