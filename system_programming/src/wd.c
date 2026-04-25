@@ -292,10 +292,7 @@ static void SwitchToReviveModeIMP(tsk_info_ty* info_)
   /* SpawnIMP */
   pid = SpawnIMP(info_);
   /* exit if fork is -1 */
-  if (-1 == pid)
-  {
-    exit(1);
-  }
+  EXIT_IF_BAD(-1 != pid, 1, "SpawnIMP failed");
 
   /* g_wd_app_pid = pid */
   g_wd_app_pid = pid;
