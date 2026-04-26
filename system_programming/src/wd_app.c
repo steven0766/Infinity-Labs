@@ -132,12 +132,22 @@ static void RegisterSignalHandlersIMP(void)
 
 static void AddTaskIMP(tsk_info_ty* tsk_info_, scheduler_op_ty tsk_func_)
 {
+  uid_ty task_id = {0};
+
   /* assert */
+  assert(tsk_info_);
+  assert(tsk_func_);
+
   /* SchedulerAddTask */
+  task_id = SchedulerAddTask(tsk_info_->m_sch, tsk_info_->m_interval, tsk_func_,
+                             tsk_info_, TaskCleanupIMP, NULL);
+
   /* EXIT_IF_BAD */
+  EXIT_IF_BAD(!IsMatchId(invalid_uid_g, task_id), 1, "failed to add task");
 }
 
 static void TaskCleanupIMP(void* unused_)
 {
   /* (void)unused_ */
+  (void)unused_;
 }
