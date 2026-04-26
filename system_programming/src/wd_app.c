@@ -126,8 +126,16 @@ static void IncrementAndCheckCounterIMP(unsigned int fail_cnt_,
 
 static void RegisterSignalHandlersIMP(void)
 {
+  struct sigaction sa = {0};
+
   /* sigemptyset sa_mask */
-  /* sa_handler = ResetCounterSH -> sigaction SIGUSR1 */
+  EXIT_IF_BAD(0 == sigemptyset(&sa.sa_mask), 1, "sigemptyset failed");
+
+  /* sa_handler = ResetCounterSH */
+  sa.sa_handler = ResetCounterSH;
+  /* sigaction SIGUSR1 */
+  EXIT_IF_BAD_PERROR(0 == sigaction(SIGUSR1, &sa, NULL), 1,
+                     "failed to register SIGUSR1 handler");
 }
 
 static void AddTaskIMP(tsk_info_ty* tsk_info_, scheduler_op_ty tsk_func_)
