@@ -100,8 +100,13 @@ static void ToDefaultModeIMP(tsk_info_ty* tsk_info_)
 static void ToReviveModeIMP(char** client_argv_)
 {
   /* assert */
+  assert(client_argv_);
+
   /* execvp(client_argv_[0], client_argv_) */
+  execvp(client_argv_[0], client_argv_);
+
   /* EXIT_IF_BAD execvp failed */
+  EXIT_IF_BAD(0, 1, "execvp failed");
 }
 
 static void SendSignalToParentIMP(char** client_argv_)
