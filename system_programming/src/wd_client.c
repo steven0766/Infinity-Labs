@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
   int num = 0;
 
   /* make immortal */
-  status = MakeMeImmortal((size_t)argc, (const char**)argv, 1);
+  status = MakeMeImmortal((size_t)argc, argv, 1, 3);
   EXIT_IF_BAD(SUCCESS == status, 1, "MakeMeImmortal failed");
 
   printf("PID: %d\n", getpid());
@@ -25,8 +25,8 @@ int main(int argc, char* argv[])
 
     if (10 == num)
     {
-      printf("DoNotResussitate activated\n");
-      DoNotResussitate();
+      printf("DoNotResuscitate activated\n");
+      DoNotResuscitate();
     }
   }
 
