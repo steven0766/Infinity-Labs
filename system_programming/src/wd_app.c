@@ -119,9 +119,16 @@ static void IncrementAndCheckCounterIMP(unsigned int fail_cnt_,
                                         char** client_argv_)
 {
   /* assert */
-  /* atomic increment g_missed_signals_cnt */
+  assert(client_argv_);
+
+  /* increment g_missed_signals_cnt */
   /* if g_missed_signals_cnt >= fail_cnt_ */
-  /* ToReviveModeIMP */
+  if (__atomic_add_fetch(&g_missed_signals_cnt, 1, __ATOMIC_SEQ_CST) >=
+      fail_cnt_)
+  {
+    /* ToReviveModeIMP */
+    ToReviveModeIMP(client_argv_);
+  }
 }
 
 static void RegisterSignalHandlersIMP(void)
