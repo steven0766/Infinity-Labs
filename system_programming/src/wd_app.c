@@ -106,13 +106,28 @@ static void ToReviveModeIMP(char** client_argv_)
 
 static void SendSignalToParentIMP(char** client_argv_)
 {
+
   /* assert */
+  assert(client_argv_);
+
   /* kill(getppid(), SIGUSR1) */
   /* if success */
-  /* return */
+  if (0 == kill(getppid(), SIGUSR1))
+  {
+    /* return */
+    return;
+  }
+
   /* if ESRCH */
-  /* ToReviveModeIMP */
+  if (ESRCH == errno)
+  {
+    /* ToReviveModeIMP */
+    ToReviveModeIMP(client_argv_);
+    return;
+  }
+
   /* EXIT_IF_BAD_PERROR — other error */
+  EXIT_IF_BAD_PERROR(0, 1, "failed to send SIGUSR1");
 }
 
 static void IncrementAndCheckCounterIMP(unsigned int fail_cnt_,
