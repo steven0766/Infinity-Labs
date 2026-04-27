@@ -86,7 +86,10 @@ static sch_op_status_ty CheckStopWDTSK(void* tsk_info_)
 static void ResetCounterSH(int sig_)
 {
   /* (void)sig_ */
-  /* atomic g_missed_signals_cnt = 0 */
+  (void)sig_;
+
+  /* g_missed_signals_cnt = 0 */
+  __atomic_store_n(&g_missed_signals_cnt, 0, __ATOMIC_SEQ_CST);
 }
 
 static void ToDefaultModeIMP(tsk_info_ty* tsk_info_)
