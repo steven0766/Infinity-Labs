@@ -62,16 +62,30 @@ int main(int argc, char* argv[])
 
 static sch_op_status_ty SendSignalToParentTSK(void* tsk_info_)
 {
+  tsk_info_ty* tsk_info = (tsk_info_ty*)tsk_info_;
+
   /* assert */
+  assert(tsk_info_);
+
   /* SendSignalToParentIMP */
+  SendSignalToParentIMP(tsk_info->m_client_argv);
+
   /* return SCH_REPEAT */
+  return SCH_REPEAT;
 }
 
 static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_)
 {
+  tsk_info_ty* tsk_info = (tsk_info_ty*)tsk_info_;
+
   /* assert */
+  assert(tsk_info_);
+
   /* IncrementAndCheckCounterIMP */
+  IncrementAndCheckCounterIMP(tsk_info->m_fail_cnt, tsk_info->m_client_argv);
+
   /* return SCH_REPEAT */
+  return SCH_REPEAT;
 }
 
 static sch_op_status_ty CheckStopWDTSK(void* tsk_info_)
