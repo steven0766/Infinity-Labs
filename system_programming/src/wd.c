@@ -353,9 +353,15 @@ static void ToReviveModeIMP(tsk_info_ty* tsk_info_)
 
 static void ToExitModeIMP(tsk_info_ty* tsk_info_)
 {
+  int status = 0;
   sigset_t msk = {0};
 
   assert(tsk_info_);
+
+  /* send SIGUSR2 */
+  status = kill(g_wd_app_pid, SIGUSR2);
+  EXIT_IF_BAD_PERROR(0 == status || ESRCH == errno, 1,
+                     "failed to send SIGUSR2");
 
   /* block signals */
   EXIT_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to init signal mask");
