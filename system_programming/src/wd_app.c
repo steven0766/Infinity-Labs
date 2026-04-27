@@ -29,6 +29,7 @@ static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_);
 static sch_op_status_ty CheckStopWDTSK(void* tsk_info_);
 
 static void ResetCounterSH(int sig_);
+static void SetStopSH(int sig_);
 
 static void ToDefaultModeIMP(tsk_info_ty* tsk_info_);
 static void ToReviveModeIMP(char** client_argv_);
@@ -141,6 +142,12 @@ static void ResetCounterSH(int sig_)
   __atomic_store_n(&g_missed_signals_cnt, 0, __ATOMIC_SEQ_CST);
 }
 
+static void SetStopSH(int sig_)
+{
+  (void)sig_;
+  __atomic_store_n(&g_should_stop, 1, __ATOMIC_SEQ_CST);
+}
+
 static void ToDefaultModeIMP(tsk_info_ty* tsk_info_)
 {
   /* assert */
@@ -222,6 +229,10 @@ static void RegisterSignalHandlersIMP(void)
   /* sigaction SIGUSR1 */
   EXIT_IF_BAD_PERROR(0 == sigaction(SIGUSR1, &sa, NULL), 1,
                      "failed to register SIGUSR1 handler");
+  sa.sa_handler = SetStopSH;
+  /* sigaction SIGUSR2 */
+  EXIT_IF_BAD_PERROR(0 == sigaction(SIGUSR2, &sa, NULL), 1,
+                     "failed to register SIGUSR2 handler");
 }
 
 static void AddTaskIMP(tsk_info_ty* tsk_info_, scheduler_op_ty tsk_func_)
