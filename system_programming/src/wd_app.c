@@ -48,16 +48,39 @@ int main(int argc, char* argv[])
   scheduler_ty* sch = NULL;
 
   /* validate argc */
+  EXIT_IF_BAD(MIN_ARGS <= argc, 1, "invalid arguments");
+
   /* parse interval */
+  tsk_info.m_interval = atoi(argv[INTERVAL_IDX]);
+  EXIT_IF_BAD(0 < tsk_info.m_interval, 1, "failed to parse interval");
+
   /* parse fail count */
+  tsk_info.m_fail_cnt = atoi(argv[FAIL_CNT_IDX]);
+  EXIT_IF_BAD(0 < tsk_info.m_fail_cnt, 1, "failed to parse fail count");
+
   /* RegisterSignalHandlersIMP */
+  RegisterSignalHandlersIMP();
+
   /* SchedulerCreate */
   /* handle failure */
+  sch = SchedulerCreate();
+  EXIT_IF_BAD(NULL != sch, 1, "failed to create scheduler");
+
   /* init tsk_info */
+  tsk_info.m_client_argv = argv + CLIENT_ARGS_IDX;
+  tsk_info.m_sch = sch;
+
   /* ToDefaultModeIMP */
+  ToDefaultModeIMP(&tsk_info);
+
   /* SchedulerRun */
+  SchedulerRun(sch);
+
   /* SchedulerDestroy */
+  SchedulerDestroy(sch);
+
   /* return SUCCESS */
+  return SUCCESS;
 }
 
 static sch_op_status_ty SendSignalToParentTSK(void* tsk_info_)
