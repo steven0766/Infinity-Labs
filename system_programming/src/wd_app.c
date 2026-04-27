@@ -76,11 +76,23 @@ static sch_op_status_ty IncrementAndCheckCounterTSK(void* tsk_info_)
 
 static sch_op_status_ty CheckStopWDTSK(void* tsk_info_)
 {
+  tsk_info_ty* tsk_info = (tsk_info_ty*)tsk_info_;
+
   /* assert */
+  assert(tsk_info_);
+
   /* if g_should_stop */
-  /* SchedulerStop */
-  /* return SCH_NOT_REPEAT */
+  if (__atomic_load_n(&g_should_stop, __ATOMIC_SEQ_CST))
+  {
+    /* SchedulerStop */
+    SchedulerStop(tsk_info->m_sch);
+
+    /* return SCH_NOT_REPEAT */
+    return SCH_NOT_REPEAT;
+  }
+
   /* return SCH_REPEAT */
+  return SCH_REPEAT;
 }
 
 static void ResetCounterSH(int sig_)
