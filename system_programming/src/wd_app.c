@@ -92,9 +92,16 @@ static void ResetCounterSH(int sig_)
 static void ToDefaultModeIMP(tsk_info_ty* tsk_info_)
 {
   /* assert */
-  /* AddTaskIMP SendSignalToParentTSK */
-  /* AddTaskIMP IncrementAndCheckCounterTSK */
-  /* AddTaskIMP CheckStopWDTSK */
+  assert(tsk_info_);
+
+  /* Add Task SendSignalToParentTSK */
+  AddTaskIMP(tsk_info_, SendSignalToParentTSK);
+
+  /* Add Task IncrementAndCheckCounterTSK */
+  AddTaskIMP(tsk_info_, IncrementAndCheckCounterTSK);
+
+  /* Add Task CheckStopWDTSK */
+  AddTaskIMP(tsk_info_, CheckStopWDTSK);
 }
 
 static void ToReviveModeIMP(char** client_argv_)
