@@ -20,7 +20,6 @@ int main(int argc, char* argv[])
 
   while (1)
   {
-    sleep(1);
     ++num;
 
     if (10 == num)
@@ -28,6 +27,8 @@ int main(int argc, char* argv[])
       printf("DoNotResuscitate activated\n");
       DoNotResuscitate();
     }
+
+    sleep(1);
   }
 
   return 0;
