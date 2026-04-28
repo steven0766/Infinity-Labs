@@ -236,6 +236,8 @@ static void* WDGuardThreadIMP(void* wd_info_)
   FreeWDArgvIMP(wd_argv);
   // TODO: should cleanup here as well, just call cleanup function (without
   // notify)
+  PANIC_IF_BAD(0 == ResetSignalHandlersIMP(),
+               "failed to reset signal handlers");
 
   return NULL;
 }
@@ -477,7 +479,7 @@ static int ResetSignalHandlersIMP(void)
   struct sigaction sa = {0};
 
   /* restore SIGUSR1 */
-  sa.sa_handler = SIG_DFL;
+  sa.sa_handler = SIG_IGN;
   RETURN_IF_BAD(0 == sigaction(SIGUSR1, &sa, NULL), 1,
                 "failed to reset SIGUSR1 handler");
 
