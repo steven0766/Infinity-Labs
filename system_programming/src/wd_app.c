@@ -14,6 +14,7 @@ typedef struct
   scheduler_ty* m_sch;
   unsigned int m_fail_cnt;
   unsigned int m_interval;
+  pid_t m_ppid;
 } tsk_info_ty;
 
 enum
@@ -33,7 +34,7 @@ static void SetStopSH(int sig_);
 
 static void ToDefaultModeIMP(tsk_info_ty* tsk_info_);
 static void ToReviveModeIMP(char** client_argv_);
-static void SendSignalToParentIMP(char** client_argv_);
+static void SendSignalToParentIMP(char** client_argv_, pid_t ppid_);
 static void IncrementAndCheckCounterIMP(unsigned int fail_cnt_,
                                         char** client_argv_);
 static void RegisterSignalHandlersIMP(void);
@@ -70,12 +71,13 @@ int main(int argc, char* argv[])
   /* init tsk_info */
   tsk_info.m_client_argv = argv + CLIENT_ARGS_IDX;
   tsk_info.m_sch = sch;
+  tsk_info.m_ppid = getppid();
 
   /* ToDefaultModeIMP */
   ToDefaultModeIMP(&tsk_info);
 
   /* SchedulerRun */
-  SchedulerRun(sch);
+  EXIT_IF_BAD(SCH_FAIL != SchedulerRun(sch), 1, "scheduler run failed");
 
   /* SchedulerDestroy */
   SchedulerDestroy(sch);
@@ -92,7 +94,7 @@ static sch_op_status_ty SendSignalToParentTSK(void* tsk_info_)
   assert(tsk_info_);
 
   /* SendSignalToParentIMP */
-  SendSignalToParentIMP(tsk_info->m_client_argv);
+  SendSignalToParentIMP(tsk_info->m_client_argv, tsk_info->m_ppid);
 
   /* return SCH_REPEAT */
   return SCH_REPEAT;
@@ -175,7 +177,7 @@ static void ToReviveModeIMP(char** client_argv_)
   EXIT_IF_BAD(0, 1, "execvp failed");
 }
 
-static void SendSignalToParentIMP(char** client_argv_)
+static void SendSignalToParentIMP(char** client_argv_, pid_t ppid_)
 {
 
   /* assert */
@@ -183,7 +185,7 @@ static void SendSignalToParentIMP(char** client_argv_)
 
   /* kill(getppid(), SIGUSR1) */
   /* if success */
-  if (0 == kill(getppid(), SIGUSR1))
+  if (0 == kill(ppid_, SIGUSR1))
   {
     /* return */
     return;
