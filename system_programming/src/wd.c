@@ -202,13 +202,17 @@ static void* WDGuardThreadIMP(void* wd_info_)
                       "failed to fill signal mask",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
-  /* remove SIGUSR1 from mask */
-  RETURN_IF_BAD_CLEAN(0 == sigdelset(&all_msk, SIGUSR1), NULL,
-                      "failed to delete SIGUSR1 from mask",
+  /* block all signals */
+  RETURN_IF_BAD_CLEAN(0 == pthread_sigmask(SIG_BLOCK, &all_msk, NULL), NULL,
+                      "failed to block signals",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
-  /* block all signals except SIGUSR1 */
-  RETURN_IF_BAD_CLEAN(0 == pthread_sigmask(SIG_BLOCK, &all_msk, NULL), NULL,
+  /* unblock SIGUSR1 */
+  RETURN_IF_BAD_CLEAN(0 == InitSignalMaskIMP(&all_msk), NULL,
+                      "failed to fill signal mask",
+                      NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
+
+  RETURN_IF_BAD_CLEAN(0 == pthread_sigmask(SIG_UNBLOCK, &all_msk, NULL), NULL,
                       "failed to block signals",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
@@ -355,6 +359,7 @@ static void ToExitModeIMP(tsk_info_ty* tsk_info_)
 {
   int status = 0;
   sigset_t msk = {0};
+  pid_t res = 0;
 
   assert(tsk_info_);
 
@@ -367,12 +372,14 @@ static void ToExitModeIMP(tsk_info_ty* tsk_info_)
   EXIT_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to init signal mask");
   EXIT_IF_BAD(0 == pthread_sigmask(SIG_BLOCK, &msk, NULL), 1,
               "failed to block signals");
-  // TODO:waitpid with while / do while. ask claude
 
   /* wait for wd_app */
-  EXIT_IF_BAD_PERROR(tsk_info_->m_wd_pid ==
-                         waitpid(tsk_info_->m_wd_pid, NULL, 0),
-                     1, "waitpid failed");
+  do
+  {
+    res = waitpid(tsk_info_->m_wd_pid, NULL, 0);
+  } while (-1 == res && EINTR == errno);
+
+  EXIT_IF_BAD_PERROR(tsk_info_->m_wd_pid == res, 1, "waitpid failed");
 
   /* stop scheduler */
   SchedulerStop(tsk_info_->m_sch);
