@@ -25,6 +25,7 @@ typedef struct
   unsigned int m_fail_cnt;
   unsigned int m_interval;
   sem_t* m_sem;
+  pid_t m_wd_pid;
 } tsk_info_ty;
 
 typedef struct
@@ -57,7 +58,7 @@ static int ToDefaultModeIMP(tsk_info_ty* tsk_info_);
 static void ToReviveModeIMP(tsk_info_ty* tsk_info_);
 static void ToExitModeIMP(tsk_info_ty* tsk_info_);
 static void CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_);
-static int SpawnWDIMP(char** wd_argv_);
+static int SpawnWDIMP(tsk_info_ty* wd_argv_);
 static char** AllocWDArgvIMP(wd_guard_info_ty* wd_info_);
 static int InitSignalMaskIMP(sigset_t* msk_);
 static int RegisterSignalHandlersIMP(void);
@@ -70,7 +71,6 @@ static void FreeWDArgvIMP(char** wd_argv_);
 static void CleanupTaskIMP(void* unused_);
 
 static int g_is_wd_guard_ready = 0;
-static pid_t g_wd_app_pid = 0;
 static pthread_t g_wd_guard_thread = 0;
 static volatile int g_should_stop = 0;
 static volatile unsigned int g_missed_signals_cnt = 0;
@@ -87,7 +87,7 @@ int MakeMeImmortal(size_t cmd_len_, char* cmd_[], int how_often_, int fail_cnt_)
   assert(0 < how_often_);
   assert(0 < fail_cnt_);
   assert(0 < cmd_len_);
-  assert(0 == g_wd_app_pid);
+  assert(0 == g_wd_guard_thread);
 
   /* init signal mask */
   RETURN_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to set signal mask");
@@ -141,7 +141,7 @@ void DoNotResuscitate(void)
   sigset_t msk = {0};
 
   /* assert wd is on */
-  assert(0 != g_wd_app_pid);
+  assert(0 != g_wd_guard_thread);
 
   /* set stop flag */
   __atomic_store_n(&g_should_stop, 1, __ATOMIC_SEQ_CST);
@@ -149,13 +149,6 @@ void DoNotResuscitate(void)
   /* pthread_join */
   EXIT_IF_BAD_PERROR(0 == pthread_join(g_wd_guard_thread, NULL), 1,
                      "pthread_join failed");
-
-  /* reset globals */
-  g_wd_app_pid = 0;
-  g_should_stop = 0;
-  g_is_wd_guard_ready = 0;
-  g_wd_guard_thread = 0;
-  g_missed_signals_cnt = 0;
 
   /* init signal mask */
   EXIT_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to set signal mask");
@@ -175,7 +168,7 @@ static void* WDGuardThreadIMP(void* wd_info_)
   scheduler_ty* sch = NULL;
   char** wd_argv = NULL;
   tsk_info_ty tsk_info = {0};
-  sigset_t msk = {0};
+  sigset_t all_msk = {0};
 
   /* assert */
   assert(wd_info_);
@@ -204,14 +197,20 @@ static void* WDGuardThreadIMP(void* wd_info_)
                       NULL, "failed to add init task",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
-  /* init signal mask */
-  RETURN_IF_BAD_CLEAN(0 == InitSignalMaskIMP(&msk), NULL,
-                      "failed to set signal mask",
+  /* fill mask with all signals */
+  sigset_t all_msk = {0};
+  RETURN_IF_BAD_CLEAN(0 == sigfillset(&all_msk), NULL,
+                      "failed to fill signal mask",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
-  /* unblock SIGUSR1 */
-  RETURN_IF_BAD_CLEAN(0 == pthread_sigmask(SIG_UNBLOCK, &msk, NULL), NULL,
-                      "failed to unblock signals",
+  /* remove SIGUSR1 from mask */
+  RETURN_IF_BAD_CLEAN(0 == sigdelset(&all_msk, SIGUSR1), NULL,
+                      "failed to delete SIGUSR1 from mask",
+                      NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
+
+  /* block all signals except SIGUSR1 */
+  RETURN_IF_BAD_CLEAN(0 == pthread_sigmask(SIG_BLOCK, &all_msk, NULL), NULL,
+                      "failed to block signals",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
   /* register signal handler */
@@ -223,7 +222,7 @@ static void* WDGuardThreadIMP(void* wd_info_)
   __atomic_store_n(&g_missed_signals_cnt, 1, __ATOMIC_SEQ_CST);
 
   /* spawn wd_app */
-  RETURN_IF_BAD_CLEAN(0 == SpawnWDIMP(wd_argv), NULL, "failed to spawn wd",
+  RETURN_IF_BAD_CLEAN(0 == SpawnWDIMP(&tsk_info), NULL, "failed to spawn wd",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
   /* run scheduler */
@@ -232,6 +231,8 @@ static void* WDGuardThreadIMP(void* wd_info_)
   /* cleanup */
   SchedulerDestroy(sch);
   FreeWDArgvIMP(wd_argv);
+  // TODO: should cleanup here as well, just call cleanup function (without
+  // notify)
 
   return NULL;
 }
@@ -258,7 +259,7 @@ static sch_op_status_ty SendSignalToWDTSK(void* tsk_info_)
   assert(tsk_info_);
 
   /* send SIGUSR1 to wd_app */
-  if (0 == kill(g_wd_app_pid, SIGUSR1))
+  if (0 == kill(tsk_info->m_wd_pid, SIGUSR1))
   {
     return SCH_REPEAT;
   }
@@ -342,10 +343,10 @@ static void ToReviveModeIMP(tsk_info_ty* tsk_info_)
   assert(tsk_info_);
 
   /* zombie process */
-  waitpid(g_wd_app_pid, NULL, 0);
+  waitpid(tsk_info_->m_wd_pid, NULL, 0);
 
   /* spawn new wd_app */
-  SpawnWDIMP(tsk_info_->m_wd_argv);
+  SpawnWDIMP(tsk_info_);
 
   /* reset g_missed_signals_cnt */
   __atomic_store_n(&g_missed_signals_cnt, 0, __ATOMIC_SEQ_CST);
@@ -359,7 +360,7 @@ static void ToExitModeIMP(tsk_info_ty* tsk_info_)
   assert(tsk_info_);
 
   /* send SIGUSR2 */
-  status = kill(g_wd_app_pid, SIGUSR2);
+  status = kill(tsk_info_->m_wd_pid, SIGUSR2);
   EXIT_IF_BAD_PERROR(0 == status || ESRCH == errno, 1,
                      "failed to send SIGUSR2");
 
@@ -367,10 +368,12 @@ static void ToExitModeIMP(tsk_info_ty* tsk_info_)
   EXIT_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to init signal mask");
   EXIT_IF_BAD(0 == pthread_sigmask(SIG_BLOCK, &msk, NULL), 1,
               "failed to block signals");
+  // TODO:waitpid with while / do while. ask claude
 
   /* wait for wd_app */
-  EXIT_IF_BAD_PERROR(g_wd_app_pid == waitpid(g_wd_app_pid, NULL, 0), 1,
-                     "waitpid failed");
+  EXIT_IF_BAD_PERROR(tsk_info_->m_wd_pid ==
+                         waitpid(tsk_info_->m_wd_pid, NULL, 0),
+                     1, "waitpid failed");
 
   /* stop scheduler */
   SchedulerStop(tsk_info_->m_sch);
@@ -412,12 +415,12 @@ static void CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_)
   tsk_info_->m_sem = BAD_MEM(sem_t*);
 }
 
-static int SpawnWDIMP(char** wd_argv_)
+static int SpawnWDIMP(tsk_info_ty* tsk_info_)
 {
   pid_t pid = 0;
 
   /* assert */
-  assert(wd_argv_);
+  assert(tsk_info_);
 
   /* fork */
   pid = fork();
@@ -427,14 +430,14 @@ static int SpawnWDIMP(char** wd_argv_)
   if (0 == pid)
   {
     /* exec wd_app */
-    execvp(wd_argv_[0], wd_argv_);
+    execvp(tsk_info_->m_wd_argv[0], tsk_info_->m_wd_argv);
     /* execvp failed */
     exit(1);
   }
 
   /* parent */
   /* save wd_app pid */
-  g_wd_app_pid = pid;
+  tsk_info_->m_wd_pid = pid;
 
   return SUCCESS;
 }
