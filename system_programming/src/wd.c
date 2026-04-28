@@ -198,7 +198,6 @@ static void* WDGuardThreadIMP(void* wd_info_)
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
   /* fill mask with all signals */
-  sigset_t all_msk = {0};
   RETURN_IF_BAD_CLEAN(0 == sigfillset(&all_msk), NULL,
                       "failed to fill signal mask",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
