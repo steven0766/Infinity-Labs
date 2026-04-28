@@ -234,8 +234,7 @@ static void* WDGuardThreadIMP(void* wd_info_)
   /* cleanup */
   SchedulerDestroy(sch);
   FreeWDArgvIMP(wd_argv);
-  // TODO: should cleanup here as well, just call cleanup function (without
-  // notify)
+
   PANIC_IF_BAD(0 == ResetSignalHandlersIMP(),
                "failed to reset signal handlers");
 
