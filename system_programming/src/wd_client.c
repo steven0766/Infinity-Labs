@@ -18,16 +18,17 @@ int main(int argc, char* argv[])
 
   printf("PID: %d\n", getpid());
 
-  while (1)
+  while (20 != num)
   {
     ++num;
+    sleep(1);
+  }
+  printf("DoNotRessuscitate activated");
+  DoNotResuscitate();
 
-    if (10 == num)
-    {
-      printf("DoNotResuscitate activated\n");
-      DoNotResuscitate();
-    }
-
+  while (1)
+  {
+    printf("PID: %d\n", getpid());
     sleep(1);
   }
 
