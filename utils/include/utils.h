@@ -6,83 +6,93 @@
 #define BAD_MEM(type) ((type)0xDEADBEEFDEADBEEF)
 
 #define EXIT_IF_BAD(condition, status, msg)                                    \
-    do                                                                         \
+  do                                                                           \
+  {                                                                            \
+    if (!(condition))                                                          \
     {                                                                          \
-        if (!(condition))                                                      \
-        {                                                                      \
-            fprintf(stderr, "%s\n", (msg));                                    \
-            exit((status));                                                    \
-        }                                                                      \
-    } while (0)
+      fprintf(stderr, "%s\n", (msg));                                          \
+      exit((status));                                                          \
+    }                                                                          \
+  } while (0)
 
 #define EXIT_IF_BAD_CLEAN(condition, status, msg, clean_op)                    \
-    if (!(condition))                                                          \
-    {                                                                          \
-        fprintf(stderr, "%s\n", (msg));                                        \
-        (clean_op);                                                            \
-        exit(status);                                                          \
-    }
+  if (!(condition))                                                            \
+  {                                                                            \
+    fprintf(stderr, "%s\n", (msg));                                            \
+    (clean_op);                                                                \
+    exit(status);                                                              \
+  }
 
 #define RETURN_IF_BAD(condition, status, msg)                                  \
-    do                                                                         \
+  do                                                                           \
+  {                                                                            \
+    if (!(condition))                                                          \
     {                                                                          \
-        if (!(condition))                                                      \
-        {                                                                      \
-            fprintf(stderr, "%s\n", (msg));                                    \
-            return (status);                                                   \
-        }                                                                      \
-    } while (0)
+      fprintf(stderr, "%s\n", (msg));                                          \
+      return (status);                                                         \
+    }                                                                          \
+  } while (0)
 
 #define RETURN_IF_BAD_CLEAN(condition, status, msg, clean_op)                  \
-    if (!(condition))                                                          \
-    {                                                                          \
-        fprintf(stderr, "%s\n", (msg));                                        \
-        (clean_op);                                                            \
-        return (status);                                                       \
-    }
+  if (!(condition))                                                            \
+  {                                                                            \
+    fprintf(stderr, "%s\n", (msg));                                            \
+    (clean_op);                                                                \
+    return (status);                                                           \
+  }
 
 #define EXIT_IF_BAD_PERROR(condition, status, msg)                             \
-    do                                                                         \
+  do                                                                           \
+  {                                                                            \
+    if (!(condition))                                                          \
     {                                                                          \
-        if (!(condition))                                                      \
-        {                                                                      \
-            perror((msg));                                                     \
-            exit((status));                                                    \
-        }                                                                      \
-    } while (0)
+      perror((msg));                                                           \
+      exit((status));                                                          \
+    }                                                                          \
+  } while (0)
 
 #define EXIT_IF_BAD_PERROR_CLEAN(condition, status, msg, clean_op)             \
-    if (!(condition))                                                          \
-    {                                                                          \
-        perror((msg));                                                         \
-        (clean_op);                                                            \
-        exit(status);                                                          \
-    }
+  if (!(condition))                                                            \
+  {                                                                            \
+    perror((msg));                                                             \
+    (clean_op);                                                                \
+    exit(status);                                                              \
+  }
 
 #define RETURN_IF_BAD_PERROR(condition, status, msg)                           \
-    do                                                                         \
-    {                                                                          \
-        if (!(condition))                                                      \
-        {                                                                      \
-            perror((msg));                                                     \
-            return (status);                                                   \
-        }                                                                      \
-    } while (0)
-
-#define RETURN_IF_BAD_PERROR_CLEAN(condition, status, msg, clean_op)           \
+  do                                                                           \
+  {                                                                            \
     if (!(condition))                                                          \
     {                                                                          \
-        perror((msg));                                                         \
-        (clean_op);                                                            \
-        return (status);                                                       \
-    }
+      perror((msg));                                                           \
+      return (status);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define RETURN_IF_BAD_PERROR_CLEAN(condition, status, msg, clean_op)           \
+  if (!(condition))                                                            \
+  {                                                                            \
+    perror((msg));                                                             \
+    (clean_op);                                                                \
+    return (status);                                                           \
+  }
+
+#define PANIC_IF_BAD(cond, error_msg)                                          \
+  do                                                                           \
+  {                                                                            \
+    if (!(cond))                                                               \
+    {                                                                          \
+      fprintf(stderr, "[%s %d] - " error_msg "\n", __FILE__, __LINE__);        \
+      abort();                                                                 \
+    }                                                                          \
+  } while (0)
 
 #ifndef NDEBUG
 #define DEBUG_ONLY(expression)                                                 \
-    do                                                                         \
-    {                                                                          \
-        expression;                                                            \
-    } while (0);
+  do                                                                           \
+  {                                                                            \
+    expression;                                                                \
+  } while (0);
 
 #define DEBUG_BAD_MEM(ptr, type) DEBUG_ONLY(ptr = BAD_MEM(type))
 #else
@@ -96,4 +106,3 @@
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
 #endif /*__UTILS_H__*/
-
