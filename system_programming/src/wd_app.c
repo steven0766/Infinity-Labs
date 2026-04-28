@@ -1,12 +1,13 @@
 #define _POSIX_C_SOURCE 199506L
-#include "scheduler.h"
-#include "uid.h"
-#include "utils.h"
 #include <assert.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include "scheduler.h"
+#include "uid.h"
+#include "utils.h"
 
 typedef struct
 {
@@ -48,6 +49,7 @@ int main(int argc, char* argv[])
 {
   tsk_info_ty tsk_info = {0};
   scheduler_ty* sch = NULL;
+  sigset_t all_msk = {0};
 
   /* validate argc */
   EXIT_IF_BAD(MIN_ARGS <= argc, 1, "invalid arguments");
@@ -59,6 +61,13 @@ int main(int argc, char* argv[])
   /* parse fail count */
   tsk_info.m_fail_cnt = atoi(argv[FAIL_CNT_IDX]);
   EXIT_IF_BAD(0 < tsk_info.m_fail_cnt, 1, "failed to parse fail count");
+
+  /* fill mask with all signals */
+  RETURN_IF_BAD(0 == sigfillset(&all_msk), 1, "failed to fill signal mask");
+
+  /* unblock all signals */
+  RETURN_IF_BAD(0 == pthread_sigmask(SIG_UNBLOCK, &all_msk, NULL), 1,
+                "failed to block signals");
 
   /* RegisterSignalHandlersIMP */
   RegisterSignalHandlersIMP();
