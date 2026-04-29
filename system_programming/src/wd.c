@@ -1,19 +1,18 @@
 #define _POSIX_C_SOURCE 199506L
-#include <assert.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include <assert.h>    /* assert */
+#include <errno.h>     /* ESRCH */
+#include <pthread.h>   /* pthread_create, pthread_join, pthread_sigmask */
+#include <semaphore.h> /* sem_t, sem_wait, sem_post, sem_destroy */
+#include <signal.h> /* kill, sigaddset, sigemptyset, sigaction, sigfillset, pthread_sigmask */
+#include <stdlib.h>    /* malloc, free */
+#include <string.h>    /* memmove */
+#include <sys/types.h> /* pid_t */
+#include <sys/wait.h>  /* waitpid */
+#include <unistd.h>    /* fork, execvp */
 
-#include "scheduler.h"
-#include "uid.h"
-#include "utils.h"
+#include "scheduler.h" /* SchedulerCreate, SchedulerDestroy, SchedulerAddTask, SchedulerRun, SchedulerStop */
+#include "uid.h"       /* IsMatchId, invalid_uid_g */
+#include "utils.h"     /* EXIT_IF_BAD, EXIT_IF_BAD_PERROR */
 #include "wd.h"
 
 #define WD_APP "./wd_app"
