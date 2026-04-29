@@ -228,7 +228,7 @@ static void* WDGuardThreadIMP(void* wd_info_)
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
   /* run scheduler */
-  SchedulerRun(sch);
+  EXIT_IF_BAD(SCH_FAIL != SchedulerRun(sch), 1, "scheduler run failed");
 
   /* cleanup */
   SchedulerDestroy(sch);
