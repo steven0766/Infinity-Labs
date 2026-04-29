@@ -4,6 +4,7 @@
 #include <pthread.h>   /* pthread_create, pthread_join, pthread_sigmask */
 #include <semaphore.h> /* sem_t, sem_wait, sem_post, sem_destroy */
 #include <signal.h> /* kill, sigaddset, sigemptyset, sigaction, sigfillset, pthread_sigmask */
+#include <stdatomic.h> /* atomic_int */
 #include <stdlib.h>    /* malloc, free */
 #include <string.h>    /* memmove */
 #include <sys/types.h> /* pid_t */
@@ -69,7 +70,7 @@ static int AddTaskIMP(tsk_info_ty* tsk_info_, scheduler_op_ty tsk_func_);
 static void FreeWDArgvIMP(char** wd_argv_);
 static void CleanupTaskIMP(void* unused_);
 
-static int g_is_wd_guard_ready = 0;
+static atomic_int g_is_wd_guard_ready = 0;
 static pthread_t g_wd_guard_thread = 0;
 static volatile int g_should_stop = 0;
 static volatile unsigned int g_missed_signals_cnt = 0;
