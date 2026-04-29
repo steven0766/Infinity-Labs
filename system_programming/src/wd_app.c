@@ -65,12 +65,12 @@ int main(int argc, char* argv[])
   /* fill mask with all signals */
   RETURN_IF_BAD(0 == sigfillset(&all_msk), 1, "failed to fill signal mask");
 
+  /* RegisterSignalHandlersIMP */
+  RegisterSignalHandlersIMP();
+
   /* unblock all signals */
   RETURN_IF_BAD(0 == pthread_sigmask(SIG_UNBLOCK, &all_msk, NULL), 1,
                 "failed to block signals");
-
-  /* RegisterSignalHandlersIMP */
-  RegisterSignalHandlersIMP();
 
   /* SchedulerCreate */
   /* handle failure */
