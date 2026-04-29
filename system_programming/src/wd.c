@@ -345,8 +345,12 @@ static void ToReviveModeIMP(tsk_info_ty* tsk_info_)
 {
   /* assert */
   assert(tsk_info_);
+
   /* kill process if alive */
-  kill(tsk_info_->m_wd_pid, SIGKILL);
+  if (0 == kill(tsk_info_->m_wd_pid, 0))
+  {
+    kill(tsk_info_->m_wd_pid, SIGKILL);
+  }
 
   /* zombie process */
   waitpid(tsk_info_->m_wd_pid, NULL, 0);
