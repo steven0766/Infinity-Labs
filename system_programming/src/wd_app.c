@@ -62,11 +62,11 @@ int main(int argc, char* argv[])
   tsk_info.m_fail_cnt = atoi(argv[FAIL_CNT_IDX]);
   EXIT_IF_BAD(0 < tsk_info.m_fail_cnt, 1, "failed to parse fail count");
 
-  /* fill mask with all signals */
-  RETURN_IF_BAD(0 == sigfillset(&all_msk), 1, "failed to fill signal mask");
-
   /* RegisterSignalHandlersIMP */
   RegisterSignalHandlersIMP();
+
+  /* fill mask with all signals */
+  RETURN_IF_BAD(0 == sigfillset(&all_msk), 1, "failed to fill signal mask");
 
   /* unblock all signals */
   RETURN_IF_BAD(0 == pthread_sigmask(SIG_UNBLOCK, &all_msk, NULL), 1,
