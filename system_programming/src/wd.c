@@ -57,7 +57,7 @@ static void ResetCounterSH(int sig_);
 static int ToDefaultModeIMP(tsk_info_ty* tsk_info_);
 static void ToReviveModeIMP(tsk_info_ty* tsk_info_);
 static void ToExitModeIMP(tsk_info_ty* tsk_info_);
-static void CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_);
+static int CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_);
 static int SpawnWDIMP(tsk_info_ty* wd_argv_);
 static char** AllocWDArgvIMP(wd_guard_info_ty* wd_info_);
 static int InitSignalMaskIMP(sigset_t* msk_);
@@ -69,6 +69,8 @@ static void NotifyFailureAndCleanupIMP(char** wd_argv_, sem_t* sem_,
 static int AddTaskIMP(tsk_info_ty* tsk_info_, scheduler_op_ty tsk_func_);
 static void FreeWDArgvIMP(char** wd_argv_);
 static void CleanupTaskIMP(void* unused_);
+static int BlockAllSignalsIMP(void);
+static int UnBlockSigusr1IMP(void);
 
 static atomic_int g_is_wd_guard_ready = 0;
 static pthread_t g_wd_guard_thread = 0;
@@ -138,8 +140,6 @@ int MakeMeImmortal(size_t cmd_len_, char* cmd_[], int how_often_, int fail_cnt_)
 
 void DoNotResuscitate(void)
 {
-  sigset_t msk = {0};
-
   /* assert wd is on */
   assert(0 != g_wd_guard_thread);
 
@@ -150,12 +150,8 @@ void DoNotResuscitate(void)
   EXIT_IF_BAD_PERROR(0 == pthread_join(g_wd_guard_thread, NULL), 1,
                      "pthread_join failed");
 
-  /* init signal mask */
-  EXIT_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to set signal mask");
-
   /* unblock SIGUSR1 */
-  EXIT_IF_BAD(0 == pthread_sigmask(SIG_UNBLOCK, &msk, NULL), 1,
-              "failed to unblock signals");
+  EXIT_IF_BAD(0 == UnBlockSigusr1IMP(), 1, "failed to unblock signals");
 
   /* restore signal handlers to default */
   EXIT_IF_BAD(0 == ResetSignalHandlersIMP(), 1,
@@ -168,7 +164,7 @@ static void* WDGuardThreadIMP(void* wd_info_)
   scheduler_ty* sch = NULL;
   char** wd_argv = NULL;
   tsk_info_ty tsk_info = {0};
-  sigset_t all_msk = {0};
+  sigset_t msk = {0};
 
   /* assert */
   assert(wd_info_);
@@ -197,24 +193,11 @@ static void* WDGuardThreadIMP(void* wd_info_)
                       NULL, "failed to add init task",
                       NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
 
-  /* fill mask with all signals */
-  RETURN_IF_BAD_CLEAN(0 == sigfillset(&all_msk), NULL,
-                      "failed to fill signal mask",
-                      NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
-
   /* block all signals */
-  RETURN_IF_BAD_CLEAN(0 == pthread_sigmask(SIG_BLOCK, &all_msk, NULL), NULL,
-                      "failed to block signals",
-                      NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
+  EXIT_IF_BAD(0 == BlockAllSignalsIMP(), 1, "block signals fail");
 
-  /* unblock SIGUSR1 */
-  RETURN_IF_BAD_CLEAN(0 == InitSignalMaskIMP(&all_msk), NULL,
-                      "failed to fill signal mask",
-                      NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
-
-  RETURN_IF_BAD_CLEAN(0 == pthread_sigmask(SIG_UNBLOCK, &all_msk, NULL), NULL,
-                      "failed to block signals",
-                      NotifyFailureAndCleanupIMP(wd_argv, wd_info->m_sem, sch));
+  /* unblock sigusr1 */
+  EXIT_IF_BAD(0 == UnBlockSigusr1IMP(), 1, "unblock SIGUSR1 fail");
 
   /* register signal handler */
   RETURN_IF_BAD_CLEAN(0 == RegisterSignalHandlersIMP(), NULL,
@@ -241,6 +224,28 @@ static void* WDGuardThreadIMP(void* wd_info_)
   return NULL;
 }
 
+static int BlockAllSignalsIMP(void)
+{
+  sigset_t msk = {0};
+
+  RETURN_IF_BAD(0 == sigfillset(&msk), 1, "sigfillset failed");
+  RETURN_IF_BAD(0 == pthread_sigmask(SIG_BLOCK, &msk, NULL), 1,
+                "pthread_sigmask failed");
+
+  return SUCCESS;
+}
+
+static int UnBlockSigusr1IMP(void)
+{
+  sigset_t msk = {0};
+
+  RETURN_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to init signal mask");
+  RETURN_IF_BAD(0 == pthread_sigmask(SIG_UNBLOCK, &msk, NULL), 1,
+                "failed to unblock signals");
+
+  return SUCCESS;
+}
+
 static sch_op_status_ty CheckWDSuccessOrFailureTSK(void* tsk_info_)
 {
   tsk_info_ty* tsk_info = (tsk_info_ty*)tsk_info_;
@@ -249,10 +254,7 @@ static sch_op_status_ty CheckWDSuccessOrFailureTSK(void* tsk_info_)
   assert(tsk_info_);
 
   /* check if wd_app sent SIGUSR1 */
-  CheckWDSuccessOrFailureIMP(tsk_info);
-
-  /* return repeat */
-  return SCH_REPEAT;
+  return CheckWDSuccessOrFailureIMP(tsk_info) ? SCH_NOT_REPEAT : SCH_REPEAT;
 }
 
 static sch_op_status_ty SendSignalToWDTSK(void* tsk_info_)
@@ -365,7 +367,6 @@ static void ToReviveModeIMP(tsk_info_ty* tsk_info_)
 static void ToExitModeIMP(tsk_info_ty* tsk_info_)
 {
   int status = 0;
-  sigset_t msk = {0};
   pid_t res = 0;
 
   assert(tsk_info_);
@@ -374,11 +375,6 @@ static void ToExitModeIMP(tsk_info_ty* tsk_info_)
   status = kill(tsk_info_->m_wd_pid, SIGUSR2);
   EXIT_IF_BAD_PERROR(0 == status || ESRCH == errno, 1,
                      "failed to send SIGUSR2");
-
-  /* block signals */
-  EXIT_IF_BAD(0 == InitSignalMaskIMP(&msk), 1, "failed to init signal mask");
-  EXIT_IF_BAD(0 == pthread_sigmask(SIG_BLOCK, &msk, NULL), 1,
-              "failed to block signals");
 
   /* wait for wd_app */
   do
@@ -392,7 +388,7 @@ static void ToExitModeIMP(tsk_info_ty* tsk_info_)
   SchedulerStop(tsk_info_->m_sch);
 }
 
-static void CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_)
+static int CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_)
 {
   unsigned int misses_count = 0;
 
@@ -404,21 +400,21 @@ static void CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_)
 
   if (0 == misses_count)
   {
-    /* wd_app signaled successfully */
+    /* wd_app signaled alive */
     g_is_wd_guard_ready = 1;
-    /* switch to normal operation tasks */
+    /* switch to normal tasks */
     ToDefaultModeIMP(tsk_info_);
   }
   else if (tsk_info_->m_fail_cnt <= misses_count)
   {
-    /* wd_app failed to signal within fail_cnt intervals */
+    /* wd_app failed to signal */
     g_is_wd_guard_ready = 0;
     ToExitModeIMP(tsk_info_);
   }
   else
   {
-    /* still waiting — not enough intervals passed yet */
-    return;
+    /* still waiting — not enough intervals passed */
+    return 0;
   }
 
   /* sem_post for MakeMeImmortal */
@@ -426,6 +422,8 @@ static void CheckWDSuccessOrFailureIMP(tsk_info_ty* tsk_info_)
 
   /* mark sem as dangling */
   tsk_info_->m_sem = BAD_MEM(sem_t*);
+
+  return 1;
 }
 
 static int SpawnWDIMP(tsk_info_ty* tsk_info_)
@@ -484,7 +482,7 @@ static int ResetSignalHandlersIMP(void)
   struct sigaction sa = {0};
 
   /* restore SIGUSR1 */
-  sa.sa_handler = SIG_IGN;
+  sa.sa_handler = SIG_DFL;
   RETURN_IF_BAD(0 == sigaction(SIGUSR1, &sa, NULL), 1,
                 "failed to reset SIGUSR1 handler");
 
