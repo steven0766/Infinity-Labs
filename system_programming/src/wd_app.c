@@ -1,13 +1,13 @@
 #define _POSIX_C_SOURCE 199506L
-#include <assert.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <assert.h> /* assert */
+#include <errno.h>  /* ESRCH */
+#include <signal.h> /* sigaction, sigemptyset, sigaddset, kill, SIGUSR1, SIGUSR2 */
+#include <stdlib.h> /* atoi, exit */
+#include <unistd.h> /* execvp, getppid */
 
-#include "scheduler.h"
-#include "uid.h"
-#include "utils.h"
+#include "scheduler.h" /* SchedulerCreate, SchedulerDestroy, SchedulerAddTask, SchedulerRun, SchedulerStop */
+#include "uid.h"       /* IsMatchId, invalid_uid_g */
+#include "utils.h"     /* EXIT_IF_BAD, EXIT_IF_BAD_PERROR */
 
 typedef struct
 {
@@ -62,15 +62,15 @@ int main(int argc, char* argv[])
   tsk_info.m_fail_cnt = atoi(argv[FAIL_CNT_IDX]);
   EXIT_IF_BAD(0 < tsk_info.m_fail_cnt, 1, "failed to parse fail count");
 
+  /* RegisterSignalHandlersIMP */
+  RegisterSignalHandlersIMP();
+
   /* fill mask with all signals */
   RETURN_IF_BAD(0 == sigfillset(&all_msk), 1, "failed to fill signal mask");
 
   /* unblock all signals */
   RETURN_IF_BAD(0 == pthread_sigmask(SIG_UNBLOCK, &all_msk, NULL), 1,
                 "failed to block signals");
-
-  /* RegisterSignalHandlersIMP */
-  RegisterSignalHandlersIMP();
 
   /* SchedulerCreate */
   /* handle failure */
@@ -267,3 +267,4 @@ static void TaskCleanupIMP(void* unused_)
   /* (void)unused_ */
   (void)unused_;
 }
+/**/
