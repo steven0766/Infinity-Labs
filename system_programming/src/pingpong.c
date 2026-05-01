@@ -43,7 +43,7 @@ int main()
 	}
 	
 	/* while true */
-	while (TRUE)
+	while (1)
 	{
 		/* if was_signal_receive on */
 		if (was_signal_receive)
