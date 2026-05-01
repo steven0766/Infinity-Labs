@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     printf("pong -> SIGUSR1 to ping (%ld)\n", ping_pid);
 
-    while (TRUE)
+    while (1)
     {
         pause();
 

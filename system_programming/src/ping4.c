@@ -28,7 +28,7 @@ int main()
     printf("ping pid: %d\n", getpid());
     printf("waiting for pong...\n");
 
-    while (TRUE)
+    while (1)
     {
         pause();
 
