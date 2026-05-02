@@ -12,3 +12,13 @@ alias gb='git branch'
 alias vlg='valgrind --leak-check=yes --track-origins=yes'
 #compile before linking
 alias go='gcc -c'
+
+#c
+alias c-build='gcc -Wall -Wextra -std=c11'
+alias c-strict='gcc -Wall -Wextra -Werror -std=c11'
+#c++ debug
+alias cpp-debug='g++ -Wall -Wextra -std=c++11 -g -O0'
+alias cpp-debug-strict='g++ -Wall -Wextra -Werror -std=c++11 -g -O0'
+#c++ release
+alias cpp-release='g++ -Wall -Wextra -std=c++11 -O2 -DNDEBUG'
+alias cpp-release-strict='g++ -Wall -Wextra -Werror -std=c++11 -O2 -DNDEBUG'
