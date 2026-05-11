@@ -61,7 +61,7 @@ X::~X()
 
 int main()
 {
-  X x1;
+  //   X x1;
   //   X x2(7.2);
   //   X* px = new X(x2);
   X x3(9, 10);
@@ -76,7 +76,7 @@ int main()
 
   //   y3 = y1;
 
-  x1 = x3;
+  //   x1 = x3;
 
   //   std::cout << "size of struct: " << sizeof(x1) << std::endl;
 
