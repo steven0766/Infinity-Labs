@@ -3,15 +3,15 @@
 
 #include <cstddef> //size_t
 
-namespace hrd42
-{
-
 /****************************
 Description:
 Developer:
 Reviewer:
 Version:
 ****************************/
+
+namespace hrd42
+{
 template <typename T> class Slist
 {
 public:
