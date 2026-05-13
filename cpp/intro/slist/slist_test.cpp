@@ -48,5 +48,7 @@ int main()
     }
   }
 
+  delete list;
+
   return 0;
 }
