@@ -9,5 +9,6 @@
 !.myfuncs
 !.gitignore
 !makefile
-!.cpp
+!*.cpp
+!*.hpp
 
