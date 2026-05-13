@@ -55,7 +55,7 @@ Slist::~Slist()
     curr = next;
   }
 
-  this->m_head = 0;
+  delete this->m_head;
 }
 void Slist::PushFront(int val_)
 {
