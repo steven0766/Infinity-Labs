@@ -4,10 +4,10 @@
 #include <cstddef> //size_t
 
 /****************************
-Description:
-Developer:
-Reviewer:
-Version:
+Description:Slist generic
+Developer:Steve
+Reviewer:Tomer
+Version:1.1
 ****************************/
 
 namespace hrd42
