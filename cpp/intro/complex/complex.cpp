@@ -1,7 +1,6 @@
 // test_complex.cpp
 #include "complex.hpp"
 #include <iostream>
-#include <sstream>
 
 using namespace hrd42;
 
@@ -56,26 +55,25 @@ int main()
   TEST("implicit right", Complex(1, 2) + 5.0 == Complex(6, 2));
   TEST("implicit left", 5.0 + Complex(1, 2) == Complex(6, 2));
 
-  //  operator>>
+  // operator
+  std::cout << "operator<< : " << Complex(3, 4) << "\n";
+  std::cout << "operator<< : " << Complex(1.5, 2.5) << "\n";
+
+  // operator>>
   Complex in1;
-  std::istringstream iss1("(7,9)");
-  iss1 >> in1;
+  std::cout << "enter (7,9) : ";
+  std::cin >> in1;
   TEST(">> simple", in1 == Complex(7, 9));
 
   Complex in2;
-  std::istringstream iss2("(70,132)");
-  iss2 >> in2;
+  std::cout << "enter (70,132) : ";
+  std::cin >> in2;
   TEST(">> multi digit", in2 == Complex(70, 132));
 
   Complex in3;
-  std::istringstream iss3("(1.5,2.5)");
-  iss3 >> in3;
+  std::cout << "enter (1.5,2.5) : ";
+  std::cin >> in3;
   TEST(">> double", in3 == Complex(1.5, 2.5));
-
-  // operator<<
-  std::ostringstream oss;
-  oss << Complex(3, 4);
-  TEST("<<", oss.str() == "(3,4)");
 
   return 0;
 }
