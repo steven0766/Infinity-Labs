@@ -27,7 +27,7 @@ String::~String()
 
 bool String::operator==(const String& other) const
 {
-  return (this->m_str == other.m_str);
+  return strcmp(m_str, other.m_str);
 }
 bool String::operator!=(const String& other) const
 {
