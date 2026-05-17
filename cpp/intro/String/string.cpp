@@ -5,12 +5,13 @@ using namespace hrd42;
 
 String::String(const char* str)
 {
-  this->m_str = new char[strlen(str) + 1];
-  strcpy(this->m_str, str);
+  m_str = new char[strlen(str) + 1];
+  strcpy(m_str, str);
 }
 String::String(const String& other)
 {
-  *this = other;
+  m_str = new char[strlen(other.m_str) + 1];
+  strcpy(m_str, other.m_str);
 }
 String& String::operator=(const String& other)
 {
