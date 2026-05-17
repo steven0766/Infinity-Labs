@@ -25,6 +25,7 @@ bool String::operator==(const String& other) const
 }
 bool String::operator!=(const String& other) const
 {
+  return (!(*this == other));
 }
 String& String::operator+=(const String& other)
 {
