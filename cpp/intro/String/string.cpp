@@ -13,6 +13,7 @@ String::String(const String& other)
 }
 String& String::operator=(const String& other)
 {
+  this->m_str = other.m_str;
 }
 String::~String()
 {
