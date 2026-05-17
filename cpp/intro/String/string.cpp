@@ -9,6 +9,7 @@ String::String(const char* str)
 }
 String::String(const String& other)
 {
+  *this = other;
 }
 String& String::operator=(const String& other)
 {
