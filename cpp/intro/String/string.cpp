@@ -15,10 +15,14 @@ String::String(const String& other)
 }
 String& String::operator=(const String& other)
 {
-  this->m_str = other.m_str;
+  delete[] m_str;
+  m_str = new char[strlen(other.m_str) + 1];
+  strcpy(m_str, other.m_str);
+  return *this;
 }
 String::~String()
 {
+  delete[] m_str;
 }
 
 bool String::operator==(const String& other) const
