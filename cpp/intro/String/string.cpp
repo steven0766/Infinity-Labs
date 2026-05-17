@@ -5,6 +5,7 @@ using namespace hrd42;
 
 String::String(const char* str)
 {
+  this->m_str = new char[strlen(str) + 1];
   strcpy(this->m_str, str);
 }
 String::String(const String& other)
