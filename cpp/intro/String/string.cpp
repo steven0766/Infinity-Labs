@@ -1,8 +1,9 @@
 #include "string.hpp"
 #include <cstring>
 
-using namespace hrd42;
-
+namespace hrd42
+{
+//  class functions
 String::String(const char* str)
 {
   m_str = new char[strlen(str) + 1];
@@ -15,9 +16,12 @@ String::String(const String& other)
 }
 String& String::operator=(const String& other)
 {
-  delete[] m_str;
-  m_str = new char[strlen(other.m_str) + 1];
-  strcpy(m_str, other.m_str);
+  if (this != &other)
+  {
+    delete[] m_str;
+    m_str = new char[strlen(other.m_str) + 1];
+    strcpy(m_str, other.m_str);
+  }
   return *this;
 }
 String::~String()
@@ -27,7 +31,7 @@ String::~String()
 
 bool String::operator==(const String& other) const
 {
-  return strcmp(this->m_str, other.m_str);
+  return (0 == strcmp(this->m_str, other.m_str));
 }
 bool String::operator!=(const String& other) const
 {
@@ -65,3 +69,20 @@ const char* String::Cstr() const
 {
   return this->m_str;
 }
+
+//  global functions
+const String operator+(const String& lhs, const String& rhs)
+{
+  return String(lhs) += rhs;
+}
+std::istream& operator>>(std::istream& is, String& str)
+{
+}
+std::ostream& operator<<(std::ostream& os, const String& str)
+{
+  os << str.m_str;
+
+  return os;
+}
+} // namespace hrd42
+//   namespace hrd42
