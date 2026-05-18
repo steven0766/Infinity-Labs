@@ -3,6 +3,13 @@
 #include <cstring>
 #include <iostream>
 
+/************************************************************
+Description: Complex
+Developer: Steve
+Reviewer: Lior
+Version: 1
+************************************************************/
+
 namespace hrd42
 {
 //  class functions
