@@ -50,9 +50,11 @@ String& String::operator+=(const String& other)
 
 char& String::operator[](size_t idx)
 {
+  return this->m_str[idx];
 }
 const char& String::operator[](size_t idx) const
 {
+  return this->m_str[idx];
 }
 
 size_t String::Length() const
