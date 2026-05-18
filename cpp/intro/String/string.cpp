@@ -6,12 +6,12 @@ using namespace hrd42;
 String::String(const char* str)
 {
   m_str = new char[strlen(str) + 1];
-  strcpy(m_str, str);
+  strcpy(this->m_str, str);
 }
 String::String(const String& other)
 {
   m_str = new char[strlen(other.m_str) + 1];
-  strcpy(m_str, other.m_str);
+  strcpy(this->m_str, other.m_str);
 }
 String& String::operator=(const String& other)
 {
@@ -22,12 +22,12 @@ String& String::operator=(const String& other)
 }
 String::~String()
 {
-  delete[] m_str;
+  delete[] this->m_str;
 }
 
 bool String::operator==(const String& other) const
 {
-  return strcmp(m_str, other.m_str);
+  return strcmp(this->m_str, other.m_str);
 }
 bool String::operator!=(const String& other) const
 {
@@ -63,4 +63,5 @@ size_t String::Length() const
 }
 const char* String::Cstr() const
 {
+  return this->m_str;
 }
