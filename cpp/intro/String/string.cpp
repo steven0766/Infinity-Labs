@@ -35,6 +35,17 @@ bool String::operator!=(const String& other) const
 }
 String& String::operator+=(const String& other)
 {
+  size_t old_len = strlen(this->m_str);
+  size_t new_len = old_len + strlen(other.m_str);
+  char* new_str = new char[new_len + 1];
+
+  strcpy(new_str, this->m_str);
+  strcat(new_str, other.m_str);
+
+  delete[] this->m_str;
+  this->m_str = new_str;
+
+  return *this;
 }
 
 char& String::operator[](size_t idx)
