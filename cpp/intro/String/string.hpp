@@ -6,7 +6,7 @@
 
 namespace hrd42
 {
-
+class String;
 const String operator+(const String& lhs, const String& rhs);
 
 std::istream& operator>>(std::istream& is, String& str);
@@ -38,6 +38,6 @@ private:
   friend std::ostream& operator<<(std::ostream& os, const String& str);
 };
 
-}; // namespace hrd42
+} // namespace hrd42
 
 #endif //__ILRD_HRD42_STRING_HPP__

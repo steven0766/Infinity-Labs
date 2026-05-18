@@ -1,5 +1,7 @@
 #include "string.hpp"
+#include <cctype>
 #include <cstring>
+#include <iostream>
 
 namespace hrd42
 {
@@ -77,6 +79,31 @@ const String operator+(const String& lhs, const String& rhs)
 }
 std::istream& operator>>(std::istream& is, String& str)
 {
+  const size_t chunk_size = 128;
+  char buf[chunk_size];
+  char* curr = buf;
+  char* end = buf + chunk_size - 1;
+
+  str = "";
+
+  while (is.get(*curr) && !std::isspace(*curr))
+  {
+    ++curr;
+    if (curr == end)
+    {
+      *curr = '\0';
+      str += String(buf);
+      curr = buf;
+    }
+  }
+
+  if (curr != buf)
+  {
+    *curr = '\0';
+    str += String(buf);
+  }
+
+  return is;
 }
 std::ostream& operator<<(std::ostream& os, const String& str)
 {
@@ -85,4 +112,3 @@ std::ostream& operator<<(std::ostream& os, const String& str)
   return os;
 }
 } // namespace hrd42
-//   namespace hrd42
