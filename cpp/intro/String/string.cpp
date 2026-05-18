@@ -59,6 +59,7 @@ const char& String::operator[](size_t idx) const
 
 size_t String::Length() const
 {
+  return strlen(this->m_str);
 }
 const char* String::Cstr() const
 {
