@@ -21,6 +21,10 @@ public:
   String& operator=(const String& other);
   ~String();
 
+  // exe 11
+  bool operator>(const String& other) const;
+  bool operator<(const String& other) const;
+
   bool operator==(const String& other) const;
   bool operator!=(const String& other) const;
   String& operator+=(const String& other);
@@ -33,6 +37,8 @@ public:
 
 private:
   char* m_str;
+
+  void MakeString(const char* str);
 
   friend std::istream& operator>>(std::istream& is, String& str);
   friend std::ostream& operator<<(std::ostream& os, const String& str);

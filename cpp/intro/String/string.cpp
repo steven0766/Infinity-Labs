@@ -1,39 +1,43 @@
 #include "string.hpp"
-#include <cctype>
-#include <cstring>
+#include <cctype>  //  isspace
+#include <cstring> //    strcpy, strcmp
 #include <iostream>
+
+/************************************************************
+Description: Complex
+Developer: Steve
+Reviewer: Lior
+Version: 1.1 after review
+************************************************************/
 
 namespace hrd42
 {
 //  class functions
-String::String(const char* str)
+String::String(const char* str_)
 {
-  m_str = new char[strlen(str) + 1];
-  strcpy(this->m_str, str);
+  MakeString(str_);
 }
 String::String(const String& other)
 {
-  m_str = new char[strlen(other.m_str) + 1];
-  strcpy(this->m_str, other.m_str);
+  MakeString(other.m_str);
 }
 String& String::operator=(const String& other)
 {
   if (this != &other)
   {
     delete[] m_str;
-    m_str = new char[strlen(other.m_str) + 1];
-    strcpy(m_str, other.m_str);
+    MakeString(other.m_str);
   }
   return *this;
 }
 String::~String()
 {
-  delete[] this->m_str;
+  delete[] m_str;
 }
 
 bool String::operator==(const String& other) const
 {
-  return (0 == strcmp(this->m_str, other.m_str));
+  return (0 == strcmp(m_str, other.m_str));
 }
 bool String::operator!=(const String& other) const
 {
@@ -41,35 +45,35 @@ bool String::operator!=(const String& other) const
 }
 String& String::operator+=(const String& other)
 {
-  size_t old_len = strlen(this->m_str);
+  size_t old_len = strlen(m_str);
   size_t new_len = old_len + strlen(other.m_str);
   char* new_str = new char[new_len + 1];
 
-  strcpy(new_str, this->m_str);
+  strcpy(new_str, m_str);
   strcat(new_str, other.m_str);
 
-  delete[] this->m_str;
-  this->m_str = new_str;
+  delete[] m_str;
+  m_str = new_str;
 
   return *this;
 }
 
 char& String::operator[](size_t idx)
 {
-  return this->m_str[idx];
+  return m_str[idx];
 }
 const char& String::operator[](size_t idx) const
 {
-  return this->m_str[idx];
+  return m_str[idx];
 }
 
 size_t String::Length() const
 {
-  return strlen(this->m_str);
+  return strlen(m_str);
 }
 const char* String::Cstr() const
 {
-  return this->m_str;
+  return m_str;
 }
 
 //  global functions
@@ -110,5 +114,21 @@ std::ostream& operator<<(std::ostream& os, const String& str)
   os << str.m_str;
 
   return os;
+}
+
+void String::MakeString(const char* str_)
+{
+  m_str = new char[strlen(str_) + 1];
+  strcpy(m_str, str_);
+}
+
+// exe 11
+bool String::operator>(const String& other) const
+{
+  return (strcmp(m_str, other.m_str) > 0);
+}
+bool String::operator<(const String& other) const
+{
+  return (strcmp(m_str, other.m_str) < 0);
 }
 } // namespace hrd42

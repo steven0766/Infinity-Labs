@@ -16,6 +16,7 @@ void TestIndex();
 void TestLength();
 void TestCstr();
 void TestStream();
+void TestLongerOrShorter();
 
 int main()
 {
@@ -27,6 +28,8 @@ int main()
   TestLength();
   TestCstr();
   TestStream();
+  TestLongerOrShorter();
+
   return 0;
 }
 
@@ -128,4 +131,17 @@ void TestStream()
   String t3;
   iss2 >> t3;
   TEST(">> long word (>128 chars)", t3 == long_word);
+}
+
+void TestLongerOrShorter()
+{
+  String s1 = "123";
+  String s2 = "1234";
+  String s3 = "123";
+  TEST("is s1 longer then s2? ", 0 == (s1 > s2));
+  TEST("is s2 longer then s1? ", 1 == (s2 > s1));
+  TEST("is s1 longer then s3? ", 0 == (s1 > s3));
+  TEST("is s1 shorter then s2? ", 1 == (s1 < s2));
+  TEST("is s2 shorter then s1? ", 0 == (s2 < s1));
+  TEST("is s1 shorter then s3? ", 0 == (s1 < s3));
 }
