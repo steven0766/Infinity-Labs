@@ -12,6 +12,18 @@ struct BadDog : public runtime_error
   }
 };
 
+struct X
+{
+  X()
+  {
+    cerr << "X constructor" << endl;
+  }
+  ~X()
+  {
+    cerr << "X destructor" << endl;
+  }
+};
+
 void Fifi()
 {
   throw BadDog("bad pup");
@@ -20,7 +32,7 @@ void Fifi()
 
 void Foo()
 {
-  // X x1;
+  X x1;
   Fifi();
   cerr << " Foo() after Fifi()" << endl;
 }
@@ -42,15 +54,19 @@ int main()
     cerr << "Out of memory! exiting.";
     exit(2);
   }
-  catch (BadDog& b)
-  {
-    cerr << "Bad dog exception: " << b.what();
-    exit(2);
-  }
-  catch (exception& r)
+  //   catch (BadDog b)
+  //   {
+  //     cerr << "Bad dog exception: " << b.what();
+  //     exit(2);
+  //   }
+  catch (exception r)
   {
     cerr << "unknown exception: " << r.what();
     exit(4);
+  }
+  catch (...)
+  {
+    cerr << "caught something unknown!" << endl;
   }
 
   return 0;
