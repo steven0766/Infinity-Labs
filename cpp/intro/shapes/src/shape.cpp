@@ -5,8 +5,7 @@
 using namespace hrd42;
 using namespace ilrd;
 
-Shape::Shape(const ilrd::Point& center, double angle = 0,
-             COLORS color = COLOR_WHITE)
+Shape::Shape(const ilrd::Point& center, double angle, COLORS color)
     : m_center(center), m_angle(angle), m_color(color)
 {
 }
@@ -38,4 +37,16 @@ Shape& Shape::SetColor(COLORS color)
 {
   this->m_color = color;
   return *this;
+}
+const ilrd::Point& Shape::GetCenter() const
+{
+  return this->m_center;
+}
+double Shape::GetAngle() const
+{
+  return this->m_angle;
+}
+COLORS Shape::GetColor() const
+{
+  return this->m_color;
 }
