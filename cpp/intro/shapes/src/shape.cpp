@@ -14,25 +14,28 @@ Shape::~Shape()
 {
 }
 
-Shape& Shape::Draw() const
-{
-}
 Shape& Shape::Move(const ilrd::Point& dest)
 {
+  this->m_center.Move(dest.GetX(), dest.GetY());
+  return *this;
 }
 Shape& Shape::Move(double x_offest, double y_offset)
 {
+  Step(&(this->m_center), x_offest, y_offset);
+  return *this;
 }
 Shape& Shape::Rotate(double angle)
 {
+  this->m_center.Revolve(this->m_center, angle);
+  return *this;
 }
 Shape& Shape::Revolve(const ilrd::Point& pivot, double angle)
 {
+  this->m_center.Revolve(pivot, angle);
+  return *this;
 }
 Shape& Shape::SetColor(COLORS color)
 {
-}
-
-Shape* Shape::Clone() const
-{
+  this->m_color = color;
+  return *this;
 }
