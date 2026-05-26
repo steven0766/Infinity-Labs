@@ -11,7 +11,7 @@ Square::Square(const ilrd::Point& center, double width, double angle,
 {
 }
 
-Square& Square::Draw() const
+Square& Square::Draw()
 {
   double half = m_width / 2.0;
   double angle = GetAngle();
@@ -31,7 +31,7 @@ Square& Square::Draw() const
               (int)p2.GetY(), (int)p3.GetX(), (int)p3.GetY(), (int)p4.GetX(),
               (int)p4.GetY());
 
-  return const_cast<Square&>(*this);
+  return *this;
 }
 
 Square* Square::Clone() const

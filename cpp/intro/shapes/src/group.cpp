@@ -13,7 +13,7 @@ Group& Group::AddShape(Shape* shape)
   return *this;
 }
 
-Group& Group::Draw() const
+Group& Group::Draw()
 {
   for (size_t i = 0; i < m_shapes.size(); ++i)
   {

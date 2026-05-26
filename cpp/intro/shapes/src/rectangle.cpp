@@ -11,7 +11,7 @@ Rectangle::Rectangle(const ilrd::Point& center, double width, double height,
 {
 }
 
-Rectangle& Rectangle::Draw() const
+Rectangle& Rectangle::Draw()
 {
   double half_width = m_width / 2;
   double half_height = m_height / 2;
@@ -32,7 +32,7 @@ Rectangle& Rectangle::Draw() const
               (int)p2.GetY(), (int)p3.GetX(), (int)p3.GetY(), (int)p4.GetX(),
               (int)p4.GetY());
 
-  return const_cast<Rectangle&>(*this);
+  return *this;
 }
 
 Rectangle* Rectangle::Clone() const

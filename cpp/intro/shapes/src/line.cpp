@@ -11,7 +11,7 @@ Line::Line(const ilrd::Point& center, double length, double angle, COLORS color)
 {
 }
 
-Line& Line::Draw() const
+Line& Line::Draw()
 {
   double half_length = m_length / 2;
   double angle = GetAngle();
@@ -26,7 +26,7 @@ Line& Line::Draw() const
   DrawPolygon(GetColor(), 2, (int)p1.GetX(), (int)p1.GetY(), (int)p2.GetX(),
               (int)p2.GetY());
 
-  return const_cast<Line&>(*this);
+  return *this;
 }
 
 Line* Line::Clone() const

@@ -11,11 +11,11 @@ Circle::Circle(const ilrd::Point& center, double radius, double angle,
 {
 }
 
-Circle& Circle::Draw() const
+Circle& Circle::Draw()
 {
   DrawCircle(GetColor(), GetCenter().GetX(), GetCenter().GetY(), m_radius);
 
-  return const_cast<Circle&>(*this);
+  return *this;
 }
 
 Circle* Circle::Clone() const
