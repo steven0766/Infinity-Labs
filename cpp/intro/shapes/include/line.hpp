@@ -15,7 +15,7 @@ public:
                 COLORS color = COLOR_WHITE);
   // using generated dtor
 
-  virtual Line& Draw();
+  virtual Line& Draw() const;
   virtual Line* Clone() const;
 
 private:

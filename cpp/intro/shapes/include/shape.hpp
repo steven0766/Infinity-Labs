@@ -22,6 +22,10 @@ public:
   virtual Shape& SetColor(COLORS color);
 
   virtual Shape* Clone() const = 0; // pure?
+protected:
+  const ilrd::Point& GetCenter() const;
+  double GetAngle() const;
+  COLORS GetColor() const;
 
 private:
   ilrd::Point m_center;

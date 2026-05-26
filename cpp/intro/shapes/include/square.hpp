@@ -15,7 +15,7 @@ public:
                   COLORS color = COLOR_WHITE);
   // using generated dtor
 
-  virtual Square& Draw();
+  virtual Square& Draw() const;
   virtual Square* Clone() const;
 
 private:
