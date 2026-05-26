@@ -16,7 +16,7 @@ public:
                      COLORS color = COLOR_WHITE);
   // using generated dtor
 
-  virtual Rectangle& Draw() const;
+  virtual Rectangle& Draw();
   virtual Rectangle* Clone() const;
 
 private:

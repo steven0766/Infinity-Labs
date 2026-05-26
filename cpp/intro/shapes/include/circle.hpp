@@ -15,7 +15,7 @@ public:
                   double angle = 0, COLORS color = COLOR_WHITE);
   // using generated dtor
 
-  virtual Circle& Draw() const;
+  virtual Circle& Draw();
   virtual Circle* Clone() const;
 
 private:

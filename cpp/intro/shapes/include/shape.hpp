@@ -14,7 +14,7 @@ public:
                  COLORS color = COLOR_WHITE);
   virtual ~Shape();
 
-  virtual Shape& Draw() const = 0;
+  virtual Shape& Draw() = 0;
   virtual Shape& Move(const ilrd::Point& dest);
   virtual Shape& Move(double x_offest, double y_offset);
   virtual Shape& Rotate(double angle);

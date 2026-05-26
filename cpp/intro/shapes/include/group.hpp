@@ -16,7 +16,7 @@ public:
 
   Group& AddShape(Shape* shape);
 
-  virtual Group& Draw() const;
+  virtual Group& Draw();
   virtual Group& Move(const ilrd::Point& dest);
   virtual Group& Move(double x_offest, double y_offset);
   virtual Group& Rotate(double angle);
