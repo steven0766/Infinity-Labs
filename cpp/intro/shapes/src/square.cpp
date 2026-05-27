@@ -5,8 +5,7 @@
 using namespace hrd42;
 using namespace ilrd;
 
-Square::Square(const ilrd::Point& center, double width, double angle,
-               COLORS color)
+Square::Square(const Point& center, double width, double angle, COLORS color)
     : Shape(center, angle, color), m_width(width)
 {
 }
@@ -15,12 +14,12 @@ Square& Square::Draw()
 {
   double half = m_width / 2.0;
   double angle = GetAngle();
-  ilrd::Point center = GetCenter();
+  Point center = GetCenter();
 
-  ilrd::Point p1(center.GetX() - half, center.GetY() - half);
-  ilrd::Point p2(center.GetX() + half, center.GetY() - half);
-  ilrd::Point p3(center.GetX() + half, center.GetY() + half);
-  ilrd::Point p4(center.GetX() - half, center.GetY() + half);
+  Point p1(center.GetX() - half, center.GetY() - half);
+  Point p2(center.GetX() + half, center.GetY() - half);
+  Point p3(center.GetX() + half, center.GetY() + half);
+  Point p4(center.GetX() - half, center.GetY() + half);
 
   p1.Revolve(center, angle);
   p2.Revolve(center, angle);

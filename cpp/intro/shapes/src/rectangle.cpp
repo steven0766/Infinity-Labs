@@ -5,7 +5,7 @@
 using namespace hrd42;
 using namespace ilrd;
 
-Rectangle::Rectangle(const ilrd::Point& center, double width, double height,
+Rectangle::Rectangle(const Point& center, double width, double height,
                      double angle, COLORS color)
     : Shape(center, angle, color), m_width(width), m_height(height)
 {
@@ -16,12 +16,12 @@ Rectangle& Rectangle::Draw()
   double half_width = m_width / 2;
   double half_height = m_height / 2;
   double angle = GetAngle();
-  ilrd::Point center = GetCenter();
+  Point center = GetCenter();
 
-  ilrd::Point p1(center.GetX() - half_width, center.GetY() - half_height);
-  ilrd::Point p2(center.GetX() + half_width, center.GetY() - half_height);
-  ilrd::Point p3(center.GetX() + half_width, center.GetY() + half_height);
-  ilrd::Point p4(center.GetX() - half_width, center.GetY() + half_height);
+  Point p1(center.GetX() - half_width, center.GetY() - half_height);
+  Point p2(center.GetX() + half_width, center.GetY() - half_height);
+  Point p3(center.GetX() + half_width, center.GetY() + half_height);
+  Point p4(center.GetX() - half_width, center.GetY() + half_height);
 
   p1.Revolve(center, angle);
   p2.Revolve(center, angle);

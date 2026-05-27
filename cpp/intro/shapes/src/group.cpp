@@ -2,7 +2,7 @@
 using namespace hrd42;
 using namespace ilrd;
 
-Group::Group(Shape& shape) : Shape(ilrd::Point(0, 0)), m_shapes()
+Group::Group(Shape& shape) : Shape(Point(0, 0)), m_shapes()
 {
   m_shapes.push_back(&shape);
 }
@@ -22,7 +22,7 @@ Group& Group::Draw()
   return const_cast<Group&>(*this);
 }
 
-Group& Group::Move(const ilrd::Point& dest)
+Group& Group::Move(const Point& dest)
 {
   for (size_t i = 0; i < m_shapes.size(); ++i)
   {
@@ -49,7 +49,7 @@ Group& Group::Rotate(double angle)
   return *this;
 }
 
-Group& Group::Revolve(const ilrd::Point& pivot, double angle)
+Group& Group::Revolve(const Point& pivot, double angle)
 {
   for (size_t i = 0; i < m_shapes.size(); ++i)
   {

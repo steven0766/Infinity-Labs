@@ -5,8 +5,7 @@
 using namespace hrd42;
 using namespace ilrd;
 
-Circle::Circle(const ilrd::Point& center, double radius, double angle,
-               COLORS color)
+Circle::Circle(const Point& center, double radius, double angle, COLORS color)
     : Shape(center, angle, color), m_radius(radius)
 {
 }
