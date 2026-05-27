@@ -3,6 +3,7 @@ Description: shape
 Developer: Steve
 Reviewer: Itay
 Version: 1
+         1.1 - repair after first review
 ************************************************************/
 
 #include "shape.hpp"
