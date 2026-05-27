@@ -12,14 +12,14 @@ Square::Square(const Point& center, double width, double angle, COLORS color)
 
 Square& Square::Draw()
 {
-  double half = m_width / 2.0;
+  double half_length = m_width / 2;
   double angle = GetAngle();
   Point center = GetCenter();
 
-  Point p1(center.GetX() - half, center.GetY() - half);
-  Point p2(center.GetX() + half, center.GetY() - half);
-  Point p3(center.GetX() + half, center.GetY() + half);
-  Point p4(center.GetX() - half, center.GetY() + half);
+  Point p1(center.GetX() - half_length, center.GetY() - half_length);
+  Point p2(center.GetX() + half_length, center.GetY() - half_length);
+  Point p3(center.GetX() + half_length, center.GetY() + half_length);
+  Point p4(center.GetX() - half_length, center.GetY() + half_length);
 
   p1.Revolve(center, angle);
   p2.Revolve(center, angle);
