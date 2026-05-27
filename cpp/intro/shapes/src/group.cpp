@@ -19,7 +19,7 @@ Group& Group::Draw()
   {
     m_shapes[i]->Draw();
   }
-  return const_cast<Group&>(*this);
+  return *this;
 }
 
 Group& Group::Move(const Point& dest)
