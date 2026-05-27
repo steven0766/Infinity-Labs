@@ -14,7 +14,7 @@ public:
                  COLORS color = COLOR_WHITE);
   virtual ~Shape();
 
-  virtual Shape& Draw() const = 0;
+  virtual Shape& Draw() = 0;
   virtual Shape& Move(const ilrd::Point& dest);
   virtual Shape& Move(double x_offest, double y_offset);
   virtual Shape& Rotate(double angle);
@@ -22,6 +22,10 @@ public:
   virtual Shape& SetColor(COLORS color);
 
   virtual Shape* Clone() const = 0; // pure?
+protected:
+  const ilrd::Point& GetCenter() const;
+  double GetAngle() const;
+  COLORS GetColor() const;
 
 private:
   ilrd::Point m_center;
