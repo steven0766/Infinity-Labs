@@ -1,3 +1,10 @@
+/************************************************************
+Description: shape
+Developer: Steve
+Reviewer: Itay
+Version: 1
+************************************************************/
+
 #include "shape.hpp"
 #include "glut_utils.h"
 #include "point.hpp"
