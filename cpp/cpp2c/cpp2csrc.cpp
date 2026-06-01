@@ -188,10 +188,12 @@ int main(int argc, char** argv, char** envp)
   Minibus m;
   PrintInfo(m);
   PrintInfo(3).Display();
+
   Public_Transport* array[] = {new Minibus(), new Taxi(), new Minibus()};
 
   for (int i = 0; i < 3; ++i)
     array[i]->Display();
+
   for (int i = 0; i < 3; ++i)
     delete array[i];
 
@@ -211,16 +213,19 @@ int main(int argc, char** argv, char** envp)
   delete[] arr4;
 
   std::cout << maxFunc<int>(1, 2) << std::endl;
+
   Special_Taxi st;
   TaxiDisplay(st);
 
   Public_Convoy* ts1 = new Public_Convoy();
   Public_Convoy* ts2 = new Public_Convoy(*ts1);
+
   ts1->Display();
   ts2->Display();
+
   delete ts1;
 
-  ts2->Display(); // this crashes. fix the bug!
+  ts2->Display();
   delete ts2;
 
   return 0;
