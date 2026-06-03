@@ -16,12 +16,12 @@ static int s_count = 0;
 void Public_Transport_Dtor(Public_Transport* this);
 void Public_Transport_Display(Public_Transport* this);
 
-static v_func v_table[] = {(v_func)Public_Transport_Dtor,
-                           (v_func)Public_Transport_Display};
+static v_func Public_Transport_VTable[] = {(v_func)Public_Transport_Dtor,
+                                           (v_func)Public_Transport_Display};
 
 Public_Transport* Public_Transport_Ctor(Public_Transport* this)
 {
-  this->vptr = v_table;
+  this->vptr = Public_Transport_VTable;
   this->m_license_plate = ++s_count;
   printf("Public_Transport::Ctor() %d\n", this->m_license_plate);
 
@@ -30,6 +30,7 @@ Public_Transport* Public_Transport_Ctor(Public_Transport* this)
 
 void Public_Transport_Dtor(Public_Transport* this)
 {
+  this->vptr = Public_Transport_VTable;
   --s_count;
   printf("Public_Transport::Dtor() %d\n", this->m_license_plate);
 }
@@ -37,7 +38,7 @@ void Public_Transport_Dtor(Public_Transport* this)
 Public_Transport* Public_Transport_Cctor(Public_Transport* this,
                                          const Public_Transport* other)
 {
-  this->vptr = v_table;
+  this->vptr = Public_Transport_VTable;
   this->m_license_plate = ++s_count;
   printf("Public_Transport::Cctor() %d\n", this->m_license_plate);
 
@@ -95,6 +96,7 @@ Minibus* Minibus_Cctor(Minibus* this, const Minibus* other)
 void Minibus_Dtor(Minibus* this)
 {
   printf("Minibus::dtor()\n");
+  this->m_pt.vptr = Minibus_VTable;
   Public_Transport_Dtor(&this->m_pt);
 }
 
@@ -140,6 +142,7 @@ Taxi* Taxi_Cctor(Taxi* this, const Taxi* other)
 void Taxi_Dtor(Taxi* this)
 {
   printf("Taxi::Dtor()\n");
+  this->m_pt.vptr = Taxi_VTable;
   Public_Transport_Dtor(&this->m_pt);
 }
 
@@ -180,6 +183,7 @@ Special_Taxi* Special_Taxi_Cctor(Special_Taxi* this, const Special_Taxi* other)
 void Special_Taxi_Dtor(Special_Taxi* this)
 {
   printf("Special_Taxi::Dtor()\n");
+  this->m_t.m_pt.vptr = Special_Taxi_VTable;
   Taxi_Dtor(&this->m_t);
 }
 
@@ -220,6 +224,7 @@ Public_Convoy* Public_Convoy_Ctor(Public_Convoy* this)
 
 void Public_Convoy_Dtor(Public_Convoy* this)
 {
+  this->m_pt.vptr = Public_Convoy_VTable;
   Minibus_Dtor((Minibus*)this->m_pt1);
   free(this->m_pt1);
   Taxi_Dtor((Taxi*)this->m_pt2);
