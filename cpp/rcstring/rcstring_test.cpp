@@ -8,16 +8,17 @@ using namespace hrd42;
 #define TEST(name, condition)                                                  \
   std::cout << (condition ? "PASS" : "FAIL") << " : " << name << "\n"
 
-void TestCtor();
-void TestCompare();
-void TestAppend();
-void TestAdd();
-void TestIndex();
-void TestLength();
-void TestCstr();
-void TestStream();
-void TestLongerOrShorter();
-void TestRC();
+static void TestCtor();
+static void TestCompare();
+static void TestAppend();
+static void TestAdd();
+static void TestIndex();
+static void TestLength();
+static void TestCstr();
+static void TestStream();
+static void TestLongerOrShorter();
+static void TestRC();
+static void TestCopyOnWrite();
 
 int main()
 {
@@ -31,11 +32,12 @@ int main()
   TestStream();
   TestLongerOrShorter();
   TestRC();
+  TestCopyOnWrite();
 
   return 0;
 }
 
-void TestCtor()
+static void TestCtor()
 {
   RCString s1;
   RCString s2 = "123asd";
@@ -45,7 +47,7 @@ void TestCtor()
   TEST("copy ctor", s3 == s2);
 }
 
-void TestCompare()
+static void TestCompare()
 {
   RCString s1 = "123";
   RCString s2 = "abd";
@@ -56,7 +58,7 @@ void TestCompare()
   TEST("!= on equal strings", !(s2 != s3));
 }
 
-void TestAppend()
+static void TestAppend()
 {
   RCString s1 = "hello";
   RCString s2 = " world";
@@ -69,7 +71,7 @@ void TestAppend()
   TEST("+= self-append", s3 == "aa");
 }
 
-void TestAdd()
+static void TestAdd()
 {
   RCString s1 = "foo";
   RCString s2 = "bar";
@@ -79,7 +81,7 @@ void TestAdd()
   TEST("+ s2 unchanged", s2 == "bar");
 }
 
-void TestIndex()
+static void TestIndex()
 {
   RCString s = "hello";
   TEST("[] read", s[0] == 'h');
@@ -91,7 +93,7 @@ void TestIndex()
   TEST("[] const read", cs[1] == 'b');
 }
 
-void TestLength()
+static void TestLength()
 {
   RCString s1 = "";
   RCString s2 = "hello";
@@ -101,13 +103,13 @@ void TestLength()
   TEST("length 11", s3.Length() == 11);
 }
 
-void TestCstr()
+static void TestCstr()
 {
   RCString s = "test";
   TEST("Cstr returns correct", 0 == strcmp(s.Cstr(), "test"));
 }
 
-void TestStream()
+static void TestStream()
 {
   std::ostringstream oss;
   RCString s = "hello";
@@ -133,7 +135,7 @@ void TestStream()
   TEST(">> long word (>128 chars)", t3 == long_word);
 }
 
-void TestLongerOrShorter()
+static void TestLongerOrShorter()
 {
   RCString s1 = "123";
   RCString s2 = "1234";
@@ -146,7 +148,7 @@ void TestLongerOrShorter()
   TEST("is s1 shorter then s3? ", 0 == (s1 < s3));
 }
 
-void TestRC()
+static void TestRC()
 {
   RCString s1 = "hello";
   RCString s2 = s1;
@@ -167,4 +169,35 @@ void TestRC()
   TEST("+= detaches", s4 == "hello world");
   TEST("+= s5 unchanged", s5 == "hello");
   TEST("+= s4/s5 not shared", s4.Cstr() != s5.Cstr());
+}
+
+static void TestCopyOnWrite()
+{
+  RCString s1("Hello");
+  RCString s2 = s1;
+
+  // sharing str
+  TEST("s1 == s2 same mem ", s1.Cstr() == s2.Cstr());
+  // read only - should still share
+  char c = s1[2];
+  (void)c;
+  TEST("s1 == s2 s1 doesn't changed ", s1.Cstr() == s2.Cstr());
+
+  // write - deep copy
+  s2[3] = 'r';
+  TEST("s1 != s2", s1.Cstr() != s2.Cstr());
+
+  RCString s3("123");
+  RCString s4("456");
+
+  const char* data3 = s3.Cstr();
+  const char* data4 = s4.Cstr();
+
+  s3[2] = s4[2];
+  TEST("s4 data unchanged ", s4.Cstr() == data4); // untouched
+  TEST("s3 new data ", s3.Cstr() == data3);       // detached
+
+  std::cout << "s3 = " << s3 << std::endl;
+  std::cout << "s4[2] = " << (char)s4[2] << std::endl;
+  TEST("s3 == 126 ", s3 == "126");
 }
