@@ -21,13 +21,13 @@ public:
 
 private:
   size_t m_count;
-  char m_data[];
+  char m_data[1];
 
   explicit SharedData(const char* str, size_t len);
   ~SharedData();
 
-  SharedData(const SharedData&) = delete;
-  SharedData& operator=(const SharedData&) = delete;
+  SharedData(const SharedData&);
+  SharedData& operator=(const SharedData&);
 };
 
 RCString::SharedData::SharedData(const char* str, size_t len) : m_count(1)
