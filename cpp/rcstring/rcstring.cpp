@@ -3,6 +3,7 @@
 #include <cctype>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
 namespace hrd42
 {
@@ -29,6 +30,36 @@ private:
   SharedData(const SharedData&);
   SharedData& operator=(const SharedData&);
 };
+
+RCString::ProxyChar::ProxyChar(SharedData** shd, size_t idx)
+    : m_str(shd), m_idx(idx)
+{
+}
+
+RCString::ProxyChar::ProxyChar(const RCString::ProxyChar& other)
+    : m_str(other.m_str), m_idx(other.m_idx)
+{
+}
+
+RCString::ProxyChar& RCString::ProxyChar::operator=(const char& c)
+{
+  RCString tmp((*m_str)->GetData());
+  std::swap(*m_str, tmp.m_data);
+  (*m_str)->GetData()[m_idx] = c;
+
+  return *this;
+}
+
+RCString::ProxyChar& RCString::ProxyChar::operator=(const ProxyChar& other)
+{
+  *this = static_cast<char>(other);
+  return *this;
+}
+
+RCString::ProxyChar::operator char() const
+{
+  return (*m_str)->GetData()[m_idx];
+}
 
 RCString::SharedData::SharedData(const char* str, size_t len) : m_count(1)
 {
@@ -102,17 +133,6 @@ RCString::~RCString()
   }
 }
 
-void RCString::Detach()
-{
-  if (1 == m_data->GetCount())
-  {
-    return;
-  }
-
-  --(*m_data);
-  m_data = SharedData::Create(m_data->GetData());
-}
-
 bool RCString::operator==(const RCString& other) const
 {
   return (m_data == other.m_data) ||
@@ -137,23 +157,20 @@ bool RCString::operator<(const RCString& other) const
 RCString& RCString::operator+=(const RCString& other)
 {
   size_t new_len = strlen(m_data->GetData()) + strlen(other.m_data->GetData());
-  char* tmp = new char[new_len + 1];
+  std::vector<char> buf(new_len + 1);
 
-  strcpy(tmp, m_data->GetData());
-  strcat(tmp, other.m_data->GetData());
+  strcpy(buf.data(), m_data->GetData());
+  strcat(buf.data(), other.m_data->GetData());
 
-  RCString new_str(tmp);
-  delete[] tmp;
-
-  std::swap(m_data, new_str.m_data);
+  RCString tmp(buf.data());
+  std::swap(m_data, tmp.m_data);
 
   return *this;
 }
 
-char& RCString::operator[](size_t idx)
+RCString::ProxyChar RCString::operator[](size_t idx)
 {
-  Detach();
-  return m_data->GetData()[idx];
+  return ProxyChar(&m_data, idx);
 }
 
 const char& RCString::operator[](size_t idx) const
