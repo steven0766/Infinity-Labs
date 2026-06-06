@@ -194,10 +194,7 @@ static void TestCopyOnWrite()
   const char* data4 = s4.Cstr();
 
   s3[2] = s4[2];
-  TEST("s4 data unchanged ", s4.Cstr() == data4); // untouched
-  TEST("s3 new data ", s3.Cstr() == data3);       // detached
-
-  std::cout << "s3 = " << s3 << std::endl;
-  std::cout << "s4[2] = " << (char)s4[2] << std::endl;
+  TEST("s4 data unchanged ", s4.Cstr() == data4);
+  TEST("s3 new data ", s3.Cstr() != data3);
   TEST("s3 == 126 ", s3 == "126");
 }
