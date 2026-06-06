@@ -16,6 +16,18 @@ class RCString
 {
 public:
   class SharedData;
+  class ProxyChar
+  {
+  public:
+    ProxyChar(RCString& rcstr, size_t idx);
+    ProxyChar& operator=(const char& c);
+    ProxyChar& operator=(const ProxyChar& other);
+    operator char() const;
+
+  private:
+    RCString& m_rcstr;
+    size_t m_idx;
+  };
 
   RCString(const char* str = "");
   RCString(const RCString& other);
@@ -29,7 +41,7 @@ public:
 
   RCString& operator+=(const RCString& other);
 
-  char& operator[](size_t idx);
+  ProxyChar operator[](size_t idx);
   const char& operator[](size_t idx) const;
 
   size_t Length() const;
@@ -38,10 +50,9 @@ public:
 private:
   SharedData* m_data;
 
-  void Detach();
-
   friend std::istream& operator>>(std::istream& is, RCString& str);
   friend std::ostream& operator<<(std::ostream& os, const RCString& str);
+  void WriteAt(size_t idx, char c);
 };
 
 } // namespace hrd42

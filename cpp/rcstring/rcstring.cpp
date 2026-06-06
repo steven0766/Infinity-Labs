@@ -1,5 +1,6 @@
 #include "rcstring.hpp"
 
+#include <assert.h>
 #include <cctype>
 #include <cstring>
 #include <iostream>
@@ -11,7 +12,8 @@ namespace hrd42
 class RCString::SharedData
 {
 public:
-  char* GetData() const;
+  char* GetData();
+  const char* GetData() const;
   size_t GetCount() const;
 
   SharedData& operator++();
@@ -31,34 +33,41 @@ private:
   SharedData& operator=(const SharedData&);
 };
 
-RCString::ProxyChar::ProxyChar(SharedData** shd, size_t idx)
-    : m_str(shd), m_idx(idx)
+void RCString::WriteAt(size_t idx, char c)
 {
+  RCString tmp(Cstr());
+  std::swap(m_data, tmp.m_data);
+  m_data->GetData()[idx] = c;
 }
 
-RCString::ProxyChar::ProxyChar(const RCString::ProxyChar& other)
-    : m_str(other.m_str), m_idx(other.m_idx)
+RCString::ProxyChar::ProxyChar(RCString& rcstr, size_t idx)
+    : m_rcstr(rcstr), m_idx(idx)
 {
 }
 
 RCString::ProxyChar& RCString::ProxyChar::operator=(const char& c)
 {
-  RCString tmp((*m_str)->GetData());
-  std::swap(*m_str, tmp.m_data);
-  (*m_str)->GetData()[m_idx] = c;
-
+  m_rcstr.WriteAt(m_idx, c);
   return *this;
 }
 
 RCString::ProxyChar& RCString::ProxyChar::operator=(const ProxyChar& other)
 {
-  *this = static_cast<char>(other);
+
+  char c = static_cast<char>(other);
+  *this = c;
   return *this;
 }
 
 RCString::ProxyChar::operator char() const
 {
-  return (*m_str)->GetData()[m_idx];
+  return m_rcstr.Cstr()[m_idx];
+}
+
+RCString::ProxyChar RCString::operator[](size_t idx)
+{
+  assert(idx < Length());
+  return ProxyChar(*this, idx);
 }
 
 RCString::SharedData::SharedData(const char* str, size_t len) : m_count(1)
@@ -95,9 +104,14 @@ RCString::SharedData& RCString::SharedData::operator--()
   return *this;
 }
 
-char* RCString::SharedData::GetData() const
+char* RCString::SharedData::GetData()
 {
-  return const_cast<char*>(m_data);
+  return m_data;
+}
+
+const char* RCString::SharedData::GetData() const
+{
+  return m_data;
 }
 
 size_t RCString::SharedData::GetCount() const
@@ -166,11 +180,6 @@ RCString& RCString::operator+=(const RCString& other)
   std::swap(m_data, tmp.m_data);
 
   return *this;
-}
-
-RCString::ProxyChar RCString::operator[](size_t idx)
-{
-  return ProxyChar(&m_data, idx);
 }
 
 const char& RCString::operator[](size_t idx) const
