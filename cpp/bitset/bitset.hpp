@@ -12,6 +12,13 @@ Version: 1
 #include <numeric>  //accumulate
 #include <vector>   // vector
 
+/************************************************************
+Description: setbit
+Developer: Steve
+Reviewer: Tomer
+Version: 1 - ready for review
+************************************************************/
+
 namespace hrd42
 {
 template <size_t Size> class BitSet;
