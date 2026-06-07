@@ -6,6 +6,13 @@
 #include <iostream>
 #include <vector>
 
+/************************************************************
+Description: rcstring
+Developer: Steve
+Reviewer: rozaline
+Version: 1
+************************************************************/
+
 namespace hrd42
 {
 
