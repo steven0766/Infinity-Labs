@@ -253,8 +253,8 @@ void Public_Convoy_Display(Public_Convoy* this)
 {
   this->m_pt1->vptr[1](this->m_pt1);
   this->m_pt2->vptr[1](this->m_pt2);
-  this->m_m.m_pt.vptr[1](&this->m_m.m_pt);
-  this->m_t.m_pt.vptr[1](&this->m_t.m_pt);
+  this->m_m.m_pt.vptr[1](&this->m_m);
+  this->m_t.m_pt.vptr[1](&this->m_t);
 }
 
 void PrintInfoi(Public_Transport* a)
@@ -286,8 +286,10 @@ int main(int argc, char** argv, char** envp)
   /* Minibus m;
 PrintInfo(m);
 PrintInfo(3).Display(); */
+  printf("__________________________________");
   Minibus m;
   Minibus_Ctor(&m);
+  printf("__________________________________");
 
   PrintInfoi(&m.m_pt);
 
