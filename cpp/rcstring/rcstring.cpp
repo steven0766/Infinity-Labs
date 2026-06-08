@@ -10,7 +10,7 @@
 Description: rcstring
 Developer: Steve
 Reviewer: rozaline
-Version: 1
+Version: 1 - ready for review
 ************************************************************/
 
 namespace hrd42
