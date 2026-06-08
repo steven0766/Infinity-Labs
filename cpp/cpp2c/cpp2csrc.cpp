@@ -185,7 +185,10 @@ void TaxiDisplay(Taxi s)
 
 int main(int argc, char** argv, char** envp)
 {
+  cout << "__________________" << endl;
   Minibus m;
+  cout << "__________________" << endl;
+
   PrintInfo(m);
   PrintInfo(3).Display();
 

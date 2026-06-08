@@ -266,14 +266,18 @@ void PrintInfoii()
   Public_Transport_PrintCount();
 }
 
-void PrintInfoiii(Public_Transport* ret, int i)
+Public_Transport PrintInfoiii(int i)
 {
   Minibus mb;
   Minibus_Ctor(&mb);
   printf("PrintInfo(int i)\n");
   mb.m_pt.vptr[1](&mb);
-  Public_Transport_Cctor(ret, &mb.m_pt);
+
+  Public_Transport ret;
+  Public_Transport_Cctor(&ret, &mb.m_pt);
+
   Minibus_Dtor(&mb);
+  return ret;
 }
 
 void TaxiDisplay(Taxi s)
@@ -286,15 +290,12 @@ int main(int argc, char** argv, char** envp)
   /* Minibus m;
 PrintInfo(m);
 PrintInfo(3).Display(); */
-  printf("__________________________________");
   Minibus m;
   Minibus_Ctor(&m);
-  printf("__________________________________");
 
   PrintInfoi(&m.m_pt);
 
-  Public_Transport tmp;
-  PrintInfoiii(&tmp, 3);
+  Public_Transport tmp = PrintInfoiii(3);
   Public_Transport_Display(&tmp);
   Public_Transport_Dtor(&tmp);
 
