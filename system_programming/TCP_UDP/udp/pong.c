@@ -31,7 +31,7 @@ int main()
   my_addr.sin_port = htons(PORT);
   my_addr.sin_addr.s_addr = INADDR_ANY;
 
-  /* bind - reserve port 8000 on this machine */
+  /* bind - reserve port */
   EXIT_IF_BAD_PERROR(
       -1 != bind(sockfd, (struct sockaddr*)&my_addr, sizeof(my_addr)), 1,
       "bind failed");
@@ -40,8 +40,7 @@ int main()
 
   while (1)
   {
-    /* recvfrom - block until a datagram arrives
-          client_addr gets filled with sender ip, port automatically */
+    /* recvfrom - block until a datagram arrives */
     bytes = recvfrom(sockfd, buf, BUF_SIZE - 1, 0,
                      (struct sockaddr*)&client_addr, &client_len);
     EXIT_IF_BAD_PERROR(-1 != bytes, 1, "recvfrom failed");
@@ -49,7 +48,7 @@ int main()
     buf[bytes] = '\0';
     printf("Received: %s\n", buf);
 
-    /* sendto - reply pong back to whoever sent us the message */
+    /* sendto - reply pong */
     bytes = sendto(sockfd, "pong", 4, 0, (struct sockaddr*)&client_addr,
                    client_len);
     EXIT_IF_BAD_PERROR(-1 != bytes, 1, "sendto failed");

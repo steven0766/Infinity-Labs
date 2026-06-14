@@ -26,7 +26,6 @@ int main()
   EXIT_IF_BAD_PERROR(-1 != sockfd, 1, "socket failed");
 
   /* fill my address */
-  /* bind ourselves to a fixed port so the pong server can reply to us */
   memset(&my_addr, 0, sizeof(my_addr));
   my_addr.sin_family = AF_INET;
   my_addr.sin_port = htons(8001); /* our port */
@@ -51,7 +50,7 @@ int main()
 
     printf("Sent: ping\n");
 
-    /* recvfrom - wait for pong back */
+    /* recvfrom - wait for pong */
     bytes = recvfrom(sockfd, buf, BUF_SIZE - 1, 0,
                      (struct sockaddr*)&server_addr, &server_len);
     EXIT_IF_BAD_PERROR(-1 != bytes, 1, "recvfrom failed");
