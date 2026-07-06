@@ -1,7 +1,9 @@
 #include "plug_and_play.hpp"
 #include "msg_broker.hpp"
 
+#include <dlfcn.h>       // dlclose, dlopen
 #include <errno.h>       // errno
+#include <iostream>      //cerr
 #include <limits.h>      //NAME_MAX
 #include <sys/inotify.h> // inotify
 #include <system_error>  // system_error
@@ -137,5 +139,36 @@ SoLoader::SoLoader(Dispatcher<std::string>* dispatcher)
 }
 
 SoLoader::~SoLoader()
+{
+  for (auto& handle : m_soHandles)
+  {
+    if (0 != dlclose(handle))
+    {
+      std::cerr << "dlclose failed\n";
+    }
+  }
+}
+
+void SoLoader::OnLoad(const std::string& dir_path)
+{
+  // open dir
+  void* handle = dlopen(dir_path.c_str(), RTLD_NOW);
+  // check if failed
+  if (!handle)
+  {
+    std::cerr << "can't open file\n";
+    return;
+  }
+
+  // add handle to vector
+  m_soHandles.push_back(handle);
+}
+
+void SoLoader::OnDisconnect()
+{
+}
+
+PnP::PnP(const std::string& dir_path)
+    : m_monitor(dir_path), m_loader(m_monitor.GetDispatcher())
 {
 }
