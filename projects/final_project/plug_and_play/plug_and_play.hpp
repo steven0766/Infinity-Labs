@@ -13,6 +13,8 @@ namespace hrd42
 
 class DirMonitor // uncopiable
 {
+  class Inotify;
+
 public:
   DirMonitor(const std::string& dir_path);
   DirMonitor(const DirMonitor&) = delete;
@@ -24,8 +26,24 @@ public:
 private:
   std::unique_ptr<Dispatcher<std::string>> m_dispatcher;
   std::thread m_monitor;
+  std::unique_ptr<Inotify> m_inotify;
 
   void MonitorThread(const std::string& dir_path);
+};
+
+class DirMonitor::Inotify
+{
+public:
+  Inotify(const std::string& dir_path);
+  Inotify(const Inotify&) = delete;
+  Inotify& operator=(const Inotify&) = delete;
+  ~Inotify();
+
+  void WaitForEvent(Dispatcher<std::string>* dispatcher_);
+
+private:
+  int m_Fd;
+  int m_wd;
 };
 
 class SoLoader // uncopiable
