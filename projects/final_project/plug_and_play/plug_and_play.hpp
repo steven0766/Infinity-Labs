@@ -25,8 +25,8 @@ public:
 
 private:
   std::unique_ptr<Dispatcher<std::string>> m_dispatcher;
-  std::thread m_monitor;
   std::unique_ptr<Inotify> m_inotify;
+  std::thread m_monitor;
 
   void MonitorThread(const std::string& dir_path);
 };
@@ -42,8 +42,8 @@ public:
   void WaitForEvent(Dispatcher<std::string>* dispatcher_);
 
 private:
-  int m_Fd;
-  int m_wd;
+  int m_fd;
+  int m_wfd;
 };
 
 class SoLoader // uncopiable
