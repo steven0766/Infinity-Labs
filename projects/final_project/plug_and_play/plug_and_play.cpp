@@ -128,3 +128,14 @@ void DirMonitor::Inotify::WaitForEvent(Dispatcher<std::string>* dispatcher_)
     }
   }
 }
+
+SoLoader::SoLoader(Dispatcher<std::string>* dispatcher)
+    : m_callback(std::make_unique<Callback<std::string, SoLoader>>(
+          dispatcher, *this, &SoLoader::OnLoad, &SoLoader::OnDisconnect)),
+      m_soHandles()
+{
+}
+
+SoLoader::~SoLoader()
+{
+}
