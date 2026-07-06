@@ -18,4 +18,9 @@ DirMonitor::DirMonitor(const std::string& dir_path)
 
 void DirMonitor::MonitorThread(const std::string& dir_path)
 {
+  // while true
+
+  // wait for new so file
+
+  // dispatcher notify with the name of new so file
 }
