@@ -1,16 +1,20 @@
 /************************************************************
-Description: BitSet class
-Developer:
-Reviewer:
-Version: 1
+Description: setbit
+Developer: Steve
+Reviewer: Tomer
+Version: 1 - ready for review
+         1.1 - after review
 ************************************************************/
 #ifndef ILRD_HRD42_BITSET_HPP
 #define ILRD_HRD42_BITSET_HPP
 
-#include <cstddef>  // size_t
-#include <iostream> // istream, ostream
-#include <numeric>  //accumulate
-#include <vector>   // vector
+#include <algorithm>  // transform
+#include <climits>    // CHAR_BIT
+#include <cstddef>    // size_t
+#include <functional> // bit_and, bit_or, bit_xor
+#include <iostream>   // istream, ostream
+#include <numeric>    //accumulate
+#include <vector>     // vector
 
 namespace hrd42
 {
@@ -68,60 +72,56 @@ private:
 
 template <size_t Size>
 BitSet<Size>::BitSet()
-    : m_bitset((Size + sizeof(size_t) * 8 - 1) / (sizeof(size_t) * 8), 0)
+    : m_bitset((Size + sizeof(size_t) * CHAR_BIT - 1) /
+                   (sizeof(size_t) * CHAR_BIT),
+               0)
 {
 }
-template <size_t Size> bool BitSet<Size>::operator!=(const BitSet& other) const
+template <size_t Size> bool BitSet<Size>::operator!=(const BitSet& other_) const
 {
-  return m_bitset != other.m_bitset;
+  return m_bitset != other_.m_bitset;
 }
 
-template <size_t Size> bool BitSet<Size>::operator==(const BitSet& other) const
+template <size_t Size> bool BitSet<Size>::operator==(const BitSet& other_) const
 {
-  return m_bitset == other.m_bitset;
+  return m_bitset == other_.m_bitset;
 }
 
 template <size_t Size>
-BitSet<Size>& BitSet<Size>::operator&=(const BitSet& other)
+BitSet<Size>& BitSet<Size>::operator&=(const BitSet& other_)
 {
-  for (size_t i = 0; i < this->m_bitset.size(); ++i)
-  {
-    this->m_bitset[i] &= other.m_bitset[i];
-  }
+  std::transform(m_bitset.begin(), m_bitset.end(), other_.m_bitset.begin(),
+                 m_bitset.begin(), std::bit_and<size_t>());
 
   return *this;
 }
 
 template <size_t Size>
-BitSet<Size>& BitSet<Size>::operator|=(const BitSet& other)
+BitSet<Size>& BitSet<Size>::operator|=(const BitSet& other_)
 {
-  for (size_t i = 0; i < this->m_bitset.size(); ++i)
-  {
-    this->m_bitset[i] |= other.m_bitset[i];
-  }
+  std::transform(m_bitset.begin(), m_bitset.end(), other_.m_bitset.begin(),
+                 m_bitset.begin(), std::bit_or<size_t>());
 
   return *this;
 }
 template <size_t Size>
-BitSet<Size>& BitSet<Size>::operator^=(const BitSet& other)
+BitSet<Size>& BitSet<Size>::operator^=(const BitSet& other_)
 {
-  for (size_t i = 0; i < this->m_bitset.size(); ++i)
-  {
-    this->m_bitset[i] ^= other.m_bitset[i];
-  }
+  std::transform(m_bitset.begin(), m_bitset.end(), other_.m_bitset.begin(),
+                 m_bitset.begin(), std::bit_xor<size_t>());
 
   return *this;
 }
 
 template <size_t Size>
-typename BitSet<Size>::BitProxy BitSet<Size>::operator[](size_t idx)
+typename BitSet<Size>::BitProxy BitSet<Size>::operator[](size_t idx_)
 {
-  return BitProxy(*this, idx);
+  return BitProxy(*this, idx_);
 }
 
-template <size_t Size> bool BitSet<Size>::operator[](size_t idx) const
+template <size_t Size> bool BitSet<Size>::operator[](size_t idx_) const
 {
-  return GetBit(idx);
+  return GetBit(idx_);
 }
 
 template <size_t Size> size_t BitSet<Size>::CountTrueBits() const
@@ -131,68 +131,63 @@ template <size_t Size> size_t BitSet<Size>::CountTrueBits() const
 }
 
 template <size_t Size>
-size_t BitSet<Size>::SumTrueBits(size_t sum, size_t block)
+size_t BitSet<Size>::SumTrueBits(size_t sum_, size_t block_)
 {
   size_t cnt = 0;
-  while (block)
+  while (block_)
   {
-    cnt += block & 1;
-    block >>= 1;
+    cnt += block_ & 1;
+    block_ >>= 1;
   }
 
-  return sum + cnt;
+  return sum_ + cnt;
 }
 
-template <size_t Size> void BitSet<Size>::SetBit(size_t idx, bool val)
+template <size_t Size> void BitSet<Size>::SetBit(size_t idx_, bool val)
 {
-  size_t bit_idx = idx % (sizeof(size_t) * 8);
-  size_t vec_idx = idx / (sizeof(size_t) * 8);
-  if (val)
-  {
-    m_bitset.at(vec_idx) |= (static_cast<size_t>(1) << bit_idx);
-  }
-  else
-  {
-    m_bitset.at(vec_idx) &= (~(static_cast<size_t>(1) << bit_idx));
-  }
+  size_t bit_idx = idx_ % (sizeof(size_t) * CHAR_BIT);
+  size_t vec_idx = idx_ / (sizeof(size_t) * CHAR_BIT);
+  size_t mask = static_cast<size_t>(1) << bit_idx;
+  m_bitset[vec_idx] =
+      (m_bitset[vec_idx] & ~mask) | (static_cast<size_t>(val) << bit_idx);
 }
 
-template <size_t Size> bool BitSet<Size>::GetBit(size_t idx) const
+template <size_t Size> bool BitSet<Size>::GetBit(size_t idx_) const
 {
-  size_t bit_idx = idx % (sizeof(size_t) * 8);
-  size_t vec_idx = idx / (sizeof(size_t) * 8);
-  return ((m_bitset.at(vec_idx) >> bit_idx) & static_cast<size_t>(1));
+  size_t bit_idx = idx_ % (sizeof(size_t) * CHAR_BIT);
+  size_t vec_idx = idx_ / (sizeof(size_t) * CHAR_BIT);
+  return (m_bitset.at(vec_idx) >> bit_idx) & 1;
 }
 
 template <size_t Size>
-std::ostream& operator<<(std::ostream& os, const BitSet<Size>& bitset)
+std::ostream& operator<<(std::ostream& os_, const BitSet<Size>& bitset_)
 {
   for (size_t i = Size; i > 0; --i)
   {
-    os << bitset.GetBit(i - 1);
+    os_ << bitset_.GetBit(i - 1);
   }
 
-  return os;
+  return os_;
 }
 
 template <size_t Size>
-BitSet<Size>::BitProxy::BitProxy(BitSet<Size>& bitset, size_t idx)
-    : m_bitset(bitset), m_idx(idx)
+BitSet<Size>::BitProxy::BitProxy(BitSet<Size>& bitset_, size_t idx_)
+    : m_bitset(bitset_), m_idx(idx_)
 {
 }
 
 template <size_t Size>
 typename BitSet<Size>::BitProxy&
-BitSet<Size>::BitProxy::operator=(const BitProxy& other)
+BitSet<Size>::BitProxy::operator=(const BitProxy& other_)
 {
-  *this = static_cast<bool>(other);
+  *this = static_cast<bool>(other_);
   return *this;
 }
 
 template <size_t Size>
-typename BitSet<Size>::BitProxy& BitSet<Size>::BitProxy::operator=(bool val)
+typename BitSet<Size>::BitProxy& BitSet<Size>::BitProxy::operator=(bool val_)
 {
-  this->m_bitset.SetBit(m_idx, val);
+  this->m_bitset.SetBit(m_idx, val_);
   return *this;
 }
 
